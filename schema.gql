@@ -1,0 +1,74 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+directive @upper on FIELD_DEFINITION
+
+type User {
+  id: ID!
+
+  """이메일"""
+  email: String!
+
+  """제목"""
+  nickname: String!
+
+  """프로필사진"""
+  avatar: String
+
+  """관리자여부"""
+  isMaster: Boolean!
+
+  """보안문자"""
+  token: String
+
+  """상태코드"""
+  status: String!
+
+  """상태설명"""
+  statusText: String!
+
+  """링크"""
+  link: String!
+
+  """생성일"""
+  createdAt: DateTime!
+
+  """수정일"""
+  updatedAt: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type OffsetPageInfo {
+  currentPage: Float!
+  lastPage: Float!
+  pageSize: Float!
+  nodeCount: Float!
+  totalCount: Float!
+}
+
+type CursorPageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+type OffsetPaginatedUser {
+  nodes: [User!]
+  pageInfo: OffsetPageInfo!
+}
+
+type UserEdge {
+  cursor: String!
+  node: User!
+}
+
+type Query {
+  users(offset: Int = 0, limit: Int = 12, nickname: String): OffsetPaginatedUser!
+  user(id: String!): User!
+}
