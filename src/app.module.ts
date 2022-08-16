@@ -1,15 +1,24 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
-import { Directive, GraphQLModule } from '@nestjs/graphql';
+import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
 import { DirectiveLocation, GraphQLDirective } from 'graphql';
+import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { upperDirectiveTransformer } from './common/directives/upper-case.directive';
 import { UsersModule } from './users/users.module';
+import { LoggingPlugin } from './common/plugins/logging.plugin';
+import { PlatformsModule } from './platforms/platforms.module';
+import { mysqlConfig } from '../ormconfig';
 
 @Module({
     imports: [
         UsersModule,
+        ConfigModule.forRoot({
+            envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
+        }),
+        TypeOrmModule.forRoot(mysqlConfig),
         GraphQLModule.forRoot<ApolloDriverConfig>({
             driver: ApolloDriver,
             autoSchemaFile: 'schema.gql',
@@ -27,6 +36,8 @@ import { UsersModule } from './users/users.module';
                 ],
             },
         }),
+        PlatformsModule,
     ],
+    providers: [LoggingPlugin],
 })
 export class AppModule {}

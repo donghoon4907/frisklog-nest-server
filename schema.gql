@@ -10,7 +10,7 @@ type User {
   """이메일"""
   email: String!
 
-  """제목"""
+  """별명"""
   nickname: String!
 
   """프로필사진"""
