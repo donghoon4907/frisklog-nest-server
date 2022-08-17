@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
+import * as path from 'path';
 
-import '../../common/env';
 import { mysqlConfig } from '../../../ormconfig';
 import { Platform } from '../../platforms/platform.entity';
 
@@ -18,7 +18,10 @@ const PLATFORM_DATA = [
 ];
 
 (async () => {
-    const AppDataSource = await new DataSource(mysqlConfig).initialize();
+    const AppDataSource = await new DataSource({
+        ...mysqlConfig,
+        entities: [path.join(process.cwd(), '/src/**/*.entity.{js,ts}')],
+    }).initialize();
 
     const repository = AppDataSource.getRepository(Platform);
 

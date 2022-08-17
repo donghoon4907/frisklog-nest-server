@@ -6,7 +6,16 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
     ManyToOne,
+    ManyToMany,
+    JoinTable,
+    JoinColumn,
+    DeleteDateColumn,
+    BeforeUpdate,
+    BeforeInsert,
+    RelationId,
+    BaseEntity,
 } from 'typeorm';
+import jwt from 'jsonwebtoken';
 
 import { Platform } from '../platforms/platform.entity';
 
@@ -19,34 +28,44 @@ export enum UserStatus {
 
 @Entity('Users')
 @ObjectType()
-export class User {
+export class User extends BaseEntity {
     @PrimaryGeneratedColumn()
-    @Field((type) => ID)
+    @Field(() => ID)
     id: number;
 
-    @Column({ nullable: true, unique: true })
-    @Field({ description: '이메일', nullable: true })
+    @Column({ comment: '이메일', nullable: true, unique: true })
     email: string;
 
-    @Column({ length: 50 })
-    @Field({ description: '별명' })
+    @Column({ comment: '별명' })
+    @Field()
     nickname: string;
 
-    @Column({ nullable: true })
-    @Field({ description: '프로필사진', nullable: true })
-    avatar?: string;
+    @Column({ comment: '프로필사진' })
+    @Field()
+    avatar: string;
 
-    @Column({ default: false })
-    @Field({ description: '관리자여부' })
+    @Column({ comment: '관리자여부', default: false })
+    @Field()
     isMaster: boolean;
 
-    @Column({ nullable: true })
-    @Field({ description: '보안문자', nullable: true })
-    token?: string;
+    @Column({ comment: '보안문자', nullable: true })
+    captcha?: string;
 
-    @Column({ type: 'enum', enum: UserStatus, default: UserStatus.OFFLINE })
-    @Field({ description: '상태코드' })
+    @Column({
+        comment: '상태코드',
+        type: 'enum',
+        enum: UserStatus,
+        default: UserStatus.OFFLINE,
+    })
+    @Field()
     status: string;
+
+    @Column({ comment: '로그인유지여부', nullable: true })
+    @Field({ nullable: true })
+    isKeep?: boolean;
+
+    @Field({ description: '로그인토큰', nullable: true })
+    token?: string;
 
     @Field({ description: '상태설명' })
     statusText: string;
@@ -54,14 +73,78 @@ export class User {
     @Field({ description: '링크' })
     link: string;
 
-    @CreateDateColumn()
-    @Field({ description: '생성일' })
+    @CreateDateColumn({ comment: '생성일' })
+    @Field()
     createdAt: Date;
 
-    @UpdateDateColumn()
-    @Field({ description: '수정일' })
+    @UpdateDateColumn({ comment: '수정일' })
+    @Field()
     updatedAt: Date;
 
+    @DeleteDateColumn({ comment: '삭제일' })
+    deletedAt?: Date;
+
     @ManyToOne(() => Platform, (platform) => platform.users)
+    // @JoinColumn({ name: 'PlatformId' })
     platform: Platform;
+
+    @RelationId((user: User) => user.platform)
+    platformId: number;
+
+    @ManyToMany(() => User, (user) => user.followings)
+    @JoinTable({
+        name: 'Follows',
+        joinColumn: {
+            name: 'FollowingId',
+            referencedColumnName: 'id',
+        },
+        inverseJoinColumn: {
+            name: 'FollowerId',
+            referencedColumnName: 'id',
+        },
+    })
+    followers: User[];
+
+    @ManyToMany(() => User, (user) => user.followers)
+    followings: User[];
+
+    @BeforeInsert()
+    @BeforeUpdate()
+    updateAvatar() {
+        let avatar = this.avatar;
+
+        if (avatar === null) {
+            avatar = '/avatar.png';
+        }
+
+        const hasDomain = avatar.includes('http');
+
+        if (!hasDomain) {
+            this.avatar = process.env.BACKEND_ROOT + avatar;
+        }
+    }
+
+    generateToken() {
+        const { id, nickname, avatar, isKeep } = this;
+
+        const tokenConfig = {};
+
+        if (!isKeep) {
+            tokenConfig['expiresIn'] = '3h';
+        }
+
+        return jwt.sign(
+            { id, nickname, avatar },
+            process.env.JWT_SECRET,
+            tokenConfig,
+        );
+    }
+
+    refreshToken() {
+        return this.generateToken();
+    }
+
+    async getPlatform() {
+        return Platform.findOneBy({ id: this.platformId });
+    }
 }

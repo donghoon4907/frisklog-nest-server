@@ -1,6 +1,7 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { DataSourceOptions } from 'typeorm';
-import * as path from 'path';
+
+import './src/common/env';
 
 export const mysqlConfig: TypeOrmModuleOptions & DataSourceOptions = {
     type: 'mysql',
@@ -10,7 +11,6 @@ export const mysqlConfig: TypeOrmModuleOptions & DataSourceOptions = {
     password: process.env.DB_PASSWORD,
     database: process.env.DB,
     autoLoadEntities: true,
-    entities: [path.join(process.cwd(), '/src/**/*.entity.{js,ts}')],
     synchronize: true,
     logging: true,
     timezone: 'local',

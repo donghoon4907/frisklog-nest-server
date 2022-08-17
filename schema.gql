@@ -4,44 +4,49 @@
 
 directive @upper on FIELD_DEFINITION
 
-type User {
+type Platform {
   id: ID!
 
-  """이메일"""
-  email: String!
+  """플랫폼명"""
+  platformName: String!
 
-  """별명"""
+  """로고경로"""
+  logoUrl: String!
+
+  """도메인"""
+  domainUrl: String!
+  users: [User!]!
+}
+
+type User {
+  id: ID!
   nickname: String!
-
-  """프로필사진"""
-  avatar: String
-
-  """관리자여부"""
+  avatar: String!
   isMaster: Boolean!
-
-  """보안문자"""
-  token: String
-
-  """상태코드"""
   status: String!
+  isKeep: Boolean
+
+  """로그인토큰"""
+  token: String
 
   """상태설명"""
   statusText: String!
 
   """링크"""
   link: String!
-
-  """생성일"""
-  createdAt: DateTime!
-
-  """수정일"""
-  updatedAt: DateTime!
+  createdAt: Date!
+  updatedAt: Date!
+  email: String!
+  captcha: String
+  deletedAt: Date
+  platform: Platform!
+  platformId: Float!
+  followers: [User!]!
+  followings: [User!]!
 }
 
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
+""""""
+scalar Date
 
 type OffsetPageInfo {
   currentPage: Float!
@@ -70,5 +75,24 @@ type UserEdge {
 
 type Query {
   users(offset: Int = 0, limit: Int = 12, nickname: String): OffsetPaginatedUser!
-  user(id: String!): User!
+  user(id: Float!): User!
+}
+
+type Mutation {
+  addUser(createUserInput: CreateUserInput!): User!
+  updateUser(updateUserInput: UpdateUserInput!): User!
+  logIn(email: String!): User!
+}
+
+input CreateUserInput {
+  email: String!
+  nickname: String!
+  avatar: String
+}
+
+input UpdateUserInput {
+  nickname: String
+  avatar: String
+  status: String
+  isKeep: Boolean
 }

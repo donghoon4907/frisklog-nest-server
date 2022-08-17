@@ -3,11 +3,11 @@ import { Min, Max, IsOptional } from 'class-validator';
 
 @ArgsType()
 export class UsersArgs {
-    @Field((type) => Int)
+    @Field(() => Int)
     @Min(0)
     offset = 0;
 
-    @Field((type) => Int)
+    @Field(() => Int)
     @Min(1)
     @Max(50)
     limit = 12;

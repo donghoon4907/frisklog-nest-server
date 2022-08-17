@@ -8,7 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { upperDirectiveTransformer } from './common/directives/upper-case.directive';
 import { UsersModule } from './users/users.module';
-import { LoggingPlugin } from './common/plugins/logging.plugin';
+// import { LoggingPlugin } from './common/plugins/logging.plugin';
 import { PlatformsModule } from './platforms/platforms.module';
 import { mysqlConfig } from '../ormconfig';
 
@@ -38,6 +38,6 @@ import { mysqlConfig } from '../ormconfig';
         }),
         PlatformsModule,
     ],
-    providers: [LoggingPlugin],
+    providers: [],
 })
 export class AppModule {}

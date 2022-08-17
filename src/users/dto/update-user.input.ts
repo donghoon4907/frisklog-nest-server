@@ -1,10 +1,10 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { Matches, IsOptional } from 'class-validator';
+import { IsOptional } from 'class-validator';
 
 @InputType()
 export class UpdateUserInput {
     @Field({ nullable: true })
-    @Matches(/[a-zA-Z0-9_-]{2, 20}/)
+    @IsOptional()
     nickname?: string;
 
     @Field({ nullable: true })
@@ -14,4 +14,8 @@ export class UpdateUserInput {
     @Field({ nullable: true })
     @IsOptional()
     status?: string;
+
+    @Field({ nullable: true })
+    @IsOptional()
+    isKeep?: boolean;
 }
