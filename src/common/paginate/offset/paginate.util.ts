@@ -1,5 +1,4 @@
-import { IPaginatedType } from './paginate.entity';
-import { OffsetPageInfo } from './page-info.entity';
+import { IPaginatedType, OffsetPageInfo } from './paginated';
 
 interface IOffsetPaginateArgs {
     offset: number;

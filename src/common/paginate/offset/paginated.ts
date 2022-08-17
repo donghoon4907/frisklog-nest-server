@@ -1,7 +1,23 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Type } from '@nestjs/common';
 
-import { OffsetPageInfo } from './page-info.entity';
+@ObjectType()
+export class OffsetPageInfo {
+    @Field()
+    currentPage: number;
+
+    @Field()
+    lastPage: number;
+
+    @Field()
+    pageSize: number;
+
+    @Field()
+    nodeCount: number;
+
+    @Field()
+    totalCount: number;
+}
 
 export interface IPaginatedType<T> {
     nodes: T[];

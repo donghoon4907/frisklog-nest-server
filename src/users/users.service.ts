@@ -7,7 +7,6 @@ import { UsersArgs } from './dto/users.args';
 import { OffsetPaginatedUser } from './dto/users.response';
 import { OffsetPaginate } from '../common/paginate/offset/paginate.util';
 import { CreateUserInput } from './dto/create-user.input';
-import { UpdateUserInput } from './dto/update-user.input';
 import { sendMail } from '../common/nodemailer/send-mail.util';
 
 @Injectable()
