@@ -1,11 +1,12 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsEmail, Matches, IsOptional } from 'class-validator';
+import { IsEmail, IsOptional } from 'class-validator';
 
 @InputType()
 export class CreateUserInput {
-    @Field()
+    @Field({ nullable: true })
     @IsEmail()
-    email: string;
+    @IsOptional()
+    email?: string;
 
     @Field()
     // @Matches(/[a-zA-Z0-9_-]{2, 20}/)

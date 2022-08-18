@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like } from 'typeorm';
+import { HttpService } from '@nestjs/axios';
+import { AxiosResponse } from 'axios';
+import { firstValueFrom } from 'rxjs';
 
 import { User } from './user.entity';
 import { UsersArgs } from './dto/users.args';
@@ -14,6 +17,7 @@ export class UsersService {
     constructor(
         @InjectRepository(User)
         private readonly usersRepository: Repository<User>,
+        private readonly httpService: HttpService,
     ) {}
 
     async findAll(usersArgs: UsersArgs): Promise<OffsetPaginatedUser> {
@@ -34,6 +38,9 @@ export class UsersService {
             },
             skip: offset,
             take: limit,
+            order: {
+                nickname: 'ASC',
+            },
         });
 
         return paginate.response(users, usersCount);
@@ -49,6 +56,10 @@ export class UsersService {
         });
     }
 
+    async findOneById(id: number): Promise<User> {
+        return this.usersRepository.findOneBy({ id });
+    }
+
     async findOneByNickname(
         nickname: string,
         platformId: number = 1,
@@ -60,12 +71,35 @@ export class UsersService {
         return this.usersRepository.findOneBy({ email, platformId });
     }
 
+    async verifyGithub(code: string): Promise<AxiosResponse<any>> {
+        const res = this.httpService.post(
+            'https://github.com/login/oauth/access_token',
+            {
+                client_id: process.env.GITHUB_CLIENT_ID,
+                client_secret: process.env.GITHUB_CLIENT_SECRET,
+                code,
+            },
+        );
+
+        return firstValueFrom(res);
+    }
+
+    async getGithubProfile(accessToken: string): Promise<AxiosResponse<any>> {
+        const res = this.httpService.get('https://api.github.com/user', {
+            headers: {
+                authorization: `token ${accessToken}`,
+            },
+        });
+
+        return firstValueFrom(res);
+    }
+
     async sendMail(email: string, captcha: string): Promise<any> {
         return sendMail(email, captcha);
     }
 
-    async create(data: CreateUserInput): Promise<User> {
-        const user = this.usersRepository.create({ ...data, platformId: 1 });
+    async create(data: CreateUserInput, platformId: number = 1): Promise<User> {
+        const user = this.usersRepository.create({ ...data, platformId });
 
         return this.usersRepository.save(user);
     }

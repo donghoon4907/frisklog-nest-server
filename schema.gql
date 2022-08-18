@@ -81,11 +81,15 @@ type Query {
 type Mutation {
   addUser(createUserInput: CreateUserInput!): User!
   updateUser(updateUserInput: UpdateUserInput!): User!
-  logIn(email: String!): User!
+  logIn(email: String!): Boolean!
+  verify(verifyUserInput: VerifyUserInput!): User!
+  githubLogin(code: String!): User!
+  follow(id: Float!): Boolean!
+  unfollow(id: Float!): Boolean!
 }
 
 input CreateUserInput {
-  email: String!
+  email: String
   nickname: String!
   avatar: String
 }
@@ -95,4 +99,10 @@ input UpdateUserInput {
   avatar: String
   status: String
   isKeep: Boolean
+}
+
+input VerifyUserInput {
+  email: String!
+  isKeep: Boolean!
+  captcha: String!
 }

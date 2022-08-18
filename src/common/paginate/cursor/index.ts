@@ -1,182 +1,197 @@
-// // import { Op } from 'sequelize';
+import { MoreThan, LessThan, Repository, SelectQueryBuilder } from 'typeorm';
 
-// interface ICursorPaginateArgs {
-//     before?: string;
-//     after?: string;
-//     order?: string[][];
-//     where: any;
-// }
+interface ICursorPaginateArgs {
+    before?: string;
+    after?: string;
+    order?: string[][];
+    where: any;
+}
 
-// class CursorPaginate {
-//     readonly order: string[][];
-//     readonly where: any;
-//     readonly before: string | null;
+export class CursorPaginate<T> {
+    public order: string[][];
+    readonly where: any;
+    readonly before: string | null;
+    readonly qb: SelectQueryBuilder<T>;
 
-//     constructor(cursorPaginateArgs: ICursorPaginateArgs) {
-//         const { before, after, order, where } = cursorPaginateArgs;
+    constructor(
+        repository: Repository<T>,
+        cursorPaginateArgs: ICursorPaginateArgs,
+    ) {
+        const { before, after, order, where } = cursorPaginateArgs;
 
-//         this.order = order;
+        this.qb = repository.createQueryBuilder();
 
-//         this.before = before;
+        this.order = order;
 
-//         this.normalizeOrder();
-//         if (before) {
-//             this.reverseOrder();
-//         }
+        this.before = before;
 
-//         let cursor = null;
-//         if (before) {
-//             cursor = this.parseCursor(before);
-//         } else if (after) {
-//             cursor = this.parseCursor(after);
-//         }
+        this.normalizeOrder();
+        if (before) {
+            this.reverseOrder();
+        }
 
-//         let query = null;
-//         if (cursor !== null) {
-//             query = this.getPaginationQuery(cursor);
-//         }
+        let cursor = null;
+        if (before) {
+            cursor = this.parseCursor(before);
+        } else if (after) {
+            cursor = this.parseCursor(after);
+        }
 
-//         this.where = where;
-//         if (query !== null) {
-//             this.where = { [Op.and]: [query, where] };
-//         }
-//     }
+        console.log(after);
+        console.log(cursor);
+        console.log(typeof cursor);
+        console.log(cursor.length);
+        console.log(this.order);
 
-//     response(instances, cursorCount, totalCount) {
-//         if (this.before) {
-//             instances.reverse();
-//         }
+        let query = null;
+        if (cursor !== null) {
+            query = this.getPaginationQuery(cursor);
+        }
 
-//         const remaining = cursorCount - instances.length;
+        console.log(query);
 
-//         const hasNextPage =
-//             (!this.before && remaining > 0) ||
-//             (Boolean(this.before) && totalCount - cursorCount > 0);
+        // this.where = where;
+        // if (query !== null) {
+        //     this.where = { ...query, ...where };
+        // }
+    }
 
-//         const hasPreviousPage =
-//             (Boolean(this.before) && remaining > 0) ||
-//             (!this.before && totalCount - cursorCount > 0);
+    response(instances, cursorCount, totalCount) {
+        if (this.before) {
+            instances.reverse();
+        }
 
-//         const edges = instances.map((node) => ({
-//             node,
-//             cursor: this.createCursor(node),
-//         }));
+        const remaining = cursorCount - instances.length;
 
-//         const pageInfo = {
-//             hasNextPage,
-//             hasPreviousPage,
-//             startCursor: edges.length > 0 ? edges[0].cursor : null,
-//             endCursor: edges.length > 0 ? edges[edges.length - 1].cursor : null,
-//         };
+        const hasNextPage =
+            (!this.before && remaining > 0) ||
+            (Boolean(this.before) && totalCount - cursorCount > 0);
 
-//         return {
-//             totalCount,
-//             edges,
-//             pageInfo,
-//         };
-//     }
+        const hasPreviousPage =
+            (Boolean(this.before) && remaining > 0) ||
+            (!this.before && totalCount - cursorCount > 0);
 
-//     normalizeOrder() {
-//         const { order } = this;
+        const edges = instances.map((node) => ({
+            node,
+            cursor: this.createCursor(node),
+        }));
 
-//         let normalized = [];
+        const pageInfo = {
+            hasNextPage,
+            hasPreviousPage,
+            startCursor: edges.length > 0 ? edges[0].cursor : null,
+            endCursor: edges.length > 0 ? edges[edges.length - 1].cursor : null,
+        };
 
-//         if (Array.isArray(order)) {
-//             normalized = order.map((o) => {
-//                 if (typeof o === 'string') {
-//                     return [o, 'ASC'];
-//                 }
+        return {
+            totalCount,
+            edges,
+            pageInfo,
+        };
+    }
 
-//                 if (Array.isArray(o)) {
-//                     const [field, direction] = o;
+    normalizeOrder() {
+        const { order } = this;
 
-//                     return [field, direction || 'ASC'];
-//                 }
+        let normalized = [];
 
-//                 return o;
-//             });
-//         }
+        if (Array.isArray(order)) {
+            normalized = order.map((o) => {
+                if (typeof o === 'string') {
+                    return [o, 'ASC'];
+                }
 
-//         return this.ensurePrimaryKeyInOrder(normalized);
-//     }
+                if (Array.isArray(o)) {
+                    const [field, direction] = o;
 
-//     ensurePrimaryKeyInOrder(order) {
-//         return [...order, ['id', 'ASC']];
-//     }
+                    return [field, direction || 'ASC'];
+                }
 
-//     reverseOrder() {
-//         const { order } = this;
+                return o;
+            });
+        }
 
-//         return order.map(([field, direction]) => [
-//             field,
-//             direction.toLowerCase() === 'desc' ? 'ASC' : 'DESC',
-//         ]);
-//     }
+        return this.ensurePrimaryKeyInOrder(normalized);
+    }
 
-//     serializeCursor(payload: any[]) {
-//         return Buffer.from(JSON.stringify(payload)).toString('base64');
-//     }
+    ensurePrimaryKeyInOrder(order) {
+        this.order = [...order, ['id', 'ASC']];
+    }
 
-//     createCursor(node) {
-//         const { order } = this;
+    reverseOrder() {
+        const { order } = this;
 
-//         const payload = order.map(([field]) => node[field]);
+        return order.map(([field, direction]) => [
+            field,
+            direction.toLowerCase() === 'desc' ? 'ASC' : 'DESC',
+        ]);
+    }
 
-//         return this.serializeCursor(payload);
-//     }
+    serializeCursor(payload: any[]) {
+        return Buffer.from(JSON.stringify(payload)).toString('base64');
+    }
 
-//     parseCursor(cursor: string) {
-//         if (!cursor) {
-//             return null;
-//         }
+    createCursor(node) {
+        const { order } = this;
 
-//         try {
-//             return JSON.parse(Buffer.from(cursor, 'base64').toString('utf8'));
-//         } catch (e) {
-//             return null;
-//         }
-//     }
+        const payload = order.map(([field]) => node[field]);
 
-//     isValidCursor(cursor) {
-//         return cursor.length === this.order.length;
-//     }
+        return this.serializeCursor(payload);
+    }
 
-//     recursivelyGetPaginationQuery(cursor, order) {
-//         const op = order[0][1].toLowerCase() === 'desc' ? Op.lt : Op.gt;
+    parseCursor(cursor: string) {
+        if (!cursor) {
+            return null;
+        }
 
-//         if (order.length === 1) {
-//             return {
-//                 [order[0][0]]: {
-//                     [op]: cursor[0],
-//                 },
-//             };
-//         } else {
-//             return {
-//                 [Op.or]: [
-//                     {
-//                         [order[0][0]]: {
-//                             [op]: cursor[0],
-//                         },
-//                     },
-//                     {
-//                         [order[0][0]]: cursor[0],
-//                         ...this.recursivelyGetPaginationQuery(
-//                             cursor.slice(1),
-//                             order.slice(1),
-//                         ),
-//                     },
-//                 ],
-//             };
-//         }
-//     }
+        try {
+            return JSON.parse(Buffer.from(cursor, 'base64').toString('utf8'));
+        } catch (e) {
+            return null;
+        }
+    }
 
-//     getPaginationQuery(cursor) {
-//         if (!this.isValidCursor(cursor)) {
-//             return null;
-//         }
+    isValidCursor(cursor: string) {
+        return cursor.length === this.order.length;
+    }
 
-//         return this.recursivelyGetPaginationQuery(cursor, this.order);
-//     }
-// }
+    recursivelyGetPaginationQuery(cursor: string, order: string[][]) {
+        const op = order[0][1].toLowerCase() === 'desc' ? '<' : '>';
 
-// export default CursorPaginate;
+        if (order.length === 1) {
+            return {
+                [order[0][0]]: {
+                    op,
+                    value: cursor[0],
+                },
+            };
+        } else {
+            return [
+                {
+                    [order[0][0]]: {
+                        op,
+                        value: cursor[0],
+                    },
+                },
+                {
+                    [order[0][0]]: {
+                        op: '=',
+                        value: cursor[0],
+                    },
+                    ...this.recursivelyGetPaginationQuery(
+                        cursor.slice(1),
+                        order.slice(1),
+                    ),
+                },
+            ];
+        }
+    }
+
+    getPaginationQuery(cursor: string) {
+        // if (!this.isValidCursor(cursor)) {
+        //     return null;
+        // }
+
+        return this.recursivelyGetPaginationQuery(cursor, this.order);
+    }
+}

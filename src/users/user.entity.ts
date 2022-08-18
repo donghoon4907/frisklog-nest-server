@@ -8,7 +8,6 @@ import {
     ManyToOne,
     ManyToMany,
     JoinTable,
-    JoinColumn,
     DeleteDateColumn,
     BeforeUpdate,
     BeforeInsert,
@@ -18,13 +17,7 @@ import {
 import jwt from 'jsonwebtoken';
 
 import { Platform } from '../platforms/platform.entity';
-
-export enum UserStatus {
-    ONLINE = 'online',
-    OFFLINE = 'offline',
-    AWAY = 'away',
-    BUSY = 'busy',
-}
+import { UserStatus } from './user.interface';
 
 @Entity('Users')
 @ObjectType()
