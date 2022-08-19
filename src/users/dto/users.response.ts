@@ -1,7 +1,7 @@
 import { ObjectType } from '@nestjs/graphql';
 
-import { Paginated as OffsetPaginated } from '../../common/paginate/offset/paginated';
-import { Paginated as CursorPaginated } from '../../common/paginate/cursor/cursor.paginate';
+import { OffsetPaginated } from '../../common/paging/offset/offset.paginated';
+import { CursorPaginated } from '../../common/paging/cursor/cursor.paginated';
 import { User } from '../user.entity';
 
 @ObjectType()

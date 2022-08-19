@@ -48,7 +48,7 @@ type User {
 """"""
 scalar Date
 
-type OffsetPageInfo {
+type OffsetMetadata {
   currentPage: Float!
   lastPage: Float!
   pageSize: Float!
@@ -56,7 +56,9 @@ type OffsetPageInfo {
   totalCount: Float!
 }
 
-type CursorPageInfo {
+type CursorMetadata {
+  pageSize: Float!
+  totalCount: Float!
   hasNextPage: Boolean!
   hasPreviousPage: Boolean!
   startCursor: String
@@ -65,7 +67,7 @@ type CursorPageInfo {
 
 type OffsetPaginatedUser {
   nodes: [User!]
-  pageInfo: OffsetPageInfo!
+  pageInfo: OffsetMetadata!
 }
 
 type UserEdge {
@@ -76,6 +78,7 @@ type UserEdge {
 type Query {
   users(offset: Int = 0, limit: Int = 12, nickname: String): OffsetPaginatedUser!
   user(id: Float!): User!
+  followings(id: ID!, first: Float, last: Float, before: String, after: String): [User!]!
 }
 
 type Mutation {

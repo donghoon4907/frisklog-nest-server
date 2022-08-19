@@ -7,10 +7,11 @@ import { firstValueFrom } from 'rxjs';
 
 import { User } from './user.entity';
 import { UsersArgs } from './dto/users.args';
-import { OffsetPaginatedUser } from './dto/users.response';
-import { OffsetPaginate } from '../common/paginate/offset/paginate.util';
+import { CursorPaginatedUser, OffsetPaginatedUser } from './dto/users.response';
+import { OffsetPaginator } from '../common/paging/offset/offset.paginator';
 import { CreateUserInput } from './dto/create-user.input';
 import { sendMail } from '../common/nodemailer/send-mail.util';
+import { FollowingsArgs } from './dto/followings.args';
 
 @Injectable()
 export class UsersService {
@@ -29,7 +30,7 @@ export class UsersService {
             where.nickname = Like(`%${nickname}%`);
         }
 
-        const paginate = new OffsetPaginate<User>({ offset, limit });
+        const paginate = new OffsetPaginator<User>({ offset, limit });
 
         const [users, usersCount] = await this.usersRepository.findAndCount({
             where,
@@ -44,6 +45,19 @@ export class UsersService {
         });
 
         return paginate.response(users, usersCount);
+    }
+
+    async followings(followingsArgs: FollowingsArgs): Promise<User> {
+        const { first, last, before, after, id } = followingsArgs;
+
+        const qb = await this.usersRepository
+            .createQueryBuilder('user')
+            .leftJoin('user.followings', 'following')
+            .getMany();
+
+        console.log(qb);
+
+        return null;
     }
 
     async findOne(id: number): Promise<User> {

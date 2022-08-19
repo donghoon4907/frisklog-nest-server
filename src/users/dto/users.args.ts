@@ -4,7 +4,6 @@ import { Min, Max, IsOptional } from 'class-validator';
 @ArgsType()
 export class UsersArgs {
     @Field(() => Int)
-    @Min(0)
     offset = 0;
 
     @Field(() => Int)

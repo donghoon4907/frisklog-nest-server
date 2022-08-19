@@ -7,10 +7,11 @@ import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { VerifyUserInput } from './dto/verify-user.input';
 import { UsersArgs } from './dto/users.args';
-import { OffsetPaginatedUser } from './dto/users.response';
+import { CursorPaginatedUser, OffsetPaginatedUser } from './dto/users.response';
 import { AuthGuard } from 'src/common/auth/auth.guard';
 import { AuthUser } from './user.decorator';
 import { UserStatus } from './user.interface';
+import { FollowingsArgs } from './dto/followings.args';
 
 @Resolver((of) => User)
 export class UsersResolver {
@@ -32,16 +33,11 @@ export class UsersResolver {
         return user;
     }
 
-    // @Query((returns) => [User])
-    // async followings(@Args('limit') limit: number) {
-    //     const user = await this.usersService.findOne(id);
-
-    //     if (user === null) {
-    //         throw new ForbiddenException('존재하지 않는 사용자입니다.');
-    //     }
-
-    //     return user;
-    // }
+    @Query((returns) => [User])
+    // @UseGuards(AuthGuard)
+    async followings(@Args() followingsArgs: FollowingsArgs) {
+        return this.usersService.followings(followingsArgs);
+    }
 
     @Mutation((returns) => User)
     async addUser(@Args('createUserInput') createUserInput: CreateUserInput) {
