@@ -36,6 +36,8 @@ type User {
   link: String!
   createdAt: Date!
   updatedAt: Date!
+  followerCount: Float
+  followingCount: Float
   email: String!
   captcha: String
   deletedAt: Date
@@ -78,7 +80,7 @@ type UserEdge {
 type Query {
   users(offset: Int = 0, limit: Int = 12, nickname: String): OffsetPaginatedUser!
   user(id: Float!): User!
-  followings(id: ID!, first: Float, last: Float, before: String, after: String): [User!]!
+  followings(limit: Int = 12, offset: Int = 0, order: [[String!]!]): OffsetPaginatedUser!
 }
 
 type Mutation {

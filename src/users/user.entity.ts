@@ -8,11 +8,14 @@ import {
     ManyToOne,
     ManyToMany,
     JoinTable,
+    JoinColumn,
     DeleteDateColumn,
     BeforeUpdate,
     BeforeInsert,
     RelationId,
     BaseEntity,
+    OneToMany,
+    RelationCount,
 } from 'typeorm';
 import jwt from 'jsonwebtoken';
 
@@ -77,11 +80,12 @@ export class User extends BaseEntity {
     @DeleteDateColumn({ comment: '삭제일' })
     deletedAt?: Date;
 
-    @ManyToOne(() => Platform, (platform) => platform.users)
-    // @JoinColumn({ name: 'PlatformId' })
+    @ManyToOne(() => Platform)
+    @JoinColumn({ name: 'platformId' })
     platform: Platform;
 
-    @RelationId((user: User) => user.platform)
+    // @RelationId((user: User) => user.platform)
+    @Column({ name: 'platformId' })
     platformId: number;
 
     @ManyToMany(() => User, (user) => user.followings)
@@ -98,8 +102,14 @@ export class User extends BaseEntity {
     })
     followers: User[];
 
+    @Field()
+    followerCount?: number;
+
     @ManyToMany(() => User, (user) => user.followers)
     followings: User[];
+
+    @Field()
+    followingCount?: number;
 
     @BeforeInsert()
     @BeforeUpdate()
@@ -135,9 +145,5 @@ export class User extends BaseEntity {
 
     refreshToken() {
         return this.generateToken();
-    }
-
-    async getPlatform() {
-        return Platform.findOneBy({ id: this.platformId });
     }
 }

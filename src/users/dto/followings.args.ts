@@ -1,30 +1,17 @@
-import { Field, ArgsType, ID } from '@nestjs/graphql';
-import { IsOptional } from 'class-validator';
-
-import { Order } from '../../common/paging/cursor/cursor.interface';
+import { Field, ArgsType, ID, Int } from '@nestjs/graphql';
+import { IsOptional, Min, Max } from 'class-validator';
 
 @ArgsType()
 export class FollowingsArgs {
-    @Field((type) => ID)
-    id: number;
+    @Field((type) => Int)
+    @Min(1)
+    @Max(50)
+    limit = 12;
 
-    @Field({ nullable: true })
+    @Field((type) => Int)
+    offset = 0;
+
+    @Field(() => [[String]], { nullable: true })
     @IsOptional()
-    first?: number;
-
-    @Field({ nullable: true })
-    @IsOptional()
-    last?: number;
-
-    @Field({ nullable: true })
-    @IsOptional()
-    before?: string;
-
-    @Field({ nullable: true })
-    @IsOptional()
-    after?: string;
-
-    // @Field(() => Order, { nullable: true })
-    // @IsOptional()
-    // order?: Order;
+    order?: String[][];
 }

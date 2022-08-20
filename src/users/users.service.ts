@@ -47,17 +47,26 @@ export class UsersService {
         return paginate.response(users, usersCount);
     }
 
-    async followings(followingsArgs: FollowingsArgs): Promise<User> {
-        const { first, last, before, after, id } = followingsArgs;
+    async followings(
+        id: number,
+        followingsArgs: FollowingsArgs,
+    ): Promise<OffsetPaginatedUser> {
+        const { limit, offset } = followingsArgs;
 
-        const qb = await this.usersRepository
+        const paginate = new OffsetPaginator<User>({ offset, limit });
+
+        const result = await this.usersRepository
             .createQueryBuilder('user')
-            .leftJoin('user.followings', 'following')
+            .leftJoinAndSelect('user.followers', 'follower')
+            .loadRelationCountAndMap('user.followerCount', 'user.followers')
+            .where('user.id = :id', { id })
+            .limit(limit)
+            .offset(offset)
             .getMany();
 
-        console.log(qb);
+        const { followers, followerCount } = result[0];
 
-        return null;
+        return paginate.response(followers, followerCount);
     }
 
     async findOne(id: number): Promise<User> {

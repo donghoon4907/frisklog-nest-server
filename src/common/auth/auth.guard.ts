@@ -23,12 +23,7 @@ export class AuthGuard implements CanActivate {
 
             const { id } = jwt.verify(token, process.env.JWT_SECRET) as User;
 
-            const user = await User.findOne({
-                where: { id },
-                relations: {
-                    followers: true,
-                },
-            });
+            const user = await User.findOneBy({ id });
 
             if (user === null) {
                 throw new Error();

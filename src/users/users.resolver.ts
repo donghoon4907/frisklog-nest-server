@@ -33,10 +33,13 @@ export class UsersResolver {
         return user;
     }
 
-    @Query((returns) => [User])
-    // @UseGuards(AuthGuard)
-    async followings(@Args() followingsArgs: FollowingsArgs) {
-        return this.usersService.followings(followingsArgs);
+    @Query((returns) => OffsetPaginatedUser)
+    @UseGuards(AuthGuard)
+    async followings(
+        @AuthUser() me: User,
+        @Args() followingsArgs: FollowingsArgs,
+    ) {
+        return this.usersService.followings(me.id, followingsArgs);
     }
 
     @Mutation((returns) => User)
@@ -189,13 +192,13 @@ export class UsersResolver {
     @Mutation((returns) => Boolean)
     @UseGuards(AuthGuard)
     async unfollow(@AuthUser() me: User, @Args('id') id: number) {
-        const findIndex = me.followers.findIndex((user) => user.id === id);
+        // const findIndex = me.followers.findIndex((user) => user.id === id);
 
-        if (findIndex === -1) {
-            throw new ForbiddenException('팔로잉된 사용자가 아닙니다.');
-        }
+        // if (findIndex === -1) {
+        //     throw new ForbiddenException('팔로잉된 사용자가 아닙니다.');
+        // }
 
-        me.followers.splice(findIndex, 1);
+        // me.followers.splice(findIndex, 1);
 
         await this.usersService.update(me);
 
