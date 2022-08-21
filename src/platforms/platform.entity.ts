@@ -9,7 +9,7 @@ import {
 
 import { User } from '../users/user.entity';
 
-@Entity('Platforms')
+@Entity('platforms')
 @ObjectType()
 export class Platform extends BaseEntity {
     @PrimaryGeneratedColumn()

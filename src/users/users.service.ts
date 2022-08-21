@@ -7,7 +7,7 @@ import { firstValueFrom } from 'rxjs';
 
 import { User } from './user.entity';
 import { UsersArgs } from './dto/users.args';
-import { CursorPaginatedUser, OffsetPaginatedUser } from './dto/users.response';
+import { OffsetPaginatedUser } from './dto/users.response';
 import { OffsetPaginator } from '../common/paging/offset/offset.paginator';
 import { CreateUserInput } from './dto/create-user.input';
 import { sendMail } from '../common/nodemailer/send-mail.util';

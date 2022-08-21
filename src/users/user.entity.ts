@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, ID, ObjectType, Int } from '@nestjs/graphql';
 import {
     Column,
     Entity,
@@ -12,17 +12,17 @@ import {
     DeleteDateColumn,
     BeforeUpdate,
     BeforeInsert,
-    RelationId,
     BaseEntity,
     OneToMany,
-    RelationCount,
 } from 'typeorm';
 import jwt from 'jsonwebtoken';
 
 import { Platform } from '../platforms/platform.entity';
+import { Post } from '../posts/post.entity';
+import { Comment } from '../comments/comment.entity';
 import { UserStatus } from './user.interface';
 
-@Entity('Users')
+@Entity('users')
 @ObjectType()
 export class User extends BaseEntity {
     @PrimaryGeneratedColumn()
@@ -88,27 +88,36 @@ export class User extends BaseEntity {
     @Column({ name: 'platformId' })
     platformId: number;
 
+    @OneToMany(() => Post, (post) => post.user)
+    posts: Post[];
+
+    @OneToMany(() => Comment, (comment) => comment.user)
+    comments: Comment[];
+
+    @ManyToMany(() => Post, (user) => user.likers)
+    likes: Post[];
+
     @ManyToMany(() => User, (user) => user.followings)
     @JoinTable({
-        name: 'Follows',
+        name: 'follows',
         joinColumn: {
-            name: 'FollowingId',
+            name: 'followingId',
             referencedColumnName: 'id',
         },
         inverseJoinColumn: {
-            name: 'FollowerId',
+            name: 'followerId',
             referencedColumnName: 'id',
         },
     })
     followers: User[];
 
-    @Field()
+    @Field(() => Int)
     followerCount?: number;
 
     @ManyToMany(() => User, (user) => user.followers)
     followings: User[];
 
-    @Field()
+    @Field(() => Int)
     followingCount?: number;
 
     @BeforeInsert()

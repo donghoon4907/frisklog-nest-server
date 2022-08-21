@@ -11,10 +11,12 @@ import { UsersModule } from './users/users.module';
 // import { LoggingPlugin } from './common/plugins/logging.plugin';
 import { PlatformsModule } from './platforms/platforms.module';
 import { mysqlConfig } from '../ormconfig';
+import { PostsModule } from './posts/posts.module';
+import { CommentsModule } from './comments/comments.module';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
     imports: [
-        UsersModule,
         ConfigModule.forRoot({
             envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
         }),
@@ -36,7 +38,11 @@ import { mysqlConfig } from '../ormconfig';
                 ],
             },
         }),
+        UsersModule,
         PlatformsModule,
+        PostsModule,
+        CommentsModule,
+        CategoriesModule,
     ],
     providers: [],
 })

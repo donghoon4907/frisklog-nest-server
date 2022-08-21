@@ -18,6 +18,47 @@ type Platform {
   users: [User!]!
 }
 
+type Category {
+  id: ID!
+  content: String!
+  posts: [Post!]!
+}
+
+type Comment {
+  id: ID!
+  content: String!
+  createdAt: Date!
+  updatedAt: Date!
+  deletedAt: Date
+  post: Post!
+  postId: Float!
+  user: User!
+  userId: Float!
+}
+
+""""""
+scalar Date
+
+type Post {
+  id: ID!
+  content: String!
+  link: String
+  createdAt: Date!
+  updatedAt: Date!
+
+  """좋아요수"""
+  likeCount: Float
+
+  """댓글수"""
+  commentCount: Float
+  deletedAt: Date
+  user: User!
+  userId: Float!
+  likers: [User!]!
+  categories: [Category!]!
+  comments: [Comment!]!
+}
+
 type User {
   id: ID!
   nickname: String!
@@ -36,19 +77,19 @@ type User {
   link: String!
   createdAt: Date!
   updatedAt: Date!
-  followerCount: Float
-  followingCount: Float
+  followerCount: Int
+  followingCount: Int
   email: String!
   captcha: String
   deletedAt: Date
   platform: Platform!
   platformId: Float!
+  posts: [Post!]!
+  comments: [Comment!]!
+  likes: [Post!]!
   followers: [User!]!
   followings: [User!]!
 }
-
-""""""
-scalar Date
 
 type OffsetMetadata {
   currentPage: Float!

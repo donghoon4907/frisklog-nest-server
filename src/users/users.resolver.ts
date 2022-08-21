@@ -7,9 +7,9 @@ import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { VerifyUserInput } from './dto/verify-user.input';
 import { UsersArgs } from './dto/users.args';
-import { CursorPaginatedUser, OffsetPaginatedUser } from './dto/users.response';
-import { AuthGuard } from 'src/common/auth/auth.guard';
-import { AuthUser } from './user.decorator';
+import { OffsetPaginatedUser } from './dto/users.response';
+import { AuthGuard } from './auth/auth.guard';
+import { AuthUser } from './auth/auth.decorator';
 import { UserStatus } from './user.interface';
 import { FollowingsArgs } from './dto/followings.args';
 
@@ -192,13 +192,13 @@ export class UsersResolver {
     @Mutation((returns) => Boolean)
     @UseGuards(AuthGuard)
     async unfollow(@AuthUser() me: User, @Args('id') id: number) {
-        // const findIndex = me.followers.findIndex((user) => user.id === id);
+        const findIndex = me.followers.findIndex((user) => user.id === id);
 
-        // if (findIndex === -1) {
-        //     throw new ForbiddenException('팔로잉된 사용자가 아닙니다.');
-        // }
+        if (findIndex === -1) {
+            throw new ForbiddenException('팔로잉된 사용자가 아닙니다.');
+        }
 
-        // me.followers.splice(findIndex, 1);
+        me.followers.splice(findIndex, 1);
 
         await this.usersService.update(me);
 
