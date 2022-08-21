@@ -11,7 +11,11 @@ export class UsersArgs {
     @Max(50)
     limit = 12;
 
-    @Field({ nullable: true })
+    @Field({ description: '닉네임', nullable: true })
     @IsOptional()
     nickname?: string;
+
+    @Field(() => [[String]], { nullable: true })
+    @IsOptional()
+    order?: String[][];
 }

@@ -88,10 +88,17 @@ export class User extends BaseEntity {
     @Column({ name: 'platformId' })
     platformId: number;
 
-    @OneToMany(() => Post, (post) => post.user)
+    @OneToMany(() => Post, (post) => post.user, {
+        onDelete: 'CASCADE',
+    })
     posts: Post[];
 
-    @OneToMany(() => Comment, (comment) => comment.user)
+    @Field(() => Int)
+    postCount?: number;
+
+    @OneToMany(() => Comment, (comment) => comment.user, {
+        onDelete: 'CASCADE',
+    })
     comments: Comment[];
 
     @ManyToMany(() => Post, (user) => user.likers)

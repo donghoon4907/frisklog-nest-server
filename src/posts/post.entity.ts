@@ -85,7 +85,9 @@ export class Post extends BaseEntity {
     })
     categories: Category[];
 
-    @OneToMany(() => Comment, (comment) => comment.post)
+    @OneToMany(() => Comment, (comment) => comment.post, {
+        onDelete: 'CASCADE',
+    })
     comments: Comment[];
 
     @Field({ description: '댓글수' })

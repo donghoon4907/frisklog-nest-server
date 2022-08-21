@@ -12,6 +12,7 @@ import { OffsetPaginator } from '../common/paging/offset/offset.paginator';
 import { CreateUserInput } from './dto/create-user.input';
 import { sendMail } from '../common/nodemailer/send-mail.util';
 import { FollowingsArgs } from './dto/followings.args';
+import { RecommendersArgs } from './dto/recommenders.args';
 
 @Injectable()
 export class UsersService {
@@ -30,8 +31,6 @@ export class UsersService {
             where.nickname = Like(`%${nickname}%`);
         }
 
-        const paginate = new OffsetPaginator<User>({ offset, limit });
-
         const [users, usersCount] = await this.usersRepository.findAndCount({
             where,
             relations: {
@@ -44,7 +43,28 @@ export class UsersService {
             },
         });
 
-        return paginate.response(users, usersCount);
+        const paginator = new OffsetPaginator<User>(offset, limit);
+
+        return paginator.response(users, usersCount);
+    }
+
+    async recommenders(
+        recommendersArgs: RecommendersArgs,
+    ): Promise<OffsetPaginatedUser> {
+        const { limit, offset } = recommendersArgs;
+
+        const [recommenders, total] = await this.usersRepository
+            .createQueryBuilder('user')
+            .loadRelationCountAndMap('user.postCount', 'user.posts')
+            .loadRelationCountAndMap('user.followerCount', 'user.followers')
+            .limit(limit)
+            .offset(offset)
+            .orderBy('user.postCount', 'DESC')
+            .getManyAndCount();
+
+        const paginator = new OffsetPaginator<User>(offset, limit);
+
+        return paginator.response(recommenders, total);
     }
 
     async followings(
@@ -53,20 +73,19 @@ export class UsersService {
     ): Promise<OffsetPaginatedUser> {
         const { limit, offset } = followingsArgs;
 
-        const paginate = new OffsetPaginator<User>({ offset, limit });
-
-        const result = await this.usersRepository
+        const [user] = await this.usersRepository
             .createQueryBuilder('user')
-            .leftJoinAndSelect('user.followers', 'follower')
+            .loadRelationCountAndMap('user.postCount', 'user.posts')
             .loadRelationCountAndMap('user.followerCount', 'user.followers')
-            .where('user.id = :id', { id })
             .limit(limit)
             .offset(offset)
             .getMany();
 
-        const { followers, followerCount } = result[0];
+        const paginator = new OffsetPaginator<User>(offset, limit);
 
-        return paginate.response(followers, followerCount);
+        const { followers, followerCount } = user;
+
+        return paginator.response(followers, followerCount);
     }
 
     async findOne(id: number): Promise<User> {
@@ -128,6 +147,18 @@ export class UsersService {
     }
 
     async update(me: User): Promise<User> {
+        return this.usersRepository.save(me);
+    }
+
+    async follow(me: User, target: User): Promise<User> {
+        me.followings.push(target);
+
+        return this.usersRepository.save(me);
+    }
+
+    async unfollow(me: User, targetId: number): Promise<User> {
+        me.followings = me.followings.filter((user) => user.id !== targetId);
+
         return this.usersRepository.save(me);
     }
 }

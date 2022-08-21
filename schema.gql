@@ -77,6 +77,7 @@ type User {
   link: String!
   createdAt: Date!
   updatedAt: Date!
+  postCount: Int
   followerCount: Int
   followingCount: Int
   email: String!
@@ -118,10 +119,34 @@ type UserEdge {
   node: User!
 }
 
+type OffsetPaginatedPost {
+  nodes: [Post!]
+  pageInfo: OffsetMetadata!
+}
+
 type Query {
-  users(offset: Int = 0, limit: Int = 12, nickname: String): OffsetPaginatedUser!
+  users(
+    offset: Int = 0
+    limit: Int = 12
+
+    """닉네임"""
+    nickname: String
+    order: [[String!]!]
+  ): OffsetPaginatedUser!
+  recommenders(offset: Int = 0, limit: Int = 12): OffsetPaginatedUser!
   user(id: Float!): User!
-  followings(limit: Int = 12, offset: Int = 0, order: [[String!]!]): OffsetPaginatedUser!
+  followings(offset: Int = 0, limit: Int = 12, order: [[String!]!]): OffsetPaginatedUser!
+  posts(
+    offset: Int = 0
+    limit: Int = 12
+
+    """포스트 검색어"""
+    searchKeyword: String
+    userId: ID
+  ): OffsetPaginatedPost!
+  categoryPosts(offset: Int = 0, limit: Int = 12, category: String!): OffsetPaginatedPost!
+  likePosts(offset: Int = 0, limit: Int = 12, userId: ID): OffsetPaginatedPost!
+  followingPosts(offset: Int = 0, limit: Int = 12, userId: ID): OffsetPaginatedPost!
 }
 
 type Mutation {
@@ -132,6 +157,11 @@ type Mutation {
   githubLogin(code: String!): User!
   follow(id: Float!): Boolean!
   unfollow(id: Float!): Boolean!
+  addPost(createPostInput: CreatePostInput!): User!
+  updatePost(updatePostInput: UpdatePostInput!): User!
+  deletePost(id: Float!): User!
+  like(id: Float!): Boolean!
+  unlike(id: Float!): Boolean!
 }
 
 input CreateUserInput {
@@ -151,4 +181,15 @@ input VerifyUserInput {
   email: String!
   isKeep: Boolean!
   captcha: String!
+}
+
+input CreatePostInput {
+  content: String!
+  categories: [String!]!
+}
+
+input UpdatePostInput {
+  content: String!
+  categories: [String!]!
+  id: ID!
 }

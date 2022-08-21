@@ -12,6 +12,7 @@ import { AuthGuard } from './auth/auth.guard';
 import { AuthUser } from './auth/auth.decorator';
 import { UserStatus } from './user.interface';
 import { FollowingsArgs } from './dto/followings.args';
+import { RecommendersArgs } from './dto/recommenders.args';
 
 @Resolver((of) => User)
 export class UsersResolver {
@@ -20,6 +21,11 @@ export class UsersResolver {
     @Query((returns) => OffsetPaginatedUser)
     users(@Args() usersArgs: UsersArgs) {
         return this.usersService.findAll(usersArgs);
+    }
+
+    @Query((returns) => OffsetPaginatedUser)
+    recommenders(@Args() recommendersArgs: RecommendersArgs) {
+        return this.usersService.recommenders(recommendersArgs);
     }
 
     @Query((returns) => User)
@@ -182,9 +188,7 @@ export class UsersResolver {
             throw new ForbiddenException('존재하지 않는 사용자입니다.');
         }
 
-        me.followers.push(user);
-
-        await this.usersService.update(me);
+        await this.usersService.follow(me, user);
 
         return true;
     }
@@ -192,15 +196,13 @@ export class UsersResolver {
     @Mutation((returns) => Boolean)
     @UseGuards(AuthGuard)
     async unfollow(@AuthUser() me: User, @Args('id') id: number) {
-        const findIndex = me.followers.findIndex((user) => user.id === id);
+        const user = await this.usersService.findOneById(id);
 
-        if (findIndex === -1) {
-            throw new ForbiddenException('팔로잉된 사용자가 아닙니다.');
+        if (user === null) {
+            throw new ForbiddenException('존재하지 않는 사용자입니다.');
         }
 
-        me.followers.splice(findIndex, 1);
-
-        await this.usersService.update(me);
+        await this.usersService.unfollow(me, id);
 
         return true;
     }

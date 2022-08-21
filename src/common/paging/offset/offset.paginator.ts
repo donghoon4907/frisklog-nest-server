@@ -1,22 +1,8 @@
 import { IOffsetPaginatedType } from './offset.interface';
 import { OffsetMetadata } from './offset.metadata';
 
-interface IOptions {
-    offset: number;
-    limit: number;
-}
-
 export class OffsetPaginator<T> {
-    protected offset: number;
-    protected limit: number;
-
-    constructor(options: IOptions) {
-        const { offset, limit } = options;
-
-        this.offset = offset;
-
-        this.limit = limit;
-    }
+    constructor(private offset: number, private limit: number) {}
 
     getCurrentPage(): number {
         const { offset, limit } = this;
