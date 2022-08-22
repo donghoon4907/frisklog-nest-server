@@ -124,6 +124,11 @@ type OffsetPaginatedPost {
   pageInfo: OffsetMetadata!
 }
 
+type OffsetPaginatedComment {
+  nodes: [Comment!]
+  pageInfo: OffsetMetadata!
+}
+
 type Query {
   users(
     offset: Int = 0
@@ -147,6 +152,7 @@ type Query {
   categoryPosts(offset: Int = 0, limit: Int = 12, category: String!): OffsetPaginatedPost!
   likePosts(offset: Int = 0, limit: Int = 12, userId: ID): OffsetPaginatedPost!
   followingPosts(offset: Int = 0, limit: Int = 12, userId: ID): OffsetPaginatedPost!
+  comments(offset: Int = 0, limit: Int = 12, postId: ID!, order: [[String!]!]): OffsetPaginatedComment!
 }
 
 type Mutation {
@@ -162,6 +168,9 @@ type Mutation {
   deletePost(id: Float!): User!
   like(id: Float!): Boolean!
   unlike(id: Float!): Boolean!
+  addComment(createCommentArgs: CreateCommentArgs!): Comment!
+  updateComment(updateCommentArgs: UpdateCommentArgs!): Comment!
+  deleteComment(id: Float!): Comment!
 }
 
 input CreateUserInput {
@@ -191,5 +200,15 @@ input CreatePostInput {
 input UpdatePostInput {
   content: String!
   categories: [String!]!
+  id: ID!
+}
+
+input CreateCommentArgs {
+  content: String!
+  postId: ID!
+}
+
+input UpdateCommentArgs {
+  content: String!
   id: ID!
 }
