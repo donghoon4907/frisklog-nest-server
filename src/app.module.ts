@@ -5,6 +5,7 @@ import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
 import { DirectiveLocation, GraphQLDirective } from 'graphql';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import * as Joi from 'joi';
 
 import { upperDirectiveTransformer } from './common/directives/upper-case.directive';
 import { UsersModule } from './users/users.module';
@@ -19,6 +20,21 @@ import { CategoriesModule } from './categories/categories.module';
     imports: [
         ConfigModule.forRoot({
             envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
+            validationSchema: Joi.object({
+                NODE_ENV: Joi.string()
+                    .valid('development', 'production')
+                    .default('development'),
+                DB: Joi.string().required(),
+                DB_USERNAME: Joi.string().required(),
+                DB_PASSWORD: Joi.string().required(),
+                JWT_SECRET: Joi.string().required(),
+                EMAIL_ID: Joi.string().required(),
+                EMAIL_PASSWORD: Joi.string().required(),
+                GITHUB_CLIENT_ID: Joi.string().required(),
+                GITHUB_CLIENT_SECRET: Joi.string().required(),
+                BACKEND_ROOT: Joi.string().required(),
+                FRONTEND_ROOT: Joi.string().required(),
+            }),
         }),
         TypeOrmModule.forRoot(mysqlConfig),
         GraphQLModule.forRoot<ApolloDriverConfig>({
