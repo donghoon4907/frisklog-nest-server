@@ -9,7 +9,7 @@ import { User } from './user.entity';
 import { UsersArgs } from './dto/users.args';
 import { OffsetPaginatedUser } from './dto/users.response';
 import { OffsetPaginator } from '../common/paging/offset/offset.paginator';
-import { CreateUserInput } from './dto/create-user.input';
+import { CreateUserDto } from './dto/create-user.dto';
 import { sendMail } from '../common/nodemailer/send-mail.util';
 import { FollowingsArgs } from './dto/followings.args';
 import { RecommendersArgs } from './dto/recommenders.args';
@@ -140,7 +140,7 @@ export class UsersService {
         return sendMail(email, captcha);
     }
 
-    async create(data: CreateUserInput, platformId: number = 1): Promise<User> {
+    async create(data: CreateUserDto, platformId: number = 1): Promise<User> {
         const user = this.usersRepository.create({ ...data, platformId });
 
         return this.usersRepository.save(user);

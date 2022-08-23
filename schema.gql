@@ -29,9 +29,9 @@ type Comment {
   content: String!
   createdAt: Date!
   updatedAt: Date!
+  postId: ID!
   deletedAt: Date
   post: Post!
-  postId: Float!
   user: User!
   userId: Float!
 }
@@ -45,17 +45,19 @@ type Post {
   link: String
   createdAt: Date!
   updatedAt: Date!
+  user: User!
 
   """좋아요수"""
   likeCount: Float
 
+  """포스트의 카테고리"""
+  categories: [Category!]!
+
   """댓글수"""
   commentCount: Float
   deletedAt: Date
-  user: User!
   userId: Float!
   likers: [User!]!
-  categories: [Category!]!
   comments: [Comment!]!
 }
 
@@ -64,7 +66,7 @@ type User {
   nickname: String!
   avatar: String!
   isMaster: Boolean!
-  status: String!
+  status: String
   isKeep: Boolean
 
   """로그인토큰"""
@@ -80,7 +82,7 @@ type User {
   postCount: Int
   followerCount: Int
   followingCount: Int
-  email: String!
+  email: String
   captcha: String
   deletedAt: Date
   platform: Platform!
@@ -156,30 +158,30 @@ type Query {
 }
 
 type Mutation {
-  addUser(createUserInput: CreateUserInput!): User!
-  updateUser(updateUserInput: UpdateUserInput!): User!
+  addUser(input: CreateUserDto!): User!
+  updateUser(input: UpdateUserDto!): User!
   logIn(email: String!): Boolean!
-  verify(verifyUserInput: VerifyUserInput!): User!
+  verify(input: VerifyUserInput!): User!
   githubLogin(code: String!): User!
   follow(id: Float!): Boolean!
   unfollow(id: Float!): Boolean!
-  addPost(createPostInput: CreatePostInput!): User!
-  updatePost(updatePostInput: UpdatePostInput!): User!
+  addPost(input: CreatePostDto!): User!
+  updatePost(input: UpdatePostDto!): User!
   deletePost(id: Float!): User!
   like(id: Float!): Boolean!
   unlike(id: Float!): Boolean!
-  addComment(createCommentArgs: CreateCommentArgs!): Comment!
-  updateComment(updateCommentArgs: UpdateCommentArgs!): Comment!
+  addComment(input: CreateCommentDto!): Comment!
+  updateComment(input: UpdateCommentDto!): Comment!
   deleteComment(id: Float!): Comment!
 }
 
-input CreateUserInput {
-  email: String
+input CreateUserDto {
   nickname: String!
   avatar: String
+  email: String
 }
 
-input UpdateUserInput {
+input UpdateUserDto {
   nickname: String
   avatar: String
   status: String
@@ -192,23 +194,30 @@ input VerifyUserInput {
   captcha: String!
 }
 
-input CreatePostInput {
-  content: String!
+input CreatePostDto {
   categories: [String!]!
+}
+
+input UpdatePostDto {
+  id: ID!
+  data: UpdatePostInput!
 }
 
 input UpdatePostInput {
   content: String!
   categories: [String!]!
-  id: ID!
 }
 
-input CreateCommentArgs {
+input CreateCommentDto {
   content: String!
   postId: ID!
 }
 
-input UpdateCommentArgs {
-  content: String!
+input UpdateCommentDto {
   id: ID!
+  data: UpdateCommentInput!
+}
+
+input UpdateCommentInput {
+  content: String!
 }

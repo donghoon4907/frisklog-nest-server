@@ -5,12 +5,19 @@ import {
     UnauthorizedException,
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import jwt from 'jsonwebtoken';
 
 import { User } from 'src/users/user.entity';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
+    constructor(
+        @InjectRepository(User)
+        private readonly usersRepository: Repository<User>,
+    ) {}
+
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const ctx = GqlExecutionContext.create(context);
 
@@ -23,7 +30,12 @@ export class AuthGuard implements CanActivate {
 
             const { id } = jwt.verify(token, process.env.JWT_SECRET) as User;
 
-            const user = await User.findOne({
+            // const user = await User.findOne({
+            //     where: { id },
+            //     relations: { followings: true },
+            // });
+
+            const user = await this.usersRepository.findOne({
                 where: { id },
                 relations: { followings: true },
             });

@@ -12,9 +12,17 @@ import {
     DeleteDateColumn,
     BeforeUpdate,
     BeforeInsert,
-    BaseEntity,
     OneToMany,
 } from 'typeorm';
+import {
+    IsBoolean,
+    IsOptional,
+    IsString,
+    Length,
+    IsNumber,
+    IsEnum,
+    IsDateString,
+} from 'class-validator';
 import jwt from 'jsonwebtoken';
 
 import { Platform } from '../platforms/platform.entity';
@@ -24,27 +32,36 @@ import { UserStatus } from './user.interface';
 
 @Entity('users')
 @ObjectType()
-export class User extends BaseEntity {
+export class User {
     @PrimaryGeneratedColumn()
     @Field(() => ID)
+    @IsNumber()
     id: number;
 
     @Column({ comment: '이메일', nullable: true, unique: true })
-    email: string;
+    email?: string;
 
     @Column({ comment: '별명' })
     @Field()
+    @IsOptional()
+    @IsString()
     nickname: string;
 
     @Column({ comment: '프로필사진' })
     @Field()
+    @IsOptional()
+    @IsString()
     avatar: string;
 
     @Column({ comment: '관리자여부', default: false })
     @Field()
+    @IsBoolean()
     isMaster: boolean;
 
     @Column({ comment: '보안문자', nullable: true })
+    @IsOptional()
+    @IsString()
+    @Length(4)
     captcha?: string;
 
     @Column({
@@ -53,28 +70,39 @@ export class User extends BaseEntity {
         enum: UserStatus,
         default: UserStatus.OFFLINE,
     })
-    @Field()
+    @Field({ nullable: true })
+    @IsOptional()
+    @IsString()
+    @IsEnum(UserStatus)
     status: string;
 
     @Column({ comment: '로그인유지여부', nullable: true })
     @Field({ nullable: true })
+    @IsOptional()
+    @IsBoolean()
     isKeep?: boolean;
 
     @Field({ description: '로그인토큰', nullable: true })
+    @IsOptional()
+    @IsString()
     token?: string;
 
     @Field({ description: '상태설명' })
+    @IsString()
     statusText: string;
 
     @Field({ description: '링크' })
+    @IsString()
     link: string;
 
     @CreateDateColumn({ comment: '생성일' })
     @Field()
+    @IsDateString()
     createdAt: Date;
 
     @UpdateDateColumn({ comment: '수정일' })
     @Field()
+    @IsDateString()
     updatedAt: Date;
 
     @DeleteDateColumn({ comment: '삭제일' })
@@ -94,6 +122,8 @@ export class User extends BaseEntity {
     posts: Post[];
 
     @Field(() => Int)
+    @IsOptional()
+    @IsNumber()
     postCount?: number;
 
     @OneToMany(() => Comment, (comment) => comment.user, {
@@ -119,12 +149,16 @@ export class User extends BaseEntity {
     followers: User[];
 
     @Field(() => Int)
+    @IsOptional()
+    @IsNumber()
     followerCount?: number;
 
     @ManyToMany(() => User, (user) => user.followers)
     followings: User[];
 
     @Field(() => Int)
+    @IsOptional()
+    @IsNumber()
     followingCount?: number;
 
     @BeforeInsert()

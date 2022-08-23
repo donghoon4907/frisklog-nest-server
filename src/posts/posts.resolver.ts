@@ -11,8 +11,8 @@ import { LikePostsArgs } from './dto/like-posts.args';
 import { FollowingPostsArgs } from './dto/following-posts.args';
 import { AuthGuard } from '../users/auth/auth.guard';
 import { AuthUser } from '../users/auth/auth.decorator';
-import { CreatePostInput } from './dto/create-post.input';
-import { UpdatePostInput } from './dto/update-post.input';
+import { CreatePostDto } from './dto/create-post.dto';
+import { UpdatePostDto } from './dto/update-post.dto';
 
 @Resolver((of) => Post)
 export class PostsResolver {
@@ -45,19 +45,14 @@ export class PostsResolver {
 
     @Mutation((returns) => User)
     @UseGuards(AuthGuard)
-    addPost(
-        @AuthUser() me: User,
-        @Args('createPostInput') createPostInput: CreatePostInput,
-    ) {
-        return this.postsService.create(createPostInput, me.id);
+    addPost(@AuthUser() me: User, @Args('input') createPostDto: CreatePostDto) {
+        return this.postsService.create(createPostDto, me.id);
     }
 
     @Mutation((returns) => User)
     @UseGuards(AuthGuard)
-    async updatePost(
-        @Args('updatePostInput') updatePostInput: UpdatePostInput,
-    ) {
-        const { id } = updatePostInput;
+    async updatePost(@Args('input') updatePostDto: UpdatePostDto) {
+        const { id, data } = updatePostDto;
 
         const post = await this.postsService.findOneById(id);
 
@@ -65,7 +60,7 @@ export class PostsResolver {
             throw new ForbiddenException('존재하지 않는 포스트입니다.');
         }
 
-        return this.postsService.update(post, updatePostInput);
+        return this.postsService.update(data, post);
     }
 
     @Mutation((returns) => User)

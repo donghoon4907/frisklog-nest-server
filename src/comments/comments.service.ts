@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import { User } from '../users/user.entity';
 import { Comment } from './comment.entity';
 import { CommentsArgs } from './dto/comments.args';
 import { OffsetPaginatedComment } from './dto/comments.response';
 import { OffsetPaginator } from '../common/paging/offset/offset.paginator';
-import { CreateCommentArgs } from './dto/create-comment.args';
-import { User } from '../users/user.entity';
-import { UpdateCommentArgs } from './dto/update-comment.args';
+import { CreateCommentDto } from './dto/create-comment.dto';
+import { UpdateCommentInput } from './dto/update-comment.dto';
 
 @Injectable()
 export class CommentsService {
@@ -48,8 +48,8 @@ export class CommentsService {
         return this.commentsRepository.findOneBy({ id });
     }
 
-    async create(createCommentArgs: CreateCommentArgs, me: User) {
-        const { content, postId } = createCommentArgs;
+    async create(createCommentDto: CreateCommentDto, me: User) {
+        const { content, postId } = createCommentDto;
 
         const comment = new Comment();
 
@@ -62,15 +62,15 @@ export class CommentsService {
         return this.commentsRepository.save(comment);
     }
 
-    async update(updateCommentArgs: UpdateCommentArgs, comment: Comment) {
-        const { content } = updateCommentArgs;
+    async update(updateCommentInput: UpdateCommentInput, comment: Comment) {
+        const { content } = updateCommentInput;
 
         comment.content = content;
 
-        return comment.save();
+        return this.commentsRepository.save(comment);
     }
 
     async delete(comment: Comment): Promise<Comment> {
-        return comment.softRemove();
+        return this.commentsRepository.softRemove(comment);
     }
 }

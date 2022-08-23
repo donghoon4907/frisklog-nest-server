@@ -8,17 +8,18 @@ import {
     ManyToOne,
     JoinColumn,
     DeleteDateColumn,
-    BaseEntity,
 } from 'typeorm';
+import { IsDateString, IsNumber, IsString } from 'class-validator';
 
 import { User } from '../users/user.entity';
 import { Post } from '../posts/post.entity';
 
 @Entity('comments')
 @ObjectType()
-export class Comment extends BaseEntity {
+export class Comment {
     @PrimaryGeneratedColumn()
     @Field(() => ID)
+    @IsNumber()
     id: number;
 
     @Column({
@@ -26,14 +27,17 @@ export class Comment extends BaseEntity {
         type: 'text',
     })
     @Field()
+    @IsString()
     content: string;
 
     @CreateDateColumn({ comment: '생성일' })
     @Field()
+    @IsDateString()
     createdAt: Date;
 
     @UpdateDateColumn({ comment: '수정일' })
     @Field()
+    @IsDateString()
     updatedAt: Date;
 
     @DeleteDateColumn({ comment: '삭제일' })
@@ -44,6 +48,8 @@ export class Comment extends BaseEntity {
     post: Post;
 
     @Column({ name: 'postId' })
+    @Field(() => ID)
+    @IsNumber()
     postId: number;
 
     @ManyToOne(() => User)

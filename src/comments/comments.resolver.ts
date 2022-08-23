@@ -8,8 +8,8 @@ import { OffsetPaginatedComment } from './dto/comments.response';
 import { AuthGuard } from '../users/auth/auth.guard';
 import { AuthUser } from '../users/auth/auth.decorator';
 import { User } from '../users/user.entity';
-import { CreateCommentArgs } from './dto/create-comment.args';
-import { UpdateCommentArgs } from './dto/update-comment.args';
+import { CreateCommentDto } from './dto/create-comment.dto';
+import { UpdateCommentDto } from './dto/update-comment.dto';
 
 @Resolver((of) => Comment)
 export class CommentsResolver {
@@ -24,17 +24,15 @@ export class CommentsResolver {
     @UseGuards(AuthGuard)
     addComment(
         @AuthUser() me: User,
-        @Args('createCommentArgs') createCommentArgs: CreateCommentArgs,
+        @Args('input') createCommentDto: CreateCommentDto,
     ) {
-        return this.commentsService.create(createCommentArgs, me);
+        return this.commentsService.create(createCommentDto, me);
     }
 
     @Mutation((returns) => Comment)
     @UseGuards(AuthGuard)
-    async updateComment(
-        @Args('updateCommentArgs') updateCommentArgs: UpdateCommentArgs,
-    ) {
-        const { id } = updateCommentArgs;
+    async updateComment(@Args('input') updateCommentDto: UpdateCommentDto) {
+        const { id, data } = updateCommentDto;
 
         const comment = await this.commentsService.findOneById(id);
 
@@ -42,7 +40,7 @@ export class CommentsResolver {
             throw new ForbiddenException('존재하지 않는 댓글입니다.');
         }
 
-        return this.commentsService.update(updateCommentArgs, comment);
+        return this.commentsService.update(data, comment);
     }
 
     @Mutation((returns) => Comment)

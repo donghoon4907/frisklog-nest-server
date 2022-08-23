@@ -3,8 +3,8 @@ import { ForbiddenException, UseGuards } from '@nestjs/common';
 
 import { User } from './user.entity';
 import { UsersService } from './users.service';
-import { CreateUserInput } from './dto/create-user.input';
-import { UpdateUserInput } from './dto/update-user.input';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { VerifyUserInput } from './dto/verify-user.input';
 import { UsersArgs } from './dto/users.args';
 import { OffsetPaginatedUser } from './dto/users.response';
@@ -49,8 +49,8 @@ export class UsersResolver {
     }
 
     @Mutation((returns) => User)
-    async addUser(@Args('createUserInput') createUserInput: CreateUserInput) {
-        const { nickname, email } = createUserInput;
+    async addUser(@Args('input') createUserDto: CreateUserDto) {
+        const { nickname, email } = createUserDto;
 
         const usingNickname = await this.usersService.findOneByNickname(
             nickname,
@@ -66,16 +66,16 @@ export class UsersResolver {
             throw new ForbiddenException('사용중인 이메일입니다.');
         }
 
-        return this.usersService.create(createUserInput);
+        return this.usersService.create(createUserDto);
     }
 
     @Mutation((returns) => User)
     @UseGuards(AuthGuard)
     async updateUser(
         @AuthUser() me: User,
-        @Args('updateUserInput') updateUserInput: UpdateUserInput,
+        @Args('input') updateUserDto: UpdateUserDto,
     ) {
-        const { nickname, avatar, status } = updateUserInput;
+        const { nickname, avatar, status, isKeep } = updateUserDto;
 
         if (nickname) {
             if (nickname !== me.nickname) {
@@ -98,6 +98,10 @@ export class UsersResolver {
 
         if (status) {
             me.status = status;
+        }
+
+        if (typeof isKeep === 'boolean') {
+            me.isKeep = isKeep;
         }
 
         const user = await this.usersService.update(me);
@@ -129,7 +133,7 @@ export class UsersResolver {
     }
 
     @Mutation((returns) => User)
-    async verify(@Args('verifyUserInput') verifyUserInput: VerifyUserInput) {
+    async verify(@Args('input') verifyUserInput: VerifyUserInput) {
         const { email, captcha, isKeep } = verifyUserInput;
 
         const user = await this.usersService.findOneByEmail(email);

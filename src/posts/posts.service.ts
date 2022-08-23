@@ -11,8 +11,8 @@ import { OffsetPaginator } from '../common/paging/offset/offset.paginator';
 import { CategoryPostsArgs } from './dto/category-posts.args';
 import { LikePostsArgs } from './dto/like-posts.args';
 import { FollowingPostsArgs } from './dto/following-posts.args';
-import { UpdatePostInput } from './dto/update-post.input';
-import { CreatePostInput } from './dto/create-post.input';
+import { UpdatePostInput } from './dto/update-post.dto';
+import { CreatePostDto } from './dto/create-post.dto';
 
 @Injectable()
 export class PostsService {
@@ -139,7 +139,7 @@ export class PostsService {
     }
 
     async create(
-        createPostInput: CreatePostInput,
+        createPostInput: CreatePostDto,
         userId: number,
     ): Promise<Post> {
         const { content, categories } = createPostInput;
@@ -161,7 +161,7 @@ export class PostsService {
         return this.postsRepository.save(post);
     }
 
-    async update(post: Post, updatePostInput: UpdatePostInput): Promise<Post> {
+    async update(updatePostInput: UpdatePostInput, post: Post): Promise<Post> {
         const { content, categories } = updatePostInput;
 
         const postCategories = categories.map((content) => ({ content }));
@@ -178,7 +178,7 @@ export class PostsService {
     }
 
     async delete(post: Post): Promise<Post> {
-        return post.softRemove();
+        return this.postsRepository.softRemove(post);
     }
 
     async like(me: User, post: Post): Promise<Post> {

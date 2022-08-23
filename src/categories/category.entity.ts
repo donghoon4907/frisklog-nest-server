@@ -1,19 +1,15 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import {
-    Column,
-    Entity,
-    PrimaryGeneratedColumn,
-    BaseEntity,
-    ManyToMany,
-} from 'typeorm';
+import { IsNumber, IsString } from 'class-validator';
+import { Column, Entity, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
 
 import { Post } from '../posts/post.entity';
 
 @Entity('categories')
 @ObjectType()
-export class Category extends BaseEntity {
+export class Category {
     @PrimaryGeneratedColumn()
     @Field(() => ID)
+    @IsNumber()
     id: number;
 
     @Column({
@@ -21,6 +17,7 @@ export class Category extends BaseEntity {
         type: 'text',
     })
     @Field()
+    @IsString()
     content: string;
 
     @ManyToMany(() => Post, (post) => post.categories)
