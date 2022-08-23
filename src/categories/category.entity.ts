@@ -1,5 +1,5 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { IsNumber, IsString } from 'class-validator';
+import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 import { Column, Entity, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
 
 import { Post } from '../posts/post.entity';
@@ -22,4 +22,9 @@ export class Category {
 
     @ManyToMany(() => Post, (post) => post.categories)
     posts: Post[];
+
+    @Field(() => Int)
+    @IsOptional()
+    @IsNumber()
+    postCount?: number;
 }

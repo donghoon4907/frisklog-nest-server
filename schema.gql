@@ -21,6 +21,7 @@ type Platform {
 type Category {
   id: ID!
   content: String!
+  postCount: Int
   posts: [Post!]!
 }
 
@@ -131,6 +132,11 @@ type OffsetPaginatedComment {
   pageInfo: OffsetMetadata!
 }
 
+type OffsetPaginatedCategory {
+  nodes: [Category!]
+  pageInfo: OffsetMetadata!
+}
+
 type Query {
   users(
     offset: Int = 0
@@ -155,6 +161,7 @@ type Query {
   likePosts(offset: Int = 0, limit: Int = 12, userId: ID): OffsetPaginatedPost!
   followingPosts(offset: Int = 0, limit: Int = 12, userId: ID): OffsetPaginatedPost!
   comments(offset: Int = 0, limit: Int = 12, postId: ID!, order: [[String!]!]): OffsetPaginatedComment!
+  recommendCategories(offset: Int = 0, limit: Int = 12): OffsetPaginatedCategory!
 }
 
 type Mutation {

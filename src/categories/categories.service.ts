@@ -3,6 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { Category } from './category.entity';
+import { OffsetPaginatedCategory } from './dto/categories.response';
+import { RecommendCategoriesArgs } from './dto/recommend-categories.args';
+import { OffsetPaginator } from '../common/paging/offset/offset.paginator';
 
 @Injectable()
 export class CategoriesService {
@@ -10,6 +13,24 @@ export class CategoriesService {
         @InjectRepository(Category)
         private readonly categoriesRepository: Repository<Category>,
     ) {}
+
+    async recommendCategories(
+        recommendCategoriesArgs: RecommendCategoriesArgs,
+    ): Promise<OffsetPaginatedCategory> {
+        const { limit, offset } = recommendCategoriesArgs;
+
+        const [recommendCategories, total] = await this.categoriesRepository
+            .createQueryBuilder('category')
+            .loadRelationCountAndMap('category.postCount', 'category.posts')
+            .limit(limit)
+            .offset(offset)
+            .orderBy('category.postCount', 'DESC')
+            .getManyAndCount();
+
+        const paginator = new OffsetPaginator<Category>(offset, limit);
+
+        return paginator.response(recommendCategories, total);
+    }
 
     async category(content: string): Promise<Category> {
         return this.categoriesRepository.findOne({ where: { content } });
