@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, HideField, ID, ObjectType } from '@nestjs/graphql';
 import {
     Column,
     Entity,
@@ -36,35 +36,37 @@ export class Post {
         comment: '내용',
         type: 'text',
     })
-    @Field()
+    @Field({ description: '내용' })
     @IsString()
     content: string;
 
     @Column({ comment: '링크', nullable: true })
-    @Field({ nullable: true })
+    @Field({ description: '링크', nullable: true })
     @IsOptional()
     @IsString()
     link?: string;
 
-    @CreateDateColumn({ comment: '생성일' })
+    @CreateDateColumn()
     @Field()
     @IsDateString()
     createdAt: Date;
 
-    @UpdateDateColumn({ comment: '수정일' })
+    @UpdateDateColumn()
     @Field()
     @IsDateString()
     updatedAt: Date;
 
-    @DeleteDateColumn({ comment: '삭제일' })
+    @DeleteDateColumn()
+    @HideField()
     deletedAt?: Date;
 
     @ManyToOne(() => User)
     @JoinColumn({ name: 'userId' })
-    @Field(() => User)
+    @Field(() => User, { description: '작성자' })
     user: User;
 
     @Column({ name: 'userId' })
+    @HideField()
     userId: number;
 
     @ManyToMany(() => User, (user) => user.likes)
@@ -79,6 +81,8 @@ export class Post {
             referencedColumnName: 'id',
         },
     })
+    @Field(() => [User], { description: '좋아요목록' })
+    @IsArray()
     likers: User[];
 
     @Field({ description: '좋아요수', nullable: true })
@@ -98,13 +102,15 @@ export class Post {
             referencedColumnName: 'id',
         },
     })
-    @Field(() => [Category], { description: '포스트의 카테고리' })
+    @Field(() => [Category], { description: '카테고리목록' })
     @IsArray()
     categories: Category[];
 
     @OneToMany(() => Comment, (comment) => comment.post, {
         onDelete: 'CASCADE',
     })
+    @Field(() => [Comment], { description: '댓글목록' })
+    @IsArray()
     comments: Comment[];
 
     @Field({ description: '댓글수', nullable: true })

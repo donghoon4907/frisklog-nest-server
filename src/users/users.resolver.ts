@@ -158,7 +158,7 @@ export class UsersResolver {
     }
 
     @Mutation((returns) => User)
-    async githubLogin(@Args('code') code: string) {
+    async githubLogIn(@Args('code') code: string) {
         const { data } = await this.usersService.verifyGithub(code);
 
         const fullStrToken = data.split('&')[0];

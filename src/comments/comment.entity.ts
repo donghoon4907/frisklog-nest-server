@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, HideField, ID, ObjectType } from '@nestjs/graphql';
 import {
     Column,
     Entity,
@@ -9,7 +9,7 @@ import {
     JoinColumn,
     DeleteDateColumn,
 } from 'typeorm';
-import { IsDateString, IsNumber, IsString } from 'class-validator';
+import { IsDateString, IsNumber, IsOptional, IsString } from 'class-validator';
 
 import { User } from '../users/user.entity';
 import { Post } from '../posts/post.entity';
@@ -26,36 +26,39 @@ export class Comment {
         comment: '내용',
         type: 'text',
     })
-    @Field()
+    @Field({ description: '내용' })
     @IsString()
     content: string;
 
-    @CreateDateColumn({ comment: '생성일' })
+    @CreateDateColumn()
     @Field()
     @IsDateString()
     createdAt: Date;
 
-    @UpdateDateColumn({ comment: '수정일' })
+    @UpdateDateColumn()
     @Field()
     @IsDateString()
     updatedAt: Date;
 
-    @DeleteDateColumn({ comment: '삭제일' })
+    @DeleteDateColumn()
+    @HideField()
     deletedAt?: Date;
 
     @ManyToOne(() => Post)
     @JoinColumn({ name: 'postId' })
+    @Field(() => Post, { description: '게시물' })
     post: Post;
 
     @Column({ name: 'postId' })
-    @Field(() => ID)
-    @IsNumber()
+    @HideField()
     postId: number;
 
     @ManyToOne(() => User)
     @JoinColumn({ name: 'userId' })
+    @Field(() => User, { description: '작성자' })
     user: User;
 
     @Column({ name: 'userId' })
+    @HideField()
     userId: number;
 }

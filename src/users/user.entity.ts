@@ -1,4 +1,11 @@
-import { Field, ID, ObjectType, Int } from '@nestjs/graphql';
+import {
+    Field,
+    ID,
+    ObjectType,
+    Int,
+    registerEnumType,
+    HideField,
+} from '@nestjs/graphql';
 import {
     Column,
     Entity,
@@ -18,10 +25,10 @@ import {
     IsBoolean,
     IsOptional,
     IsString,
-    Length,
     IsNumber,
     IsEnum,
     IsDateString,
+    IsArray,
 } from 'class-validator';
 import jwt from 'jsonwebtoken';
 
@@ -29,6 +36,8 @@ import { Platform } from '../platforms/platform.entity';
 import { Post } from '../posts/post.entity';
 import { Comment } from '../comments/comment.entity';
 import { UserStatus } from './user.interface';
+
+registerEnumType(UserStatus, { name: 'UserStatus' });
 
 @Entity('users')
 @ObjectType()
@@ -39,29 +48,26 @@ export class User {
     id: number;
 
     @Column({ comment: '이메일', nullable: true, unique: true })
+    @HideField()
     email?: string;
 
     @Column({ comment: '별명' })
-    @Field()
-    @IsOptional()
+    @Field({ description: '별명' })
     @IsString()
     nickname: string;
 
     @Column({ comment: '프로필사진' })
-    @Field()
-    @IsOptional()
+    @Field({ description: '프로필사진' })
     @IsString()
     avatar: string;
 
     @Column({ comment: '관리자여부', default: false })
-    @Field()
+    @Field({ description: '관리자여부' })
     @IsBoolean()
     isMaster: boolean;
 
     @Column({ comment: '보안문자', nullable: true })
-    @IsOptional()
-    @IsString()
-    @Length(4)
+    @HideField()
     captcha?: string;
 
     @Column({
@@ -70,14 +76,13 @@ export class User {
         enum: UserStatus,
         default: UserStatus.OFFLINE,
     })
-    @Field({ nullable: true })
-    @IsOptional()
+    @Field(() => UserStatus, { description: '상태코드' })
     @IsString()
     @IsEnum(UserStatus)
     status: string;
 
     @Column({ comment: '로그인유지여부', nullable: true })
-    @Field({ nullable: true })
+    @Field({ description: '로그인유지여부', nullable: true })
     @IsOptional()
     @IsBoolean()
     isKeep?: boolean;
@@ -95,33 +100,38 @@ export class User {
     @IsString()
     link: string;
 
-    @CreateDateColumn({ comment: '생성일' })
+    @CreateDateColumn()
     @Field()
     @IsDateString()
     createdAt: Date;
 
-    @UpdateDateColumn({ comment: '수정일' })
+    @UpdateDateColumn()
     @Field()
     @IsDateString()
     updatedAt: Date;
 
-    @DeleteDateColumn({ comment: '삭제일' })
+    @DeleteDateColumn()
+    @HideField()
     deletedAt?: Date;
 
     @ManyToOne(() => Platform)
     @JoinColumn({ name: 'platformId' })
+    @Field(() => Platform, { description: '플랫폼' })
     platform: Platform;
 
     // @RelationId((user: User) => user.platform)
     @Column({ name: 'platformId' })
+    @HideField()
     platformId: number;
 
     @OneToMany(() => Post, (post) => post.user, {
         onDelete: 'CASCADE',
     })
+    @Field(() => [Post], { description: '작성한포스트목록' })
+    @IsArray()
     posts: Post[];
 
-    @Field(() => Int)
+    @Field(() => Int, { description: '작성한포스트수', nullable: true })
     @IsOptional()
     @IsNumber()
     postCount?: number;
@@ -129,9 +139,13 @@ export class User {
     @OneToMany(() => Comment, (comment) => comment.user, {
         onDelete: 'CASCADE',
     })
+    @Field(() => Int, { description: '작성한댓글목록' })
+    @IsArray()
     comments: Comment[];
 
     @ManyToMany(() => Post, (user) => user.likers)
+    @Field(() => [Post], { description: '좋아요한포스트목록' })
+    @IsArray()
     likes: Post[];
 
     @ManyToMany(() => User, (user) => user.followings)
@@ -146,17 +160,21 @@ export class User {
             referencedColumnName: 'id',
         },
     })
+    @Field(() => [User], { description: '팔로워목록' })
+    @IsArray()
     followers: User[];
 
-    @Field(() => Int)
+    @Field(() => Int, { description: '팔로워수' })
     @IsOptional()
     @IsNumber()
     followerCount?: number;
 
     @ManyToMany(() => User, (user) => user.followers)
+    @Field(() => [User], { description: '팔로잉목록' })
+    @IsArray()
     followings: User[];
 
-    @Field(() => Int)
+    @Field(() => Int, { description: '팔로잉수' })
     @IsOptional()
     @IsNumber()
     followingCount?: number;

@@ -3,7 +3,7 @@ import { IsArray } from 'class-validator';
 import { Post } from '../post.entity';
 
 @InputType()
-export class CreatePostDto extends PickType(Post, ['content']) {
+export class CreatePostDto extends PickType(Post, ['content'], InputType) {
     @Field(() => [String])
     @IsArray()
     categories: string[];

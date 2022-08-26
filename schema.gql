@@ -15,26 +15,37 @@ type Platform {
 
   """도메인"""
   domainUrl: String!
+
+  """사용자목록"""
   users: [User!]!
 }
 
 type Category {
   id: ID!
+
+  """카테고리명"""
   content: String!
-  postCount: Int
+
+  """게시물목록"""
   posts: [Post!]!
+
+  """게시물수"""
+  postCount: Int
 }
 
 type Comment {
   id: ID!
+
+  """내용"""
   content: String!
   createdAt: Date!
   updatedAt: Date!
-  postId: ID!
-  deletedAt: Date
+
+  """게시물"""
   post: Post!
+
+  """작성자"""
   user: User!
-  userId: Float!
 }
 
 """"""
@@ -42,32 +53,50 @@ scalar Date
 
 type Post {
   id: ID!
+
+  """내용"""
   content: String!
+
+  """링크"""
   link: String
   createdAt: Date!
   updatedAt: Date!
+
+  """작성자"""
   user: User!
+
+  """좋아요목록"""
+  likers: [User!]!
 
   """좋아요수"""
   likeCount: Float
 
-  """포스트의 카테고리"""
+  """카테고리목록"""
   categories: [Category!]!
+
+  """댓글목록"""
+  comments: [Comment!]!
 
   """댓글수"""
   commentCount: Float
-  deletedAt: Date
-  userId: Float!
-  likers: [User!]!
-  comments: [Comment!]!
 }
 
 type User {
   id: ID!
+
+  """별명"""
   nickname: String!
+
+  """프로필사진"""
   avatar: String!
+
+  """관리자여부"""
   isMaster: Boolean!
-  status: String
+
+  """상태코드"""
+  status: UserStatus!
+
+  """로그인유지여부"""
   isKeep: Boolean
 
   """로그인토큰"""
@@ -80,19 +109,40 @@ type User {
   link: String!
   createdAt: Date!
   updatedAt: Date!
-  postCount: Int
-  followerCount: Int
-  followingCount: Int
-  email: String
-  captcha: String
-  deletedAt: Date
+
+  """플랫폼"""
   platform: Platform!
-  platformId: Float!
+
+  """작성한포스트목록"""
   posts: [Post!]!
-  comments: [Comment!]!
+
+  """작성한포스트수"""
+  postCount: Int
+
+  """작성한댓글목록"""
+  comments: Int!
+
+  """좋아요한포스트목록"""
   likes: [Post!]!
+
+  """팔로워목록"""
   followers: [User!]!
+
+  """팔로워수"""
+  followerCount: Int
+
+  """팔로잉목록"""
   followings: [User!]!
+
+  """팔로잉수"""
+  followingCount: Int
+}
+
+enum UserStatus {
+  ONLINE
+  OFFLINE
+  AWAY
+  BUSY
 }
 
 type OffsetMetadata {
@@ -169,7 +219,7 @@ type Mutation {
   updateUser(input: UpdateUserDto!): User!
   logIn(email: String!): Boolean!
   verify(input: VerifyUserInput!): User!
-  githubLogin(code: String!): User!
+  githubLogIn(code: String!): User!
   follow(id: Float!): Boolean!
   unfollow(id: Float!): Boolean!
   addPost(input: CreatePostDto!): User!
@@ -183,15 +233,25 @@ type Mutation {
 }
 
 input CreateUserDto {
+  """별명"""
   nickname: String!
+
+  """프로필사진"""
   avatar: String
   email: String
 }
 
 input UpdateUserDto {
+  """별명"""
   nickname: String
+
+  """프로필사진"""
   avatar: String
-  status: String
+
+  """상태코드"""
+  status: UserStatus
+
+  """로그인유지여부"""
   isKeep: Boolean
 }
 
@@ -202,6 +262,8 @@ input VerifyUserInput {
 }
 
 input CreatePostDto {
+  """내용"""
+  content: String!
   categories: [String!]!
 }
 
@@ -211,13 +273,14 @@ input UpdatePostDto {
 }
 
 input UpdatePostInput {
+  """내용"""
   content: String!
   categories: [String!]!
 }
 
 input CreateCommentDto {
+  """내용"""
   content: String!
-  postId: ID!
 }
 
 input UpdateCommentDto {
@@ -226,5 +289,6 @@ input UpdateCommentDto {
 }
 
 input UpdateCommentInput {
+  """내용"""
   content: String!
 }
