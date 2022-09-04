@@ -106,7 +106,7 @@ export class UsersResolver {
 
         const user = await this.usersService.update(me);
 
-        user.token = user.refreshToken();
+        user.token = user.generateToken();
 
         return user;
     }
@@ -177,6 +177,8 @@ export class UsersResolver {
                 2,
             );
         }
+
+        user.isKeep = true;
 
         user.token = user.generateToken();
 

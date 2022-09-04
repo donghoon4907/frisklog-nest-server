@@ -41,3 +41,6 @@ lerna-debug.log*
 .env.production
 .env.production.local
 .env.local
+
+# upload local files
+upload

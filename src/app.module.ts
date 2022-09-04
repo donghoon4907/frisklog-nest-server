@@ -15,9 +15,14 @@ import { mysqlConfig } from '../ormconfig';
 import { PostsModule } from './posts/posts.module';
 import { CommentsModule } from './comments/comments.module';
 import { CategoriesModule } from './categories/categories.module';
+import { UploadController } from './upload/upload.controller';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
     imports: [
+        MulterModule.register({
+            dest: './upload',
+        }),
         ConfigModule.forRoot({
             envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
             validationSchema: Joi.object({
@@ -61,5 +66,6 @@ import { CategoriesModule } from './categories/categories.module';
         CategoriesModule,
     ],
     providers: [],
+    controllers: [UploadController],
 })
 export class AppModule {}

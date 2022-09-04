@@ -26,4 +26,6 @@ const PLATFORM_DATA = [
     const repository = AppDataSource.getRepository(Platform);
 
     await repository.upsert(PLATFORM_DATA, ['platformName']);
+
+    console.log('fin platform seeding');
 })();

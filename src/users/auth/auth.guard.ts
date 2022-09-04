@@ -7,9 +7,9 @@ import {
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import jwt from 'jsonwebtoken';
+import { JwtPayload, verify } from 'jsonwebtoken';
 
-import { User } from 'src/users/user.entity';
+import { User } from '../user.entity';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -26,14 +26,9 @@ export class AuthGuard implements CanActivate {
         const { authorization } = req.headers;
 
         try {
-            const token = authorization.split(' ')[1];
+            const token = authorization.split(' ')[1] as string;
 
-            const { id } = jwt.verify(token, process.env.JWT_SECRET) as User;
-
-            // const user = await User.findOne({
-            //     where: { id },
-            //     relations: { followings: true },
-            // });
+            const { id } = verify(token, process.env.JWT_SECRET) as JwtPayload;
 
             const user = await this.usersRepository.findOne({
                 where: { id },

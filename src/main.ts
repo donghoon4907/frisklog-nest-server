@@ -8,6 +8,8 @@ async function bootstrap() {
     // 전역에서 유효성 검사 패키지 활성화
     app.useGlobalPipes(new ValidationPipe());
 
+    app.setGlobalPrefix('v1', { exclude: ['graphql'] });
+
     await app.listen(4000);
 
     console.log(`Application is running on: ${await app.getUrl()}`);

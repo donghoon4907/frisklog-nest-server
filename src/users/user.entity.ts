@@ -30,7 +30,7 @@ import {
     IsDateString,
     IsArray,
 } from 'class-validator';
-import jwt from 'jsonwebtoken';
+import { sign } from 'jsonwebtoken';
 
 import { Platform } from '../platforms/platform.entity';
 import { Post } from '../posts/post.entity';
@@ -196,22 +196,17 @@ export class User {
     }
 
     generateToken() {
-        const { id, nickname, avatar, isKeep } = this;
+        const { id, nickname, avatar, isMaster, isKeep } = this;
 
-        const tokenConfig = {};
-
+        let expiresIn = '365d';
         if (!isKeep) {
-            tokenConfig['expiresIn'] = '3h';
+            expiresIn = '3h';
         }
 
-        return jwt.sign(
-            { id, nickname, avatar },
+        return sign(
+            { id, nickname, avatar, isMaster, isKeep },
             process.env.JWT_SECRET,
-            tokenConfig,
+            { expiresIn },
         );
-    }
-
-    refreshToken() {
-        return this.generateToken();
     }
 }
