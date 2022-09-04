@@ -5,7 +5,10 @@ import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
 import { DirectiveLocation, GraphQLDirective } from 'graphql';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { MulterModule } from '@nestjs/platform-express';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import * as Joi from 'joi';
+import { join } from 'path';
 
 import { upperDirectiveTransformer } from './common/directives/upper-case.directive';
 import { UsersModule } from './users/users.module';
@@ -16,10 +19,12 @@ import { PostsModule } from './posts/posts.module';
 import { CommentsModule } from './comments/comments.module';
 import { CategoriesModule } from './categories/categories.module';
 import { UploadController } from './upload/upload.controller';
-import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
     imports: [
+        ServeStaticModule.forRoot({
+            rootPath: join(process.cwd(), '/upload'),
+        }),
         MulterModule.register({
             dest: './upload',
         }),
