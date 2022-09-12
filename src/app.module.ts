@@ -24,6 +24,7 @@ import { UploadController } from './upload/upload.controller';
     imports: [
         ServeStaticModule.forRoot({
             rootPath: join(process.cwd(), '/upload'),
+            exclude: ['/graphql'],
         }),
         MulterModule.register({
             dest: './upload',
