@@ -30,7 +30,8 @@ export class PostsService {
             .createQueryBuilder('post')
             .innerJoinAndSelect('post.user', 'user')
             .loadRelationCountAndMap('post.likeCount', 'post.likers')
-            .loadRelationCountAndMap('post.commentCount', 'post.comments');
+            .loadRelationCountAndMap('post.commentCount', 'post.comments')
+            .leftJoinAndSelect('post.likers', 'liker');
 
         if (searchKeyword) {
             qb.andWhere('post.content like :searchKeyword', {
