@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 
 import { Post } from './post.entity';
 import { User } from '../users/user.entity';
-import { Category } from '../categories/category.entity';
 import { PostsArgs } from './dto/posts.args';
 import { OffsetPaginatedPost } from './dto/posts.response';
 import { OffsetPaginator } from '../common/paging/offset/offset.paginator';
@@ -13,14 +12,14 @@ import { LikePostsArgs } from './dto/like-posts.args';
 import { FollowingPostsArgs } from './dto/following-posts.args';
 import { UpdatePostInput } from './dto/update-post.dto';
 import { CreatePostDto } from './dto/create-post.dto';
+import { CategoryRepository } from '../categories/category.repository';
 
 @Injectable()
 export class PostsService {
     constructor(
         @InjectRepository(Post)
         private readonly postsRepository: Repository<Post>,
-        @InjectRepository(Category)
-        private readonly categoriesRepository: Repository<Category>,
+        private readonly categoriesRepository: CategoryRepository,
     ) {}
 
     async posts(postsArgs: PostsArgs): Promise<OffsetPaginatedPost> {
@@ -153,13 +152,15 @@ export class PostsService {
 
         post.userId = userId;
 
-        const postCategories = categories.map((content) => ({ content }));
+        post.categories = [];
 
-        const { raw } = await this.categoriesRepository.upsert(postCategories, [
-            'content',
-        ]);
+        for (let i = 0; i < categories.length; i++) {
+            const category = await this.categoriesRepository.findOrCreate(
+                categories[i],
+            );
 
-        post.categories = raw;
+            post.categories.push(category);
+        }
 
         return this.postsRepository.save(post);
     }
@@ -167,15 +168,17 @@ export class PostsService {
     async update(updatePostInput: UpdatePostInput, post: Post): Promise<Post> {
         const { content, categories } = updatePostInput;
 
-        const postCategories = categories.map((content) => ({ content }));
-
         post.content = content;
 
-        const { raw } = await this.categoriesRepository.upsert(postCategories, [
-            'content',
-        ]);
+        post.categories = [];
 
-        post.categories = raw;
+        for (let i = 0; i < categories.length; i++) {
+            const category = await this.categoriesRepository.findOrCreate(
+                categories[i],
+            );
+
+            post.categories.push(category);
+        }
 
         return this.postsRepository.save(post);
     }

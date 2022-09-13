@@ -6,13 +6,11 @@ import { Category } from './category.entity';
 import { OffsetPaginatedCategory } from './dto/categories.response';
 import { RecommendCategoriesArgs } from './dto/recommend-categories.args';
 import { OffsetPaginator } from '../common/paging/offset/offset.paginator';
+import { CategoryRepository } from './category.repository';
 
 @Injectable()
 export class CategoriesService {
-    constructor(
-        @InjectRepository(Category)
-        private readonly categoriesRepository: Repository<Category>,
-    ) {}
+    constructor(private readonly categoriesRepository: CategoryRepository) {}
 
     async recommendCategories(
         recommendCategoriesArgs: RecommendCategoriesArgs,
