@@ -51,13 +51,13 @@ export class PostsService {
         return paginator.response(posts, total);
     }
 
-    async findOneById(id: number): Promise<Post> {
-        return this.postsRepository.findOneBy({ id });
+    async findOneById(id: string): Promise<Post> {
+        return this.postsRepository.findOneBy({ id: parseInt(id, 10) });
     }
 
-    async findOne(id: number): Promise<Post> {
+    async findOne(id: string): Promise<Post> {
         return this.postsRepository.findOne({
-            where: { id },
+            where: { id: parseInt(id, 10) },
             relations: {
                 likers: true,
             },
@@ -140,17 +140,14 @@ export class PostsService {
         return paginator.response(posts, total);
     }
 
-    async create(
-        createPostInput: CreatePostDto,
-        userId: number,
-    ): Promise<Post> {
+    async create(createPostInput: CreatePostDto, user: User): Promise<Post> {
         const { content, categories } = createPostInput;
 
         const post = new Post();
 
         post.content = content;
 
-        post.userId = userId;
+        post.user = user;
 
         post.categories = [];
 

@@ -10,8 +10,8 @@ export class UpdatePostInput extends PickType(CreatePostDto, [
 
 @InputType()
 export class UpdatePostDto {
-    @Field(() => ID)
-    id: number;
+    @Field()
+    id: string;
 
     @Field((type) => UpdatePostInput)
     data: UpdatePostInput;

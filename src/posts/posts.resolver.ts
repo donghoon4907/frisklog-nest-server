@@ -43,13 +43,13 @@ export class PostsResolver {
         return this.postsService.followingPosts(followingPostArgs, me.id);
     }
 
-    @Mutation((returns) => User)
+    @Mutation((returns) => Post)
     @UseGuards(AuthGuard)
     addPost(@AuthUser() me: User, @Args('input') createPostDto: CreatePostDto) {
-        return this.postsService.create(createPostDto, me.id);
+        return this.postsService.create(createPostDto, me);
     }
 
-    @Mutation((returns) => User)
+    @Mutation((returns) => Post)
     @UseGuards(AuthGuard)
     async updatePost(@Args('input') updatePostDto: UpdatePostDto) {
         const { id, data } = updatePostDto;
@@ -63,9 +63,9 @@ export class PostsResolver {
         return this.postsService.update(data, post);
     }
 
-    @Mutation((returns) => User)
+    @Mutation((returns) => Post)
     @UseGuards(AuthGuard)
-    async deletePost(@Args('id') id: number) {
+    async deletePost(@Args('id') id: string) {
         const post = await this.postsService.findOneById(id);
 
         if (post === null) {
@@ -77,7 +77,7 @@ export class PostsResolver {
 
     @Mutation((returns) => Boolean)
     @UseGuards(AuthGuard)
-    async like(@AuthUser() me: User, @Args('id') id: number) {
+    async like(@AuthUser() me: User, @Args('id') id: string) {
         const post = await this.postsService.findOne(id);
 
         if (post === null) {
@@ -91,7 +91,7 @@ export class PostsResolver {
 
     @Mutation((returns) => Boolean)
     @UseGuards(AuthGuard)
-    async unlike(@AuthUser() me: User, @Args('id') id: number) {
+    async unlike(@AuthUser() me: User, @Args('id') id: string) {
         const post = await this.postsService.findOne(id);
 
         if (post === null) {

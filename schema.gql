@@ -222,11 +222,11 @@ type Mutation {
   githubLogIn(code: String!): User!
   follow(id: Float!): Boolean!
   unfollow(id: Float!): Boolean!
-  addPost(input: CreatePostDto!): User!
-  updatePost(input: UpdatePostDto!): User!
-  deletePost(id: Float!): User!
-  like(id: Float!): Boolean!
-  unlike(id: Float!): Boolean!
+  addPost(input: CreatePostDto!): Post!
+  updatePost(input: UpdatePostDto!): Post!
+  deletePost(id: String!): Post!
+  like(id: String!): Boolean!
+  unlike(id: String!): Boolean!
   addComment(input: CreateCommentDto!): Comment!
   updateComment(input: UpdateCommentDto!): Comment!
   deleteComment(id: Float!): Comment!
@@ -268,7 +268,7 @@ input CreatePostDto {
 }
 
 input UpdatePostDto {
-  id: ID!
+  id: String!
   data: UpdatePostInput!
 }
 
