@@ -123,7 +123,8 @@ export class UsersResolver {
 
         try {
             await this.usersService.sendMail(user.email, user.captcha);
-        } catch {
+        } catch (e) {
+            console.log(e);
             throw new ForbiddenException('메일 전송 중 오류가 발생했습니다.');
         }
 

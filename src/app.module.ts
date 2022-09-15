@@ -23,11 +23,11 @@ import { UploadController } from './upload/upload.controller';
 @Module({
     imports: [
         ServeStaticModule.forRoot({
-            rootPath: join(process.cwd(), '/upload'),
+            rootPath: join(process.cwd(), '/public'),
             exclude: ['/graphql'],
         }),
         MulterModule.register({
-            dest: './upload',
+            dest: './public/upload',
         }),
         ConfigModule.forRoot({
             envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,

@@ -1,24 +1,27 @@
-import nodemailer from 'nodemailer';
-import smtpPool from 'nodemailer-smtp-pool';
+import { createTransport } from 'nodemailer';
+import * as smtpPool from 'nodemailer-smtp-pool';
 
 export const sendMail = async (email: string, token: string) => {
     const mailConfig = {
         service: 'gmail',
         host: 'localhost',
         port: 465,
+        // port: 587,
         auth: {
             user: process.env.EMAIL_ID,
             pass: process.env.EMAIL_PASSWORD,
         },
-        tls: {
-            rejectUnauthorize: false,
-        },
+        secure: true,
+        requireTLS: true,
+        // tls: {
+        //     rejectUnauthorize: false,
+        // },
         maxConnections: 5,
         maxMessages: 10,
         pool: true,
     };
 
-    let transporter = nodemailer.createTransport(smtpPool(mailConfig as any));
+    let transporter = createTransport(smtpPool(mailConfig));
 
     return transporter.sendMail({
         from: `Frisklog ${mailConfig.auth.user}`,

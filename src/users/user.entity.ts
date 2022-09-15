@@ -184,8 +184,8 @@ export class User {
     updateAvatar() {
         let avatar = this.avatar;
 
-        if (avatar === null) {
-            avatar = '/avatar.png';
+        if (!avatar) {
+            avatar = '/default-avatar.png';
         }
 
         const hasDomain = avatar.includes('http');

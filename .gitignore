@@ -43,4 +43,4 @@ lerna-debug.log*
 .env.local
 
 # upload local files
-upload
+public/upload/*

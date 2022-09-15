@@ -6,6 +6,7 @@ import { AxiosResponse } from 'axios';
 import { firstValueFrom } from 'rxjs';
 
 import { User } from './user.entity';
+import { Post } from '../posts/post.entity';
 import { UsersArgs } from './dto/users.args';
 import { OffsetPaginatedUser } from './dto/users.response';
 import { OffsetPaginator } from '../common/paging/offset/offset.paginator';
@@ -55,11 +56,14 @@ export class UsersService {
 
         const [recommenders, total] = await this.usersRepository
             .createQueryBuilder('user')
+            .addSelect((qb) => {
+                return qb.select('COUNT(*)', 'postCount').from(Post, 'post');
+            }, 'postCount')
             .loadRelationCountAndMap('user.postCount', 'user.posts')
             .loadRelationCountAndMap('user.followerCount', 'user.followers')
             .limit(limit)
             .offset(offset)
-            .orderBy('user.postCount', 'DESC')
+            .orderBy('postCount', 'DESC')
             .getManyAndCount();
 
         const paginator = new OffsetPaginator<User>(offset, limit);
