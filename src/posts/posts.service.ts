@@ -32,7 +32,9 @@ export class PostsService {
             .loadRelationCountAndMap('post.commentCount', 'post.comments')
             .leftJoinAndSelect('post.likers', 'likers')
             .leftJoinAndSelect('post.categories', 'categories')
-            .orderBy('post.createdAt', 'DESC');
+            .orderBy('post.createdAt', 'DESC')
+            .limit(limit)
+            .offset(offset);
 
         if (searchKeyword) {
             qb.andWhere('post.content like :searchKeyword', {
