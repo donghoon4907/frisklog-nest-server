@@ -29,7 +29,7 @@ export class UsersResolver {
     }
 
     @Query((returns) => User)
-    async user(@Args('id') id: number) {
+    async user(@Args('id') id: string) {
         const user = await this.usersService.findOne(id);
 
         if (user === null) {
@@ -168,13 +168,13 @@ export class UsersResolver {
 
         const userInfo = await this.usersService.getGithubProfile(accessToken);
 
-        const { login, avatar_url } = userInfo.data;
+        const { id, login, avatar_url } = userInfo.data;
 
-        let user = await this.usersService.findOneByNickname(login, 2);
+        let user = await this.usersService.findOneByGithubId(id);
 
         if (user === null) {
             user = await this.usersService.create(
-                { nickname: login, avatar: avatar_url },
+                { nickname: login, avatar: avatar_url, githubId: id },
                 2,
             );
         }

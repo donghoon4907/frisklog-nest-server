@@ -47,6 +47,10 @@ export class User {
     @IsNumber()
     id: number;
 
+    @Column({ comment: 'github_id', nullable: true, unique: true })
+    @HideField()
+    githubId?: number;
+
     @Column({ comment: '이메일', nullable: true, unique: true })
     @HideField()
     email?: string;
@@ -76,7 +80,7 @@ export class User {
         enum: UserStatus,
         default: UserStatus.OFFLINE,
     })
-    @Field(() => UserStatus, { description: '상태코드' })
+    @Field(() => String, { description: '상태코드' })
     @IsString()
     @IsEnum(UserStatus)
     status: string;
@@ -191,7 +195,7 @@ export class User {
         const hasDomain = avatar.includes('http');
 
         if (!hasDomain) {
-            this.avatar = process.env.BACKEND_ROOT + avatar;
+            this.avatar = `${process.env.BACKEND_ROOT}/upload/${avatar}`;
         }
     }
 

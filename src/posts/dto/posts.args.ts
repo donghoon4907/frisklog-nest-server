@@ -15,7 +15,7 @@ export class PostsArgs {
     @IsOptional()
     searchKeyword?: string;
 
-    @Field(() => ID, { nullable: true })
+    @Field(() => String, { nullable: true })
     @IsOptional()
-    userId?: number;
+    userId?: string;
 }

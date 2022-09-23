@@ -12,7 +12,7 @@ export const mysqlConfig: TypeOrmModuleOptions & DataSourceOptions = {
     database: process.env.DB,
     autoLoadEntities: true,
     synchronize: true,
-    logging: true,
+    logging: false,
     timezone: 'local',
     charset: 'utf8mb4',
 };

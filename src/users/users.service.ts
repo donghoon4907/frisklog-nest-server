@@ -92,9 +92,9 @@ export class UsersService {
         return paginator.response(followers, followerCount);
     }
 
-    async findOne(id: number): Promise<User> {
+    async findOne(id: string): Promise<User> {
         return this.usersRepository.findOne({
-            where: { id },
+            where: { id: parseInt(id, 10) },
             relations: {
                 followers: true,
                 platform: true,
@@ -115,6 +115,10 @@ export class UsersService {
 
     async findOneByEmail(email: string, platformId: number = 1): Promise<User> {
         return this.usersRepository.findOneBy({ email, platformId });
+    }
+
+    async findOneByGithubId(githubId: number): Promise<User> {
+        return this.usersRepository.findOneBy({ githubId });
     }
 
     async verifyGithub(code: string): Promise<AxiosResponse<any>> {

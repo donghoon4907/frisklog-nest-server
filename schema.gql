@@ -94,7 +94,7 @@ type User {
   isMaster: Boolean!
 
   """상태코드"""
-  status: UserStatus!
+  status: String!
 
   """로그인유지여부"""
   isKeep: Boolean
@@ -136,13 +136,6 @@ type User {
 
   """팔로잉수"""
   followingCount: Int
-}
-
-enum UserStatus {
-  ONLINE
-  OFFLINE
-  AWAY
-  BUSY
 }
 
 type OffsetMetadata {
@@ -197,7 +190,7 @@ type Query {
     order: [[String!]!]
   ): OffsetPaginatedUser!
   recommenders(offset: Int = 0, limit: Int = 12): OffsetPaginatedUser!
-  user(id: Float!): User!
+  user(id: String!): User!
   followings(offset: Int = 0, limit: Int = 12, order: [[String!]!]): OffsetPaginatedUser!
   posts(
     offset: Int = 0
@@ -205,11 +198,11 @@ type Query {
 
     """포스트 검색어"""
     searchKeyword: String
-    userId: ID
+    userId: String
   ): OffsetPaginatedPost!
   categoryPosts(offset: Int = 0, limit: Int = 12, category: String!): OffsetPaginatedPost!
-  likePosts(offset: Int = 0, limit: Int = 12, userId: ID): OffsetPaginatedPost!
-  followingPosts(offset: Int = 0, limit: Int = 12, userId: ID): OffsetPaginatedPost!
+  likePosts(offset: Int = 0, limit: Int = 12, userId: String): OffsetPaginatedPost!
+  followingPosts(offset: Int = 0, limit: Int = 12, userId: String): OffsetPaginatedPost!
   comments(offset: Int = 0, limit: Int = 12, postId: ID!, order: [[String!]!]): OffsetPaginatedComment!
   recommendCategories(offset: Int = 0, limit: Int = 12): OffsetPaginatedCategory!
 }
@@ -239,6 +232,7 @@ input CreateUserDto {
   """프로필사진"""
   avatar: String
   email: String
+  githubId: Float
 }
 
 input UpdateUserDto {
@@ -249,7 +243,7 @@ input UpdateUserDto {
   avatar: String
 
   """상태코드"""
-  status: UserStatus
+  status: String
 
   """로그인유지여부"""
   isKeep: Boolean
