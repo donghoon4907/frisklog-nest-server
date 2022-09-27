@@ -203,7 +203,7 @@ type Query {
   categoryPosts(offset: Int = 0, limit: Int = 12, category: String!): OffsetPaginatedPost!
   likePosts(offset: Int = 0, limit: Int = 12, userId: String): OffsetPaginatedPost!
   followingPosts(offset: Int = 0, limit: Int = 12, userId: String): OffsetPaginatedPost!
-  comments(offset: Int = 0, limit: Int = 12, postId: ID!, order: [[String!]!]): OffsetPaginatedComment!
+  comments(offset: Int = 0, limit: Int = 12, postId: String!, order: [[String!]!]): OffsetPaginatedComment!
   recommendCategories(offset: Int = 0, limit: Int = 12): OffsetPaginatedCategory!
 }
 
@@ -275,6 +275,7 @@ input UpdatePostInput {
 input CreateCommentDto {
   """내용"""
   content: String!
+  postId: String!
 }
 
 input UpdateCommentDto {

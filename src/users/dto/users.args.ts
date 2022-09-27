@@ -17,5 +17,5 @@ export class UsersArgs {
 
     @Field(() => [[String]], { nullable: true })
     @IsOptional()
-    order?: String[][];
+    order?: string[][];
 }

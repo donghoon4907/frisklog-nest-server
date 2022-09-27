@@ -9,7 +9,7 @@ export class OffsetPaginator<T> {
 
         let page = 1;
         if (offset > 0) {
-            page = Math.ceil(offset / limit);
+            page = Math.ceil(offset / limit) + 1;
         }
 
         return page;

@@ -11,8 +11,8 @@ export class CommentsArgs {
     @Max(50)
     limit = 12;
 
-    @Field(() => ID)
-    postId: number;
+    @Field(() => String)
+    postId: string;
 
     @Field(() => [[String]])
     @IsOptional()
