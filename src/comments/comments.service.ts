@@ -44,8 +44,8 @@ export class CommentsService {
         return paginator.response(comments, total);
     }
 
-    async findOneById(id: number) {
-        return this.commentsRepository.findOneBy({ id });
+    async findOneById(id: string) {
+        return this.commentsRepository.findOneBy({ id: parseInt(id, 10) });
     }
 
     async create(createCommentDto: CreateCommentDto, user: User) {

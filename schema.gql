@@ -222,7 +222,7 @@ type Mutation {
   unlike(id: String!): Boolean!
   addComment(input: CreateCommentDto!): Comment!
   updateComment(input: UpdateCommentDto!): Comment!
-  deleteComment(id: Float!): Comment!
+  deleteComment(id: String!): Comment!
 }
 
 input CreateUserDto {
@@ -279,7 +279,7 @@ input CreateCommentDto {
 }
 
 input UpdateCommentDto {
-  id: ID!
+  id: String!
   data: UpdateCommentInput!
 }
 

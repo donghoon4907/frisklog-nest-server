@@ -9,8 +9,8 @@ export class UpdateCommentInput extends PickType(CreateCommentDto, [
 
 @InputType()
 export class UpdateCommentDto {
-    @Field(() => ID)
-    id: number;
+    @Field(() => String)
+    id: string;
 
     @Field((type) => UpdateCommentInput)
     data: UpdateCommentInput;

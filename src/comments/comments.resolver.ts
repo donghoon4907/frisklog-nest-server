@@ -31,7 +31,10 @@ export class CommentsResolver {
 
     @Mutation((returns) => Comment)
     @UseGuards(AuthGuard)
-    async updateComment(@Args('input') updateCommentDto: UpdateCommentDto) {
+    async updateComment(
+        @AuthUser() me: User,
+        @Args('input') updateCommentDto: UpdateCommentDto,
+    ) {
         const { id, data } = updateCommentDto;
 
         const comment = await this.commentsService.findOneById(id);
@@ -40,12 +43,14 @@ export class CommentsResolver {
             throw new ForbiddenException('존재하지 않는 댓글입니다.');
         }
 
+        comment.user = me;
+
         return this.commentsService.update(data, comment);
     }
 
     @Mutation((returns) => Comment)
     @UseGuards(AuthGuard)
-    async deleteComment(@Args('id') id: number) {
+    async deleteComment(@Args('id') id: string) {
         const comment = await this.commentsService.findOneById(id);
 
         if (comment === null) {
