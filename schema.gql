@@ -170,13 +170,13 @@ type OffsetPaginatedPost {
   pageInfo: OffsetMetadata!
 }
 
-type OffsetPaginatedComment {
-  nodes: [Comment!]
+type OffsetPaginatedCategory {
+  nodes: [Category!]
   pageInfo: OffsetMetadata!
 }
 
-type OffsetPaginatedCategory {
-  nodes: [Category!]
+type OffsetPaginatedComment {
+  nodes: [Comment!]
   pageInfo: OffsetMetadata!
 }
 
@@ -203,8 +203,8 @@ type Query {
   categoryPosts(offset: Int = 0, limit: Int = 12, category: String!): OffsetPaginatedPost!
   likePosts(offset: Int = 0, limit: Int = 12, userId: String): OffsetPaginatedPost!
   followingPosts(offset: Int = 0, limit: Int = 12, userId: String): OffsetPaginatedPost!
-  comments(offset: Int = 0, limit: Int = 12, postId: String!, order: [[String!]!]): OffsetPaginatedComment!
   recommendCategories(offset: Int = 0, limit: Int = 12): OffsetPaginatedCategory!
+  comments(offset: Int = 0, limit: Int = 12, postId: String!, order: [[String!]!]): OffsetPaginatedComment!
 }
 
 type Mutation {

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -12,14 +12,16 @@ import { LikePostsArgs } from './dto/like-posts.args';
 import { FollowingPostsArgs } from './dto/following-posts.args';
 import { UpdatePostInput } from './dto/update-post.dto';
 import { CreatePostDto } from './dto/create-post.dto';
-import { CategoryRepository } from '../categories/category.repository';
+// import { CategoryRepository } from '../categories/category.repository';
+import { CategoriesService } from 'src/categories/categories.service';
 
 @Injectable()
 export class PostsService {
     constructor(
         @InjectRepository(Post)
         private readonly postsRepository: Repository<Post>,
-        private readonly categoriesRepository: CategoryRepository,
+        @Inject(forwardRef(() => CategoriesService))
+        private readonly categoriesService: CategoriesService, // private readonly categoriesRepository: CategoryRepository,
     ) {}
 
     async posts(postsArgs: PostsArgs): Promise<OffsetPaginatedPost> {
@@ -53,17 +55,8 @@ export class PostsService {
         return paginator.response(posts, total);
     }
 
-    async findOneById(id: string): Promise<Post> {
+    async findById(id: string): Promise<Post> {
         return this.postsRepository.findOneBy({ id: parseInt(id, 10) });
-    }
-
-    async findOne(id: string): Promise<Post> {
-        return this.postsRepository.findOne({
-            where: { id: parseInt(id, 10) },
-            relations: {
-                likers: true,
-            },
-        });
     }
 
     async categoryPosts(
@@ -151,17 +144,7 @@ export class PostsService {
 
         post.user = user;
 
-        post.categories = [];
-
-        for (let i = 0; i < categories.length; i++) {
-            const category = await this.categoriesRepository.findOrCreate(
-                categories[i],
-            );
-
-            post.categories.push(category);
-        }
-
-        return this.postsRepository.save(post);
+        return this.setPostCategories(post, categories);
     }
 
     async update(updatePostInput: UpdatePostInput, post: Post): Promise<Post> {
@@ -169,14 +152,22 @@ export class PostsService {
 
         post.content = content;
 
-        post.categories = [];
+        return this.setPostCategories(post, categories);
+    }
+
+    async setPostCategories(post: Post, categories: string[]) {
+        const postCategories = await post.categories;
+
+        postCategories.splice(0, postCategories.length);
 
         for (let i = 0; i < categories.length; i++) {
-            const category = await this.categoriesRepository.findOrCreate(
+            const category = await this.categoriesService.findOrCreate(
                 categories[i],
             );
 
-            post.categories.push(category);
+            if (category) {
+                postCategories.push(category);
+            }
         }
 
         return this.postsRepository.save(post);
@@ -186,15 +177,25 @@ export class PostsService {
         return this.postsRepository.softRemove(post);
     }
 
-    async like(me: User, post: Post): Promise<Post> {
-        post.likers.push(me);
+    async like(post: Post, me: User): Promise<Post> {
+        (await post.likers).push(me);
 
-        return this.postsRepository.save(post);
+        await this.postsRepository.save(post);
+
+        return post;
     }
 
-    async unlike(me: User, post: Post): Promise<Post> {
-        post.likers = post.likers.filter((user) => user.id !== me.id);
+    async unlike(post: Post, me: User): Promise<Post> {
+        const likers = await post.likers;
 
-        return this.postsRepository.save(post);
+        const index = likers.findIndex((liker) => liker.id == me.id);
+
+        if (index !== -1) {
+            likers.splice(index, 1);
+
+            await this.postsRepository.save(post);
+        }
+
+        return post;
     }
 }

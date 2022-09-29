@@ -54,7 +54,7 @@ export class PostsResolver {
     async updatePost(@Args('input') updatePostDto: UpdatePostDto) {
         const { id, data } = updatePostDto;
 
-        const post = await this.postsService.findOneById(id);
+        const post = await this.postsService.findById(id);
 
         if (post === null) {
             throw new ForbiddenException('존재하지 않는 포스트입니다.');
@@ -66,7 +66,7 @@ export class PostsResolver {
     @Mutation((returns) => Post)
     @UseGuards(AuthGuard)
     async deletePost(@Args('id') id: string) {
-        const post = await this.postsService.findOneById(id);
+        const post = await this.postsService.findById(id);
 
         if (post === null) {
             throw new ForbiddenException('존재하지 않는 포스트입니다.');
@@ -78,13 +78,13 @@ export class PostsResolver {
     @Mutation((returns) => Boolean)
     @UseGuards(AuthGuard)
     async like(@AuthUser() me: User, @Args('id') id: string) {
-        const post = await this.postsService.findOne(id);
+        const post = await this.postsService.findById(id);
 
         if (post === null) {
             throw new ForbiddenException('존재하지 않는 포스트입니다.');
         }
 
-        await this.postsService.like(me, post);
+        await this.postsService.like(post, me);
 
         return true;
     }
@@ -92,13 +92,13 @@ export class PostsResolver {
     @Mutation((returns) => Boolean)
     @UseGuards(AuthGuard)
     async unlike(@AuthUser() me: User, @Args('id') id: string) {
-        const post = await this.postsService.findOne(id);
+        const post = await this.postsService.findById(id);
 
         if (post === null) {
             throw new ForbiddenException('존재하지 않는 포스트입니다.');
         }
 
-        await this.postsService.unlike(me, post);
+        await this.postsService.unlike(post, me);
 
         return true;
     }

@@ -139,6 +139,8 @@ export class UsersResolver {
 
         const user = await this.usersService.findOneByEmail(email);
 
+        console.log(user);
+
         if (user === null) {
             throw new ForbiddenException('등록되지 않은 이메일 입니다.');
         }
@@ -160,30 +162,38 @@ export class UsersResolver {
 
     @Mutation((returns) => User)
     async githubLogIn(@Args('code') code: string) {
-        const { data } = await this.usersService.verifyGithub(code);
+        try {
+            const { data } = await this.usersService.verifyGithub(code);
 
-        const fullStrToken = data.split('&')[0];
+            const fullStrToken = data.split('&')[0];
 
-        const accessToken = fullStrToken.split('=')[1];
+            const accessToken = fullStrToken.split('=')[1];
 
-        const userInfo = await this.usersService.getGithubProfile(accessToken);
-
-        const { id, login, avatar_url } = userInfo.data;
-
-        let user = await this.usersService.findOneByGithubId(id);
-
-        if (user === null) {
-            user = await this.usersService.create(
-                { nickname: login, avatar: avatar_url, githubId: id },
-                2,
+            const userInfo = await this.usersService.getGithubProfile(
+                accessToken,
             );
+
+            const { id, login, avatar_url } = userInfo.data;
+
+            let user = await this.usersService.findOneByGithubId(id);
+
+            if (user === null) {
+                user = await this.usersService.create(
+                    { nickname: login, avatar: avatar_url, githubId: id },
+                    2,
+                );
+            }
+
+            user.isKeep = true;
+
+            user.token = user.generateToken();
+
+            return user;
+        } catch (e) {
+            console.log(e.message);
+
+            return null;
         }
-
-        user.isKeep = true;
-
-        user.token = user.generateToken();
-
-        return user;
     }
 
     @Mutation((returns) => Boolean)

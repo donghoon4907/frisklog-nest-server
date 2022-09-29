@@ -31,4 +31,32 @@ export class CategoriesService {
 
         return paginator.response(recommendCategories, total);
     }
+
+    findById(id: string) {
+        return this.categoriesRepository.findOne({
+            where: { id: parseInt(id, 10) },
+        });
+    }
+
+    findByContent(content: string) {
+        return this.categoriesRepository.findOne({
+            where: { content },
+        });
+    }
+
+    createCategory(content: string) {
+        const category = this.categoriesRepository.create({ content });
+
+        return this.categoriesRepository.save(category);
+    }
+
+    async findOrCreate(content: string) {
+        let category = await this.findByContent(content);
+
+        if (category === null) {
+            category = await this.createCategory(content);
+        }
+
+        return category;
+    }
 }

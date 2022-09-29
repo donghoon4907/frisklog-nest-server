@@ -83,7 +83,7 @@ export class Post {
     })
     @Field(() => [User], { description: '좋아요목록' })
     @IsArray()
-    likers: User[];
+    likers: Promise<User[]>;
 
     @Field({ description: '좋아요수', nullable: true })
     @IsOptional()
@@ -104,14 +104,14 @@ export class Post {
     })
     @Field(() => [Category], { description: '카테고리목록' })
     @IsArray()
-    categories: Category[];
+    categories: Promise<Category[]>;
 
     @OneToMany(() => Comment, (comment) => comment.post, {
         onDelete: 'CASCADE',
     })
     @Field(() => [Comment], { description: '댓글목록' })
     @IsArray()
-    comments: Comment[];
+    comments: Promise<Comment[]>;
 
     @Field({ description: '댓글수', nullable: true })
     @IsOptional()

@@ -9,17 +9,17 @@ export class CategoryRepository extends Repository<Category> {
         super(Category, dataSource.createEntityManager());
     }
 
-    async findOrCreate(content: string) {
-        let category = await this.findOne({
-            where: { content },
-        });
+    // async findOrCreate(content: string) {
+    //     let category = await this.findOne({
+    //         where: { content },
+    //     });
 
-        if (category === null) {
-            const newCategory = this.create({ content });
+    //     if (category === null) {
+    //         const newCategory = this.create({ content });
 
-            category = await this.save(newCategory);
-        }
+    //         category = await this.save(newCategory);
+    //     }
 
-        return category;
-    }
+    //     return category;
+    // }
 }
