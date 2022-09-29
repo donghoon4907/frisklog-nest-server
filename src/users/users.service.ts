@@ -87,12 +87,14 @@ export class UsersService {
 
         const paginator = new OffsetPaginator<User>(offset, limit);
 
-        const { followers, followerCount } = user;
+        const followings = await user.followings;
 
-        return paginator.response(followers, followerCount);
+        const { followerCount } = user;
+
+        return paginator.response(followings, followerCount);
     }
 
-    async findOne(id: string): Promise<User> {
+    user(id: string): Promise<User> {
         return this.usersRepository.findOne({
             where: { id: parseInt(id, 10) },
             relations: {
@@ -102,26 +104,23 @@ export class UsersService {
         });
     }
 
-    async findOneById(id: number): Promise<User> {
-        return this.usersRepository.findOneBy({ id });
+    findById(id: string): Promise<User> {
+        return this.usersRepository.findOneBy({ id: parseInt(id, 10) });
     }
 
-    async findOneByNickname(
-        nickname: string,
-        platformId: number = 1,
-    ): Promise<User> {
+    findByNickname(nickname: string, platformId: number = 1): Promise<User> {
         return this.usersRepository.findOneBy({ nickname, platformId });
     }
 
-    async findOneByEmail(email: string, platformId: number = 1): Promise<User> {
+    findByEmail(email: string, platformId: number = 1): Promise<User> {
         return this.usersRepository.findOneBy({ email, platformId });
     }
 
-    async findOneByGithubId(githubId: number): Promise<User> {
+    findByGithubId(githubId: number): Promise<User> {
         return this.usersRepository.findOneBy({ githubId });
     }
 
-    async verifyGithub(code: string): Promise<AxiosResponse<any>> {
+    verifyGithub(code: string): Promise<AxiosResponse<any>> {
         const res = this.httpService.post(
             'https://github.com/login/oauth/access_token',
             {
@@ -134,7 +133,7 @@ export class UsersService {
         return firstValueFrom(res);
     }
 
-    async getGithubProfile(accessToken: string): Promise<AxiosResponse<any>> {
+    getGithubProfile(accessToken: string): Promise<AxiosResponse<any>> {
         const res = this.httpService.get('https://api.github.com/user', {
             headers: {
                 authorization: `token ${accessToken}`,
@@ -144,29 +143,45 @@ export class UsersService {
         return firstValueFrom(res);
     }
 
-    async sendMail(email: string, captcha: string): Promise<any> {
+    sendMail(email: string, captcha: string): Promise<any> {
         return sendMail(email, captcha);
     }
 
     async create(data: CreateUserDto, platformId: number = 1): Promise<User> {
         const user = this.usersRepository.create({ ...data, platformId });
 
-        return this.usersRepository.save(user);
+        await this.usersRepository.save(user);
+
+        return user;
     }
 
     async update(me: User): Promise<User> {
-        return this.usersRepository.save(me);
+        await this.usersRepository.save(me);
+
+        return me;
     }
 
     async follow(me: User, target: User): Promise<User> {
-        me.followings.push(target);
+        (await me.followings).push(target);
 
-        return this.usersRepository.save(me);
+        await this.usersRepository.save(me);
+
+        return me;
     }
 
-    async unfollow(me: User, targetId: number): Promise<User> {
-        me.followings = me.followings.filter((user) => user.id !== targetId);
+    async unfollow(me: User, target: User): Promise<User> {
+        const followings = await me.followings;
 
-        return this.usersRepository.save(me);
+        const index = followings.findIndex(
+            (following) => following.id == target.id,
+        );
+
+        if (index !== -1) {
+            followings.splice(index, 1);
+
+            this.usersRepository.save(me);
+        }
+
+        return me;
     }
 }

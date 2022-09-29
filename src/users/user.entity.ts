@@ -121,7 +121,7 @@ export class User {
     @ManyToOne(() => Platform)
     @JoinColumn({ name: 'platformId' })
     @Field(() => Platform, { description: '플랫폼' })
-    platform: Platform;
+    platform: Promise<Platform>;
 
     // @RelationId((user: User) => user.platform)
     @Column({ name: 'platformId' })
@@ -133,7 +133,7 @@ export class User {
     })
     @Field(() => [Post], { description: '작성한포스트목록' })
     @IsArray()
-    posts: Post[];
+    posts: Promise<Post[]>;
 
     @Field(() => Int, { description: '작성한포스트수', nullable: true })
     @IsOptional()
@@ -145,12 +145,12 @@ export class User {
     })
     @Field(() => Int, { description: '작성한댓글목록' })
     @IsArray()
-    comments: Comment[];
+    comments: Promise<Comment[]>;
 
     @ManyToMany(() => Post, (user) => user.likers)
     @Field(() => [Post], { description: '좋아요한포스트목록' })
     @IsArray()
-    likes: Post[];
+    likes: Promise<Post[]>;
 
     @ManyToMany(() => User, (user) => user.followings)
     @JoinTable({
@@ -166,7 +166,7 @@ export class User {
     })
     @Field(() => [User], { description: '팔로워목록' })
     @IsArray()
-    followers: User[];
+    followers: Promise<User[]>;
 
     @Field(() => Int, { description: '팔로워수' })
     @IsOptional()
@@ -176,7 +176,7 @@ export class User {
     @ManyToMany(() => User, (user) => user.followers)
     @Field(() => [User], { description: '팔로잉목록' })
     @IsArray()
-    followings: User[];
+    followings: Promise<User[]>;
 
     @Field(() => Int, { description: '팔로잉수' })
     @IsOptional()

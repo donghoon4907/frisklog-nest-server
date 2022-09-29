@@ -30,7 +30,7 @@ export class UsersResolver {
 
     @Query((returns) => User)
     async user(@Args('id') id: string) {
-        const user = await this.usersService.findOne(id);
+        const user = await this.usersService.user(id);
 
         if (user === null) {
             throw new ForbiddenException('존재하지 않는 사용자입니다.');
@@ -52,15 +52,13 @@ export class UsersResolver {
     async addUser(@Args('input') createUserDto: CreateUserDto) {
         const { nickname, email } = createUserDto;
 
-        const usingNickname = await this.usersService.findOneByNickname(
-            nickname,
-        );
+        const usingNickname = await this.usersService.findByNickname(nickname);
 
         if (usingNickname !== null) {
             throw new ForbiddenException('사용중인 닉네임입니다.');
         }
 
-        const usingEmail = await this.usersService.findOneByEmail(email);
+        const usingEmail = await this.usersService.findByEmail(email);
 
         if (usingEmail !== null) {
             throw new ForbiddenException('사용중인 이메일입니다.');
@@ -79,7 +77,7 @@ export class UsersResolver {
 
         if (nickname) {
             if (nickname !== me.nickname) {
-                const existUser = await this.usersService.findOneByNickname(
+                const existUser = await this.usersService.findByNickname(
                     nickname,
                     me.platformId,
                 );
@@ -113,7 +111,7 @@ export class UsersResolver {
 
     @Mutation((returns) => Boolean)
     async logIn(@Args('email') email: string) {
-        const user = await this.usersService.findOneByEmail(email);
+        const user = await this.usersService.findByEmail(email);
 
         if (user === null) {
             throw new ForbiddenException('등록되지 않은 이메일 입니다.');
@@ -137,9 +135,7 @@ export class UsersResolver {
     async verify(@Args('input') verifyUserInput: VerifyUserInput) {
         const { email, captcha, isKeep } = verifyUserInput;
 
-        const user = await this.usersService.findOneByEmail(email);
-
-        console.log(user);
+        const user = await this.usersService.findByEmail(email);
 
         if (user === null) {
             throw new ForbiddenException('등록되지 않은 이메일 입니다.');
@@ -154,6 +150,8 @@ export class UsersResolver {
         user.isKeep = isKeep;
 
         await this.usersService.update(user);
+
+        await user.followings;
 
         user.token = user.generateToken();
 
@@ -175,7 +173,7 @@ export class UsersResolver {
 
             const { id, login, avatar_url } = userInfo.data;
 
-            let user = await this.usersService.findOneByGithubId(id);
+            let user = await this.usersService.findByGithubId(id);
 
             if (user === null) {
                 user = await this.usersService.create(
@@ -198,8 +196,8 @@ export class UsersResolver {
 
     @Mutation((returns) => Boolean)
     @UseGuards(AuthGuard)
-    async follow(@AuthUser() me: User, @Args('id') id: number) {
-        const user = await this.usersService.findOneById(id);
+    async follow(@AuthUser() me: User, @Args('id') id: string) {
+        const user = await this.usersService.findById(id);
 
         if (user === null) {
             throw new ForbiddenException('존재하지 않는 사용자입니다.');
@@ -212,14 +210,14 @@ export class UsersResolver {
 
     @Mutation((returns) => Boolean)
     @UseGuards(AuthGuard)
-    async unfollow(@AuthUser() me: User, @Args('id') id: number) {
-        const user = await this.usersService.findOneById(id);
+    async unfollow(@AuthUser() me: User, @Args('id') id: string) {
+        const user = await this.usersService.findById(id);
 
         if (user === null) {
             throw new ForbiddenException('존재하지 않는 사용자입니다.');
         }
 
-        await this.usersService.unfollow(me, id);
+        await this.usersService.unfollow(me, user);
 
         return true;
     }
