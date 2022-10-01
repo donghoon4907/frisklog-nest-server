@@ -94,16 +94,6 @@ export class UsersService {
         return paginator.response(followings, followerCount);
     }
 
-    user(id: string): Promise<User> {
-        return this.usersRepository.findOne({
-            where: { id: parseInt(id, 10) },
-            relations: {
-                followers: true,
-                platform: true,
-            },
-        });
-    }
-
     findById(id: string): Promise<User> {
         return this.usersRepository.findOneBy({ id: parseInt(id, 10) });
     }
@@ -166,7 +156,7 @@ export class UsersService {
 
         await this.usersRepository.save(me);
 
-        return me;
+        return target;
     }
 
     async unfollow(me: User, target: User): Promise<User> {
@@ -182,6 +172,6 @@ export class UsersService {
             this.usersRepository.save(me);
         }
 
-        return me;
+        return target;
     }
 }

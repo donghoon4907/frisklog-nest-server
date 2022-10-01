@@ -118,6 +118,8 @@ export class User {
     @HideField()
     deletedAt?: Date;
 
+    // lazy relation 활성화: Promise 타입으로 정의
+    // 이후 DB조회 시 조인하지 않아도 쿼리리턴값에 정의하는 것만으로 로드 가능
     @ManyToOne(() => Platform)
     @JoinColumn({ name: 'platformId' })
     @Field(() => Platform, { description: '플랫폼' })
@@ -183,6 +185,11 @@ export class User {
     @IsNumber()
     followingCount?: number;
 
+    // @Field(() => Boolean, { description: '팔로잉여부' })
+    // @IsOptional()
+    // @IsBoolean()
+    // isFollowing?: boolean;
+
     @BeforeInsert()
     @BeforeUpdate()
     updateAvatar() {
@@ -200,17 +207,13 @@ export class User {
     }
 
     generateToken() {
-        const { id, nickname, avatar, isMaster, isKeep } = this;
+        const { id, isKeep } = this;
 
         let expiresIn = '365d';
         if (!isKeep) {
             expiresIn = '3h';
         }
 
-        return sign(
-            { id, nickname, avatar, isMaster, isKeep },
-            process.env.JWT_SECRET,
-            { expiresIn },
-        );
+        return sign({ id }, process.env.JWT_SECRET, { expiresIn });
     }
 }

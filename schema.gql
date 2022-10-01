@@ -213,8 +213,8 @@ type Mutation {
   logIn(email: String!): Boolean!
   verify(input: VerifyUserInput!): User!
   githubLogIn(code: String!): User!
-  follow(id: String!): Boolean!
-  unfollow(id: String!): Boolean!
+  follow(id: String!): User!
+  unfollow(id: String!): User!
   addPost(input: CreatePostDto!): Post!
   updatePost(input: UpdatePostDto!): Post!
   deletePost(id: String!): Post!

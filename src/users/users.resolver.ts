@@ -1,4 +1,11 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import {
+    Resolver,
+    Query,
+    Mutation,
+    Args,
+    ResolveField,
+    Parent,
+} from '@nestjs/graphql';
 import { ForbiddenException, UseGuards } from '@nestjs/common';
 
 import { User } from './user.entity';
@@ -13,6 +20,7 @@ import { AuthUser } from './auth/auth.decorator';
 import { UserStatus } from './user.interface';
 import { FollowingsArgs } from './dto/followings.args';
 import { RecommendersArgs } from './dto/recommenders.args';
+// import { loggedMiddleware } from './user.middleware';
 
 @Resolver((of) => User)
 export class UsersResolver {
@@ -30,7 +38,7 @@ export class UsersResolver {
 
     @Query((returns) => User)
     async user(@Args('id') id: string) {
-        const user = await this.usersService.user(id);
+        const user = await this.usersService.findById(id);
 
         if (user === null) {
             throw new ForbiddenException('존재하지 않는 사용자입니다.');
@@ -151,8 +159,6 @@ export class UsersResolver {
 
         await this.usersService.update(user);
 
-        await user.followings;
-
         user.token = user.generateToken();
 
         return user;
@@ -194,7 +200,7 @@ export class UsersResolver {
         }
     }
 
-    @Mutation((returns) => Boolean)
+    @Mutation((returns) => User)
     @UseGuards(AuthGuard)
     async follow(@AuthUser() me: User, @Args('id') id: string) {
         const user = await this.usersService.findById(id);
@@ -203,12 +209,10 @@ export class UsersResolver {
             throw new ForbiddenException('존재하지 않는 사용자입니다.');
         }
 
-        await this.usersService.follow(me, user);
-
-        return true;
+        return this.usersService.follow(me, user);
     }
 
-    @Mutation((returns) => Boolean)
+    @Mutation((returns) => User)
     @UseGuards(AuthGuard)
     async unfollow(@AuthUser() me: User, @Args('id') id: string) {
         const user = await this.usersService.findById(id);
@@ -217,8 +221,11 @@ export class UsersResolver {
             throw new ForbiddenException('존재하지 않는 사용자입니다.');
         }
 
-        await this.usersService.unfollow(me, user);
-
-        return true;
+        return this.usersService.unfollow(me, user);
     }
+
+    // @ResolveField((returns) => Boolean, { middleware: [loggedMiddleware] })
+    // async isFollowing(@Parent() user: User) {
+    //     return user;
+    // }
 }
