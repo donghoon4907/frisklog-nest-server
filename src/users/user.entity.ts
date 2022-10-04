@@ -180,6 +180,11 @@ export class User {
     @IsArray()
     followings: Promise<User[]>;
 
+    @Field(() => [User])
+    @IsOptional()
+    @IsArray()
+    searchedFollowings?: User[];
+
     @Field(() => Int, { description: '팔로잉수' })
     @IsOptional()
     @IsNumber()

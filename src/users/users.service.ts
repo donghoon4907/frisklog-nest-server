@@ -72,26 +72,31 @@ export class UsersService {
     }
 
     async followings(
-        id: number,
         followingsArgs: FollowingsArgs,
+        authId: number,
     ): Promise<OffsetPaginatedUser> {
-        const { limit, offset } = followingsArgs;
+        const { limit, offset, nickname } = followingsArgs;
 
-        const [user] = await this.usersRepository
+        const qb = this.usersRepository
             .createQueryBuilder('user')
+            .leftJoinAndSelect('user.followers', 'followers')
             .loadRelationCountAndMap('user.postCount', 'user.posts')
             .loadRelationCountAndMap('user.followerCount', 'user.followers')
+            .where('followers.id = :authId', { authId })
             .limit(limit)
-            .offset(offset)
-            .getMany();
+            .offset(offset);
+
+        if (nickname) {
+            qb.andWhere('user.nickname like :nickname', {
+                nickname: `%${nickname}%`,
+            });
+        }
+
+        const [followings, total] = await qb.getManyAndCount();
 
         const paginator = new OffsetPaginator<User>(offset, limit);
 
-        const followings = await user.followings;
-
-        const { followerCount } = user;
-
-        return paginator.response(followings, followerCount);
+        return paginator.response(followings, total);
     }
 
     findById(id: string): Promise<User> {

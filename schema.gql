@@ -133,6 +133,7 @@ type User {
 
   """팔로잉목록"""
   followings: [User!]!
+  searchedFollowings: [User!]
 
   """팔로잉수"""
   followingCount: Int
@@ -191,7 +192,13 @@ type Query {
   ): OffsetPaginatedUser!
   recommenders(offset: Int = 0, limit: Int = 12): OffsetPaginatedUser!
   user(id: String!): User!
-  followings(offset: Int = 0, limit: Int = 12, order: [[String!]!]): OffsetPaginatedUser!
+  followings(
+    offset: Int = 0
+    limit: Int = 12
+
+    """닉네임"""
+    nickname: String
+  ): OffsetPaginatedUser!
   posts(
     offset: Int = 0
     limit: Int = 12

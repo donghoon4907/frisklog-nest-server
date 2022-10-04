@@ -53,7 +53,7 @@ export class UsersResolver {
         @AuthUser() me: User,
         @Args() followingsArgs: FollowingsArgs,
     ) {
-        return this.usersService.followings(me.id, followingsArgs);
+        return this.usersService.followings(followingsArgs, me.id);
     }
 
     @Mutation((returns) => User)

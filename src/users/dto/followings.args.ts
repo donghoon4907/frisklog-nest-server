@@ -6,5 +6,5 @@ import { UsersArgs } from './users.args';
 export class FollowingsArgs extends PickType(UsersArgs, [
     'limit',
     'offset',
-    'order',
+    'nickname',
 ] as const) {}
