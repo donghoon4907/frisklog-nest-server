@@ -81,8 +81,14 @@ type Post {
   commentCount: Float
 }
 
+type Follow {
+  id: String!
+  acceptor: User!
+  requester: User!
+}
+
 type User {
-  id: ID!
+  id: String!
 
   """별명"""
   nickname: String!
@@ -125,15 +131,14 @@ type User {
   """좋아요한포스트목록"""
   likes: [Post!]!
 
-  """팔로워목록"""
-  followers: [User!]!
+  """팔로워 목록"""
+  followers: [Follow!]!
 
   """팔로워수"""
   followerCount: Int
 
-  """팔로잉목록"""
-  followings: [User!]!
-  searchedFollowings: [User!]
+  """팔로워 목록"""
+  followings: [Follow!]!
 
   """팔로잉수"""
   followingCount: Int

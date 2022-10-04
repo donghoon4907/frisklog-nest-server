@@ -83,7 +83,7 @@ export class PostsService {
 
     async likePosts(
         likePostsArgs: LikePostsArgs,
-        authId: number,
+        authId: string,
     ): Promise<OffsetPaginatedPost> {
         const { offset, limit, userId } = likePostsArgs;
 
@@ -110,7 +110,7 @@ export class PostsService {
 
     async followingPosts(
         followingPostArgs: FollowingPostsArgs,
-        authId: number,
+        authId: string,
     ): Promise<OffsetPaginatedPost> {
         const { offset, limit, userId } = followingPostArgs;
 

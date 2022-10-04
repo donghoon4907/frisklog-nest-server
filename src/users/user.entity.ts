@@ -1,6 +1,5 @@
 import {
     Field,
-    ID,
     ObjectType,
     Int,
     registerEnumType,
@@ -14,7 +13,6 @@ import {
     UpdateDateColumn,
     ManyToOne,
     ManyToMany,
-    JoinTable,
     JoinColumn,
     DeleteDateColumn,
     BeforeUpdate,
@@ -36,16 +34,17 @@ import { Platform } from '../platforms/platform.entity';
 import { Post } from '../posts/post.entity';
 import { Comment } from '../comments/comment.entity';
 import { UserStatus } from './user.interface';
+import { Follow } from './follow.entity';
 
 registerEnumType(UserStatus, { name: 'UserStatus' });
 
 @Entity('users')
 @ObjectType()
 export class User {
-    @PrimaryGeneratedColumn()
-    @Field(() => ID)
+    @PrimaryGeneratedColumn('uuid')
+    @Field(() => String)
     @IsNumber()
-    id: number;
+    id: string;
 
     @Column({ comment: 'github_id', nullable: true, unique: true })
     @HideField()
@@ -154,41 +153,49 @@ export class User {
     @IsArray()
     likes: Promise<Post[]>;
 
-    @ManyToMany(() => User, (user) => user.followings)
-    @JoinTable({
-        name: 'follows',
-        joinColumn: {
-            name: 'followingId',
-            referencedColumnName: 'id',
-        },
-        inverseJoinColumn: {
-            name: 'followerId',
-            referencedColumnName: 'id',
-        },
-    })
-    @Field(() => [User], { description: '팔로워목록' })
-    @IsArray()
-    followers: Promise<User[]>;
+    // 2022-10-05 Self relation의 경우 Duplicate entry 오류가 발생하여 커스텀 엔티티로 대체
+    // @ManyToMany(() => User, (user) => user.followings)
+    // @JoinTable({
+    //     name: 'follow',
+    //     joinColumn: {
+    //         name: 'followerId',
+    //         referencedColumnName: 'id',
+    //     },
+    //     inverseJoinColumn: {
+    //         name: 'followingId',
+    //         referencedColumnName: 'id',
+    //     },
+    // })
+    // @Field(() => [User], { description: '팔로워목록' })
+    // @IsArray()
+    // followers: Promise<User[]>;
+    // @ManyToMany(() => User, (user) => user.followers)
+    // @Field(() => [User], { description: '팔로잉목록' })
+    // @IsArray()
+    // followings: Promise<User[]>;
+
+    @OneToMany(() => Follow, (follow) => follow.acceptor)
+    @Field(() => [Follow], { description: '팔로워 목록' })
+    followers: Promise<Follow[]>;
 
     @Field(() => Int, { description: '팔로워수' })
     @IsOptional()
     @IsNumber()
     followerCount?: number;
 
-    @ManyToMany(() => User, (user) => user.followers)
-    @Field(() => [User], { description: '팔로잉목록' })
-    @IsArray()
-    followings: Promise<User[]>;
-
-    @Field(() => [User])
-    @IsOptional()
-    @IsArray()
-    searchedFollowings?: User[];
+    @OneToMany(() => Follow, (follow) => follow.requester)
+    @Field(() => [Follow], { description: '팔로워 목록' })
+    followings: Promise<Follow[]>;
 
     @Field(() => Int, { description: '팔로잉수' })
     @IsOptional()
     @IsNumber()
     followingCount?: number;
+
+    // @Field(() => [User])
+    // @IsOptional()
+    // @IsArray()
+    // searchedFollowings?: User[];
 
     // @Field(() => Boolean, { description: '팔로잉여부' })
     // @IsOptional()
@@ -201,7 +208,7 @@ export class User {
         let avatar = this.avatar;
 
         if (!avatar) {
-            avatar = '/default-avatar.png';
+            avatar = 'default-avatar.png';
         }
 
         const hasDomain = avatar.includes('http');

@@ -14,12 +14,15 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { sendMail } from '../common/nodemailer/send-mail.util';
 import { FollowingsArgs } from './dto/followings.args';
 import { RecommendersArgs } from './dto/recommenders.args';
+import { Follow } from './follow.entity';
 
 @Injectable()
 export class UsersService {
     constructor(
         @InjectRepository(User)
         private readonly usersRepository: Repository<User>,
+        @InjectRepository(Follow)
+        private readonly followsRepository: Repository<Follow>,
         private readonly httpService: HttpService,
     ) {}
 
@@ -73,7 +76,7 @@ export class UsersService {
 
     async followings(
         followingsArgs: FollowingsArgs,
-        authId: number,
+        authId: string,
     ): Promise<OffsetPaginatedUser> {
         const { limit, offset, nickname } = followingsArgs;
 
@@ -100,11 +103,11 @@ export class UsersService {
     }
 
     findById(id: string): Promise<User> {
-        return this.usersRepository.findOneBy({ id: parseInt(id, 10) });
+        return this.usersRepository.findOneBy({ id });
     }
 
-    findByNickname(nickname: string, platformId: number = 1): Promise<User> {
-        return this.usersRepository.findOneBy({ nickname, platformId });
+    findByNickname(nickname: string): Promise<User> {
+        return this.usersRepository.findOneBy({ nickname });
     }
 
     findByEmail(email: string, platformId: number = 1): Promise<User> {
@@ -157,9 +160,14 @@ export class UsersService {
     }
 
     async follow(me: User, target: User): Promise<User> {
-        (await me.followings).push(target);
+        // (await me.followings).push(target);
+        const follow = new Follow();
 
-        await this.usersRepository.save(me);
+        follow.acceptor = Promise.resolve(target);
+
+        follow.requester = Promise.resolve(me);
+
+        await this.followsRepository.save(follow);
 
         return target;
     }
@@ -167,14 +175,12 @@ export class UsersService {
     async unfollow(me: User, target: User): Promise<User> {
         const followings = await me.followings;
 
-        const index = followings.findIndex(
-            (following) => following.id == target.id,
-        );
+        for (let i = 0; i < followings.length; i++) {
+            const acceptor = await followings[i].acceptor;
 
-        if (index !== -1) {
-            followings.splice(index, 1);
-
-            this.usersRepository.save(me);
+            if (target.id === acceptor.id) {
+                this.followsRepository.remove(followings[i]);
+            }
         }
 
         return target;

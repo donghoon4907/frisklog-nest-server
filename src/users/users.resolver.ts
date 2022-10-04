@@ -87,7 +87,6 @@ export class UsersResolver {
             if (nickname !== me.nickname) {
                 const existUser = await this.usersService.findByNickname(
                     nickname,
-                    me.platformId,
                 );
 
                 if (existUser !== null) {

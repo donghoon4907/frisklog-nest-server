@@ -7,9 +7,10 @@ import { UsersService } from './users.service';
 import { UsersResolver } from './users.resolver';
 import { UserSubscriber } from './user.subscriber';
 import { DateScalar } from '../common/scalars/date.scalar';
+import { Follow } from './follow.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([User]), HttpModule],
+    imports: [TypeOrmModule.forFeature([User, Follow]), HttpModule],
     providers: [UsersService, UsersResolver, UserSubscriber, DateScalar],
 })
 export class UsersModule {}
