@@ -1,4 +1,4 @@
-import { Field, HideField, ID, ObjectType } from '@nestjs/graphql';
+import { Field, HideField, ObjectType } from '@nestjs/graphql';
 import {
     Column,
     Entity,
@@ -27,10 +27,9 @@ import {
 @Entity('posts')
 @ObjectType()
 export class Post {
-    @PrimaryGeneratedColumn()
-    @Field(() => ID)
-    @IsNumber()
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    @Field(() => String)
+    id: string;
 
     @Column({
         comment: '내용',
@@ -67,7 +66,7 @@ export class Post {
 
     @Column({ name: 'userId' })
     @HideField()
-    userId: number;
+    userId: string;
 
     @ManyToMany(() => User, (user) => user.likes)
     @JoinTable({

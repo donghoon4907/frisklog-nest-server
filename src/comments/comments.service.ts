@@ -25,7 +25,7 @@ export class CommentsService {
         const [comments, total] = await this.commentsRepository.findAndCount({
             where: {
                 post: {
-                    id: parseInt(postId, 10),
+                    id: postId,
                 },
             },
             relations: {
@@ -45,7 +45,7 @@ export class CommentsService {
     }
 
     async findOneById(id: string) {
-        return this.commentsRepository.findOneBy({ id: parseInt(id, 10) });
+        return this.commentsRepository.findOneBy({ id });
     }
 
     async create(createCommentDto: CreateCommentDto, user: User) {
@@ -55,7 +55,7 @@ export class CommentsService {
 
         comment.content = content;
 
-        comment.postId = parseInt(postId, 10);
+        comment.postId = postId;
 
         comment.user = user;
 

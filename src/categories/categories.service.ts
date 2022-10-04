@@ -34,7 +34,7 @@ export class CategoriesService {
 
     findById(id: string) {
         return this.categoriesRepository.findOne({
-            where: { id: parseInt(id, 10) },
+            where: { id },
         });
     }
 

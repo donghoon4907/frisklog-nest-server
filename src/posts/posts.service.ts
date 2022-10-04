@@ -56,7 +56,7 @@ export class PostsService {
     }
 
     async findById(id: string): Promise<Post> {
-        return this.postsRepository.findOneBy({ id: parseInt(id, 10) });
+        return this.postsRepository.findOneBy({ id });
     }
 
     async categoryPosts(

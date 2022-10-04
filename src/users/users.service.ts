@@ -110,8 +110,8 @@ export class UsersService {
         return this.usersRepository.findOneBy({ nickname });
     }
 
-    findByEmail(email: string, platformId: number = 1): Promise<User> {
-        return this.usersRepository.findOneBy({ email, platformId });
+    findByEmail(email: string): Promise<User> {
+        return this.usersRepository.findOneBy({ email });
     }
 
     findByGithubId(githubId: number): Promise<User> {

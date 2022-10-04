@@ -1,4 +1,4 @@
-import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
 import { Column, Entity, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
 
@@ -7,10 +7,9 @@ import { Post } from '../posts/post.entity';
 @Entity('categories')
 @ObjectType()
 export class Category {
-    @PrimaryGeneratedColumn()
-    @Field(() => ID)
-    @IsNumber()
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    @Field(() => String)
+    id: string;
 
     @Column({
         comment: '카테고리명',

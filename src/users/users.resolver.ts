@@ -3,8 +3,8 @@ import {
     Query,
     Mutation,
     Args,
-    ResolveField,
-    Parent,
+    // ResolveField,
+    // Parent,
 } from '@nestjs/graphql';
 import { ForbiddenException, UseGuards } from '@nestjs/common';
 
@@ -223,6 +223,7 @@ export class UsersResolver {
         return this.usersService.unfollow(me, user);
     }
 
+    // GraphQL computed field 사용법
     // @ResolveField((returns) => Boolean, { middleware: [loggedMiddleware] })
     // async isFollowing(@Parent() user: User) {
     //     return user;

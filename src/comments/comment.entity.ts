@@ -1,4 +1,4 @@
-import { Field, HideField, ID, ObjectType } from '@nestjs/graphql';
+import { Field, HideField, ObjectType } from '@nestjs/graphql';
 import {
     Column,
     Entity,
@@ -9,7 +9,7 @@ import {
     JoinColumn,
     DeleteDateColumn,
 } from 'typeorm';
-import { IsDateString, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsDateString, IsString } from 'class-validator';
 
 import { User } from '../users/user.entity';
 import { Post } from '../posts/post.entity';
@@ -17,10 +17,9 @@ import { Post } from '../posts/post.entity';
 @Entity('comments')
 @ObjectType()
 export class Comment {
-    @PrimaryGeneratedColumn()
-    @Field(() => ID)
-    @IsNumber()
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    @Field(() => String)
+    id: string;
 
     @Column({
         comment: '내용',
@@ -51,7 +50,7 @@ export class Comment {
 
     @Column({ name: 'postId' })
     @HideField()
-    postId: number;
+    postId: string;
 
     @ManyToOne(() => User)
     @JoinColumn({ name: 'userId' })
@@ -60,5 +59,5 @@ export class Comment {
 
     @Column({ name: 'userId' })
     @HideField()
-    userId: number;
+    userId: string;
 }

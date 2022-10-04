@@ -43,7 +43,6 @@ registerEnumType(UserStatus, { name: 'UserStatus' });
 export class User {
     @PrimaryGeneratedColumn('uuid')
     @Field(() => String)
-    @IsNumber()
     id: string;
 
     @Column({ comment: 'github_id', nullable: true, unique: true })
