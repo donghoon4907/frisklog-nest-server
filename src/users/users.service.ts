@@ -102,6 +102,21 @@ export class UsersService {
         return paginator.response(followings, total);
     }
 
+    async isFollowing(acceptorId: string, requesterId: string) {
+        const following = await this.followsRepository.findOne({
+            where: {
+                acceptor: {
+                    id: acceptorId,
+                },
+                requester: {
+                    id: requesterId,
+                },
+            },
+        });
+
+        return following !== null;
+    }
+
     findById(id: string): Promise<User> {
         return this.usersRepository.findOneBy({ id });
     }

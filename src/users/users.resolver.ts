@@ -3,8 +3,9 @@ import {
     Query,
     Mutation,
     Args,
-    // ResolveField,
-    // Parent,
+    ResolveField,
+    Parent,
+    Context,
 } from '@nestjs/graphql';
 import { ForbiddenException, UseGuards } from '@nestjs/common';
 
@@ -20,7 +21,7 @@ import { AuthUser } from './auth/auth.decorator';
 import { UserStatus } from './user.interface';
 import { FollowingsArgs } from './dto/followings.args';
 import { RecommendersArgs } from './dto/recommenders.args';
-// import { loggedMiddleware } from './user.middleware';
+import { decodeToken, getBearerToken } from 'src/common/context';
 
 @Resolver((of) => User)
 export class UsersResolver {
@@ -223,9 +224,33 @@ export class UsersResolver {
         return this.usersService.unfollow(me, user);
     }
 
-    // GraphQL computed field 사용법
-    // @ResolveField((returns) => Boolean, { middleware: [loggedMiddleware] })
-    // async isFollowing(@Parent() user: User) {
-    //     return user;
-    // }
+    @ResolveField((returns) => Boolean)
+    isFollowing(@Parent() user: User, @Context() ctx: any) {
+        const token = getBearerToken(ctx);
+
+        if (token) {
+            const { id } = decodeToken(token);
+
+            if (id) {
+                return this.usersService.isFollowing(user.id, id);
+            }
+        } else {
+            return false;
+        }
+    }
+
+    @ResolveField((returns) => Boolean)
+    async isMe(@Parent() user: User, @Context() ctx: any) {
+        const token = getBearerToken(ctx);
+
+        if (token) {
+            const { id } = decodeToken(token);
+
+            if (id) {
+                return user.id === id;
+            }
+        } else {
+            return false;
+        }
+    }
 }

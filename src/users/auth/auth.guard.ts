@@ -10,6 +10,7 @@ import { Repository } from 'typeorm';
 import { JwtPayload, verify } from 'jsonwebtoken';
 
 import { User } from '../user.entity';
+import { decodeToken, getBearerToken } from 'src/common/context';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -19,30 +20,36 @@ export class AuthGuard implements CanActivate {
     ) {}
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
+        let next = true;
+
         const ctx = GqlExecutionContext.create(context);
 
-        const { req } = ctx.getContext();
+        const token = getBearerToken(ctx.getContext());
 
-        const { authorization } = req.headers;
+        if (token) {
+            const { id } = decodeToken(token);
 
-        try {
-            const token = authorization.split(' ')[1] as string;
+            if (id) {
+                const user = await this.usersRepository.findOneBy({ id });
 
-            const { id } = verify(token, process.env.JWT_SECRET) as JwtPayload;
-
-            const user = await this.usersRepository.findOneBy({ id });
-
-            if (user === null) {
-                throw new Error();
+                if (user === null) {
+                    next = false;
+                } else {
+                    ctx.getContext().user = user;
+                }
+            } else {
+                next = false;
             }
+        } else {
+            next = false;
+        }
 
-            ctx.getContext().user = user;
-        } catch {
+        if (!next) {
             throw new UnauthorizedException(
                 '세션이 만료되었습니다. 다시 로그인 해주세요.',
             );
         }
 
-        return true;
+        return next;
     }
 }

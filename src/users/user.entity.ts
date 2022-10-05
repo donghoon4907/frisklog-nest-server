@@ -196,10 +196,15 @@ export class User {
     // @IsArray()
     // searchedFollowings?: User[];
 
-    // @Field(() => Boolean, { description: '팔로잉여부' })
-    // @IsOptional()
-    // @IsBoolean()
-    // isFollowing?: boolean;
+    @Field(() => Boolean, { description: '팔로잉여부' })
+    @IsOptional()
+    @IsBoolean()
+    isFollowing?: boolean;
+
+    @Field(() => Boolean, { description: '자신여부' })
+    @IsOptional()
+    @IsBoolean()
+    isMe?: boolean;
 
     @BeforeInsert()
     @BeforeUpdate()
