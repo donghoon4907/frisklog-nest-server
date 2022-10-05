@@ -21,7 +21,7 @@ type Platform {
 }
 
 type Category {
-  id: ID!
+  id: String!
 
   """카테고리명"""
   content: String!
@@ -34,7 +34,7 @@ type Category {
 }
 
 type Comment {
-  id: ID!
+  id: String!
 
   """내용"""
   content: String!
@@ -52,7 +52,7 @@ type Comment {
 scalar Date
 
 type Post {
-  id: ID!
+  id: String!
 
   """내용"""
   content: String!

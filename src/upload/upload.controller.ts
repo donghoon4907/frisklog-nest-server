@@ -31,6 +31,6 @@ export class UploadController {
         @UploadedFile()
         file: Express.Multer.File,
     ) {
-        return file.filename;
+        return `upload/${file.filename}`;
     }
 }
