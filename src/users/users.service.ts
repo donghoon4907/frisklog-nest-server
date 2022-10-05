@@ -83,9 +83,10 @@ export class UsersService {
         const qb = this.usersRepository
             .createQueryBuilder('user')
             .leftJoinAndSelect('user.followers', 'followers')
+            .innerJoinAndSelect('followers.requester', 'requester')
             .loadRelationCountAndMap('user.postCount', 'user.posts')
             .loadRelationCountAndMap('user.followerCount', 'user.followers')
-            .where('followers.id = :authId', { authId })
+            .where('requester.id = :authId', { authId })
             .limit(limit)
             .offset(offset);
 

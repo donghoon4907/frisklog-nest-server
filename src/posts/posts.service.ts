@@ -118,9 +118,10 @@ export class PostsService {
             .createQueryBuilder('post')
             .innerJoinAndSelect('post.user', 'user')
             .leftJoinAndSelect('user.followers', 'followers')
+            .innerJoinAndSelect('followers.requester', 'requester')
             .loadRelationCountAndMap('post.likeCount', 'post.likers')
             .loadRelationCountAndMap('post.commentCount', 'post.comments')
-            .where('followers.id = :authId', { authId });
+            .where('requester.id = :authId', { authId });
 
         if (userId) {
             qb.where('user.id = :userId', {
