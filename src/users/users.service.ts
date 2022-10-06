@@ -59,13 +59,13 @@ export class UsersService {
 
         const [recommenders, total] = await this.usersRepository
             .createQueryBuilder('user')
-            .addSelect((qb) => {
-                return qb.select('COUNT(*)', 'postCount').from(Post, 'post');
-            }, 'postCount')
+            .addSelect('COUNT(posts.id) as postCount')
+            .leftJoin('user.posts', 'posts')
             .loadRelationCountAndMap('user.postCount', 'user.posts')
             .loadRelationCountAndMap('user.followerCount', 'user.followers')
             .limit(limit)
             .offset(offset)
+            .groupBy('user.id')
             .orderBy('postCount', 'DESC')
             .getManyAndCount();
 
