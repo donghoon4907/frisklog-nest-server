@@ -103,7 +103,7 @@ export class Post {
             referencedColumnName: 'id',
         },
         inverseJoinColumn: {
-            name: 'userId',
+            name: 'categoryId',
             referencedColumnName: 'id',
         },
     })

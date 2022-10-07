@@ -54,7 +54,7 @@ export class PostsService {
     }
 
     async findById(id: string): Promise<Post> {
-        return this.postsRepository.findOneBy({ id });
+        return this.postsRepository.findOne({ where: { id } });
     }
 
     async categoryPosts(
@@ -179,26 +179,20 @@ export class PostsService {
         return this.postsRepository.softRemove(post);
     }
 
-    async like(post: Post, me: User): Promise<Post> {
-        (await post.likers).push(me);
-
-        await this.postsRepository.save(post);
-
-        return post;
+    like(post: Post, me: User) {
+        return this.postsRepository
+            .createQueryBuilder('post')
+            .relation('likers')
+            .of(post)
+            .add(me);
     }
 
-    async unlike(post: Post, me: User): Promise<Post> {
-        const likers = await post.likers;
-
-        const index = likers.findIndex((liker) => liker.id == me.id);
-
-        if (index !== -1) {
-            likers.splice(index, 1);
-
-            await this.postsRepository.save(post);
-        }
-
-        return post;
+    unlike(post: Post, me: User) {
+        return this.postsRepository
+            .createQueryBuilder('post')
+            .relation('likers')
+            .of(post)
+            .remove(me);
     }
 
     async isLiked(postId: string, authId: string) {

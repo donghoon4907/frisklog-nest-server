@@ -22,7 +22,7 @@ export class Category {
     @ManyToMany(() => Post, (post) => post.categories)
     @Field(() => [Post], { description: '게시물목록' })
     @IsArray()
-    posts: Post[];
+    posts: Promise<Post[]>;
 
     @Field(() => Int, { description: '게시물수' })
     @IsOptional()
