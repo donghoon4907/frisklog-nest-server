@@ -1,4 +1,12 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import {
+    Resolver,
+    Query,
+    Mutation,
+    Args,
+    ResolveField,
+    Parent,
+    Context,
+} from '@nestjs/graphql';
 import { ForbiddenException, UseGuards } from '@nestjs/common';
 
 import { Post } from './post.entity';
@@ -13,6 +21,7 @@ import { AuthGuard } from '../users/auth/auth.guard';
 import { AuthUser } from '../users/auth/auth.decorator';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { decodeToken, getBearerToken } from 'src/common/context';
 
 @Resolver((of) => Post)
 export class PostsResolver {
@@ -101,5 +110,20 @@ export class PostsResolver {
         await this.postsService.unlike(post, me);
 
         return true;
+    }
+
+    @ResolveField((returns) => Boolean)
+    async isLiked(@Parent() post: Post, @Context() ctx: any) {
+        const token = getBearerToken(ctx);
+
+        if (token) {
+            const { id } = decodeToken(token);
+
+            if (id) {
+                return this.postsService.isLiked(post.id, id);
+            }
+        } else {
+            return false;
+        }
     }
 }

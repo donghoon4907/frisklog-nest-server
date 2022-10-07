@@ -18,6 +18,7 @@ import { Comment } from '../comments/comment.entity';
 import { Category } from '../categories/category.entity';
 import {
     IsArray,
+    IsBoolean,
     IsDateString,
     IsNumber,
     IsOptional,
@@ -84,10 +85,15 @@ export class Post {
     @IsArray()
     likers: Promise<User[]>;
 
+    @Field(() => Boolean, { description: '좋아요한 포스트여부' })
+    @IsOptional()
+    @IsBoolean()
+    isLiked?: boolean;
+
     @Field({ description: '좋아요수', nullable: true })
     @IsOptional()
     @IsNumber()
-    likeCount?: number;
+    likedCount?: number;
 
     @ManyToMany(() => Category, (category) => category.posts)
     @JoinTable({

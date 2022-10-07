@@ -30,10 +30,8 @@ export class PostsService {
         const qb = this.postsRepository
             .createQueryBuilder('post')
             .innerJoinAndSelect('post.user', 'user')
-            .loadRelationCountAndMap('post.likeCount', 'post.likers')
+            .loadRelationCountAndMap('post.likedCount', 'post.likers')
             .loadRelationCountAndMap('post.commentCount', 'post.comments')
-            .leftJoinAndSelect('post.likers', 'likers')
-            .leftJoinAndSelect('post.categories', 'categories')
             .orderBy('post.createdAt', 'DESC')
             .limit(limit)
             .offset(offset);
@@ -68,7 +66,7 @@ export class PostsService {
             .createQueryBuilder('post')
             .innerJoinAndSelect('post.user', 'user')
             .leftJoinAndSelect('post.categories', 'categories')
-            .loadRelationCountAndMap('post.likeCount', 'post.likers')
+            .loadRelationCountAndMap('post.likedCount', 'post.likers')
             .loadRelationCountAndMap('post.commentCount', 'post.comments')
             .where('categories.content = :category', {
                 category,
@@ -91,7 +89,7 @@ export class PostsService {
             .createQueryBuilder('post')
             .innerJoinAndSelect('post.user', 'user')
             .leftJoinAndSelect('post.likers', 'likers')
-            .loadRelationCountAndMap('post.likeCount', 'post.likers')
+            .loadRelationCountAndMap('post.likedCount', 'post.likers')
             .loadRelationCountAndMap('post.commentCount', 'post.comments')
             .where('likers.id = :authId', { authId });
 
@@ -119,12 +117,15 @@ export class PostsService {
             .innerJoinAndSelect('post.user', 'user')
             .leftJoinAndSelect('user.followers', 'followers')
             .innerJoinAndSelect('followers.requester', 'requester')
-            .loadRelationCountAndMap('post.likeCount', 'post.likers')
+            .loadRelationCountAndMap('post.likedCount', 'post.likers')
             .loadRelationCountAndMap('post.commentCount', 'post.comments')
-            .where('requester.id = :authId', { authId });
+            .where('requester.id = :authId', { authId })
+            .orderBy('post.createdAt', 'DESC')
+            .limit(limit)
+            .offset(offset);
 
         if (userId) {
-            qb.where('user.id = :userId', {
+            qb.andWhere('user.id = :userId', {
                 userId,
             });
         }
@@ -198,5 +199,18 @@ export class PostsService {
         }
 
         return post;
+    }
+
+    async isLiked(postId: string, authId: string) {
+        const isLiked = await this.postsRepository.findOne({
+            where: {
+                likers: {
+                    id: authId,
+                },
+                id: postId,
+            },
+        });
+
+        return isLiked !== null;
     }
 }
