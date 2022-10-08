@@ -59,4 +59,46 @@ export class CategoriesService {
 
         return category;
     }
+
+    async relatedCategories(category: Category) {
+        const posts = await category.posts;
+
+        const relatedCategories = {};
+
+        for (let i = 0; i < posts.length; i++) {
+            const postCategories = await posts[i].categories;
+
+            for (let j = 0; j < postCategories.length; j++) {
+                const content = postCategories[j].content;
+
+                if (content === category.content) {
+                    continue;
+                }
+
+                if (relatedCategories.hasOwnProperty(content)) {
+                    relatedCategories[content] += 1;
+                } else {
+                    relatedCategories[content] = 1;
+                }
+            }
+        }
+
+        const sortedCategories = Object.keys(relatedCategories).sort((a, b) => {
+            if (relatedCategories[a] > relatedCategories[b]) {
+                return -1;
+            } else {
+                return 1;
+            }
+        });
+
+        return sortedCategories.map((content) => {
+            const entity = new Category();
+
+            entity.content = content;
+
+            entity.postCount = relatedCategories[content];
+
+            return entity;
+        });
+    }
 }

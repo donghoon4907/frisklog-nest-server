@@ -1,6 +1,14 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
-import { Column, Entity, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
+import {
+    Column,
+    Entity,
+    PrimaryGeneratedColumn,
+    ManyToMany,
+    ManyToOne,
+    OneToMany,
+    RelationCount,
+} from 'typeorm';
 
 import { Post } from '../posts/post.entity';
 
@@ -28,4 +36,10 @@ export class Category {
     @IsOptional()
     @IsNumber()
     postCount?: number;
+
+    // @ManyToOne((type) => Category, (category) => category.children)
+    // parent: Promise<Category>;
+
+    // @OneToMany((type) => Category, (category) => category.parent)
+    // children: Promise<Category[]>;
 }

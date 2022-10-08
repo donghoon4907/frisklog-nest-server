@@ -17,4 +17,15 @@ export class CategoriesResolver {
             recommendCategoriesArgs,
         );
     }
+
+    @Query((returns) => [Category])
+    async relatedCategories(@Args('content') content: string) {
+        const category = await this.categoriesService.findByContent(content);
+
+        if (category === null) {
+            return [];
+        }
+
+        return this.categoriesService.relatedCategories(category);
+    }
 }

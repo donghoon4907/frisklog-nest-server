@@ -225,6 +225,7 @@ type Query {
   likePosts(offset: Int = 0, limit: Int = 12, userId: String): OffsetPaginatedPost!
   followingPosts(offset: Int = 0, limit: Int = 12, userId: String): OffsetPaginatedPost!
   recommendCategories(offset: Int = 0, limit: Int = 12): OffsetPaginatedCategory!
+  relatedCategories(content: String!): [Category!]!
   comments(offset: Int = 0, limit: Int = 12, postId: String!, order: [[String!]!]): OffsetPaginatedComment!
 }
 
