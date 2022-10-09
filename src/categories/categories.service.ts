@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { Category } from './category.entity';
-import { Post } from '../posts/post.entity';
 import { OffsetPaginatedCategory } from './dto/categories.response';
 import { RecommendCategoriesArgs } from './dto/recommend-categories.args';
 import { OffsetPaginator } from '../common/paging/offset/offset.paginator';

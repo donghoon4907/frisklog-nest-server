@@ -65,7 +65,7 @@ export class PostsService {
         const qb = this.postsRepository
             .createQueryBuilder('post')
             .innerJoinAndSelect('post.user', 'user')
-            .leftJoinAndSelect('post.categories', 'categories')
+            .leftJoin('post.categories', 'categories')
             .loadRelationCountAndMap('post.likedCount', 'post.likers')
             .loadRelationCountAndMap('post.commentCount', 'post.comments')
             .where('categories.content = :category', {
