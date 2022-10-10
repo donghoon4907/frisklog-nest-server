@@ -63,7 +63,7 @@ export class Post {
     @ManyToOne(() => User)
     @JoinColumn({ name: 'userId' })
     @Field(() => User, { description: '작성자' })
-    user: User;
+    user: Promise<User>;
 
     @Column({ name: 'userId' })
     @HideField()

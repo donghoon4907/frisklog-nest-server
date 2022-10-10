@@ -39,7 +39,7 @@ export class PostsService {
         if (searchKeyword) {
             qb.andWhere('post.content like :searchKeyword', {
                 searchKeyword: `%${searchKeyword}%`,
-            });
+            }).orWhere('user.nickname like :searchKeyword');
         }
 
         if (userId) {
@@ -144,7 +144,7 @@ export class PostsService {
 
         post.content = content;
 
-        post.user = user;
+        post.userId = user.id;
 
         return this.setPostCategories(post, categories);
     }

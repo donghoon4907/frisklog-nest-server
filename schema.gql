@@ -202,7 +202,6 @@ type Query {
 
     """닉네임"""
     nickname: String
-    order: [[String!]!]
   ): OffsetPaginatedUser!
   recommenders(offset: Int = 0, limit: Int = 12): OffsetPaginatedUser!
   user(id: String!): User!

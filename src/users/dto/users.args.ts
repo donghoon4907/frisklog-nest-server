@@ -14,8 +14,4 @@ export class UsersArgs {
     @Field({ description: '닉네임', nullable: true })
     @IsOptional()
     nickname?: string;
-
-    @Field(() => [[String]], { nullable: true })
-    @IsOptional()
-    order?: string[][];
 }
