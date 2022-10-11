@@ -35,6 +35,7 @@ import { Post } from '../posts/post.entity';
 import { Comment } from '../comments/comment.entity';
 import { UserStatus } from './user.interface';
 import { Follow } from './follow.entity';
+import { Attendance } from 'src/attendance/attendance.entity';
 
 registerEnumType(UserStatus, { name: 'UserStatus' });
 
@@ -205,6 +206,19 @@ export class User {
     @IsOptional()
     @IsBoolean()
     isMe?: boolean;
+
+    @OneToMany(() => Attendance, (attendance) => attendance.user, {
+        onDelete: 'CASCADE',
+    })
+    @Field(() => [Attendance], { description: '작성한포스트목록' })
+    @IsArray()
+    attendances: Promise<Attendance[]>;
+
+    @Column({ comment: '최근 접속일', nullable: true })
+    @Field()
+    @IsOptional()
+    @IsDateString()
+    lastAccessAt?: Date;
 
     @BeforeInsert()
     @BeforeUpdate()

@@ -19,6 +19,7 @@ import { PostsModule } from './posts/posts.module';
 import { CommentsModule } from './comments/comments.module';
 import { CategoriesModule } from './categories/categories.module';
 import { UploadController } from './upload/upload.controller';
+import { AttendanceModule } from './attendance/attendance.module';
 
 @Module({
     imports: [
@@ -70,6 +71,7 @@ import { UploadController } from './upload/upload.controller';
         PostsModule,
         CommentsModule,
         CategoriesModule,
+        AttendanceModule,
     ],
     providers: [],
     controllers: [UploadController],

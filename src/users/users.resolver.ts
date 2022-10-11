@@ -153,15 +153,9 @@ export class UsersResolver {
             throw new ForbiddenException('보안문자가 일치하지 않습니다.');
         }
 
-        user.status = UserStatus.ONLINE;
-
         user.isKeep = isKeep;
 
-        await this.usersService.update(user);
-
-        user.token = user.generateToken();
-
-        return user;
+        return this.usersService.verify(user);
     }
 
     @Mutation((returns) => User)
@@ -190,9 +184,7 @@ export class UsersResolver {
 
             user.isKeep = true;
 
-            user.token = user.generateToken();
-
-            return user;
+            return this.usersService.verify(user);
         } catch (e) {
             console.log(e.message);
 

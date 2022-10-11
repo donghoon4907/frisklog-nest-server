@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like } from 'typeorm';
 import { HttpService } from '@nestjs/axios';
@@ -15,6 +15,8 @@ import { sendMail } from '../common/nodemailer/send-mail.util';
 import { FollowingsArgs } from './dto/followings.args';
 import { RecommendersArgs } from './dto/recommenders.args';
 import { Follow } from './follow.entity';
+import { AttendanceService } from '../attendance/attendance.service';
+import { UserStatus } from './user.interface';
 
 @Injectable()
 export class UsersService {
@@ -23,6 +25,8 @@ export class UsersService {
         private readonly usersRepository: Repository<User>,
         @InjectRepository(Follow)
         private readonly followsRepository: Repository<Follow>,
+        @Inject(forwardRef(() => AttendanceService))
+        private readonly attendanceService: AttendanceService,
         private readonly httpService: HttpService,
     ) {}
 
@@ -169,8 +173,24 @@ export class UsersService {
         return user;
     }
 
-    async update(me: User): Promise<User> {
+    async update(me: User) {
         await this.usersRepository.save(me);
+
+        return me;
+    }
+
+    async verify(me: User) {
+        me.status = UserStatus.ONLINE;
+
+        me.captcha = null;
+
+        me.lastAccessAt = new Date();
+
+        await this.update(me);
+
+        await this.attendanceService.findOrCreate(me.id);
+
+        me.token = me.generateToken();
 
         return me;
     }

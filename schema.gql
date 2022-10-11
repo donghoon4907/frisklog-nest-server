@@ -90,6 +90,14 @@ type Follow {
   requester: User!
 }
 
+type Attendance {
+  id: String!
+
+  """사용자"""
+  user: User!
+  createdAt: Date!
+}
+
 type User {
   id: String!
 
@@ -151,6 +159,10 @@ type User {
 
   """자신여부"""
   isMe: Boolean
+
+  """작성한포스트목록"""
+  attendances: [Attendance!]!
+  lastAccessAt: Date
 }
 
 type OffsetMetadata {
