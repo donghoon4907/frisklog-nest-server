@@ -36,6 +36,7 @@ import { Comment } from '../comments/comment.entity';
 import { UserStatus } from './user.interface';
 import { Follow } from './follow.entity';
 import { Attendance } from 'src/attendance/attendance.entity';
+import { Notification } from 'src/notifications/notification.entity';
 
 registerEnumType(UserStatus, { name: 'UserStatus' });
 
@@ -219,6 +220,20 @@ export class User {
     @IsOptional()
     @IsDateString()
     lastAccessAt?: Date;
+
+    @OneToMany(() => Notification, (noti) => noti.target, {
+        onDelete: 'CASCADE',
+    })
+    @Field(() => [Notification], { description: '받은 알림 목록' })
+    @IsArray()
+    receiveNotifications: Promise<Notification[]>;
+
+    @OneToMany(() => Notification, (noti) => noti.user, {
+        onDelete: 'CASCADE',
+    })
+    @Field(() => [Notification], { description: '보낸 알림 목록' })
+    @IsArray()
+    sendNotifications: Promise<Notification[]>;
 
     @BeforeInsert()
     @BeforeUpdate()

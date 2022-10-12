@@ -98,6 +98,24 @@ type Attendance {
   createdAt: Date!
 }
 
+type Notification {
+  id: String!
+
+  """발신자"""
+  user: User!
+
+  """수신자"""
+  target: User!
+
+  """내용"""
+  content: String!
+
+  """링크"""
+  url: String!
+  createdAt: Date!
+  readedAt: Date
+}
+
 type User {
   id: String!
 
@@ -163,6 +181,12 @@ type User {
   """작성한포스트목록"""
   attendances: [Attendance!]!
   lastAccessAt: Date
+
+  """받은 알림 목록"""
+  receiveNotifications: [Notification!]!
+
+  """보낸 알림 목록"""
+  sendNotifications: [Notification!]!
 }
 
 type OffsetMetadata {

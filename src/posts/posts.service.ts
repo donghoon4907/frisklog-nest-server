@@ -13,7 +13,8 @@ import { FollowingPostsArgs } from './dto/following-posts.args';
 import { UpdatePostInput } from './dto/update-post.dto';
 import { CreatePostDto } from './dto/create-post.dto';
 // import { CategoryRepository } from '../categories/category.repository';
-import { CategoriesService } from 'src/categories/categories.service';
+import { CategoriesService } from '../categories/categories.service';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class PostsService {
@@ -21,7 +22,9 @@ export class PostsService {
         @InjectRepository(Post)
         private readonly postsRepository: Repository<Post>,
         @Inject(forwardRef(() => CategoriesService))
-        private readonly categoriesService: CategoriesService, // private readonly categoriesRepository: CategoryRepository,
+        private readonly categoriesService: CategoriesService,
+        @Inject(forwardRef(() => NotificationsService))
+        private readonly notificationsService: NotificationsService, // private readonly categoriesRepository: CategoryRepository,
     ) {}
 
     async posts(postsArgs: PostsArgs): Promise<OffsetPaginatedPost> {
@@ -144,9 +147,15 @@ export class PostsService {
 
         post.content = content;
 
-        post.userId = user.id;
+        post.user = Promise.resolve(user);
 
-        return this.setPostCategories(post, categories);
+        await this.setPostCategories(post, categories);
+
+        await this.postsRepository.save(post);
+
+        await this.sendNotificationToFollowers(user);
+
+        return post;
     }
 
     async update(updatePostInput: UpdatePostInput, post: Post): Promise<Post> {
@@ -172,7 +181,26 @@ export class PostsService {
             }
         }
 
-        return this.postsRepository.save(post);
+        return post;
+    }
+
+    async sendNotificationToFollowers(user: User) {
+        const followers = await user.followers;
+
+        for (let i = 0; i < followers.length; i++) {
+            const target = await followers[i].requester;
+
+            await this.notificationsService.createNotification(
+                {
+                    content: '새로운 포스트 작성',
+                    url: `/user/${user.id}`,
+                },
+                user,
+                target,
+            );
+        }
+
+        return true;
     }
 
     async delete(post: Post): Promise<Post> {

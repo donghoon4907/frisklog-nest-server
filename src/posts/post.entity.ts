@@ -65,10 +65,6 @@ export class Post {
     @Field(() => User, { description: '작성자' })
     user: Promise<User>;
 
-    @Column({ name: 'userId' })
-    @HideField()
-    userId: string;
-
     @ManyToMany(() => User, (user) => user.likes)
     @JoinTable({
         name: 'likes',

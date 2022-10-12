@@ -20,6 +20,7 @@ import { CommentsModule } from './comments/comments.module';
 import { CategoriesModule } from './categories/categories.module';
 import { UploadController } from './upload/upload.controller';
 import { AttendanceModule } from './attendance/attendance.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
     imports: [
@@ -72,6 +73,7 @@ import { AttendanceModule } from './attendance/attendance.module';
         CommentsModule,
         CategoriesModule,
         AttendanceModule,
+        NotificationsModule,
     ],
     providers: [],
     controllers: [UploadController],
