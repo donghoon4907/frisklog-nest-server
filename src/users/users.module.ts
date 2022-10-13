@@ -1,6 +1,5 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { HttpModule } from '@nestjs/axios';
 
 import { User } from './user.entity';
 import { UsersService } from './users.service';
@@ -9,12 +8,13 @@ import { UserSubscriber } from './user.subscriber';
 import { DateScalar } from '../common/scalars/date.scalar';
 import { Follow } from './follow.entity';
 import { AttendanceModule } from '../attendance/attendance.module';
+import { GithubModule } from '../github/github.module';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([User, Follow]),
         forwardRef(() => AttendanceModule),
-        HttpModule,
+        forwardRef(() => GithubModule),
     ],
     providers: [UsersService, UsersResolver, UserSubscriber, DateScalar],
 })

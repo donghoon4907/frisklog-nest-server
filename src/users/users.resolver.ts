@@ -7,25 +7,37 @@ import {
     Parent,
     Context,
 } from '@nestjs/graphql';
-import { ForbiddenException, UseGuards } from '@nestjs/common';
+import {
+    ForbiddenException,
+    forwardRef,
+    Inject,
+    UseGuards,
+} from '@nestjs/common';
 
 import { User } from './user.entity';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { VerifyUserInput } from './dto/verify-user.input';
+import { VerifyUserDto } from './dto/verify-user.dto';
 import { UsersArgs } from './dto/users.args';
 import { OffsetPaginatedUser } from './dto/users.response';
 import { AuthGuard } from './auth/auth.guard';
 import { AuthUser } from './auth/auth.decorator';
-import { UserStatus } from './user.interface';
 import { FollowingsArgs } from './dto/followings.args';
 import { RecommendersArgs } from './dto/recommenders.args';
-import { decodeToken, getBearerToken } from 'src/common/context';
+import { decodeToken, getBearerToken } from '../common/context';
+import { AttendanceService } from '../attendance/attendance.service';
+import { GithubService } from '../github/github.service';
 
 @Resolver((of) => User)
 export class UsersResolver {
-    constructor(private readonly usersService: UsersService) {}
+    constructor(
+        private readonly usersService: UsersService,
+        @Inject(forwardRef(() => AttendanceService))
+        private readonly attendanceService: AttendanceService,
+        @Inject(forwardRef(() => GithubService))
+        private readonly githubService: GithubService,
+    ) {}
 
     @Query((returns) => OffsetPaginatedUser)
     users(@Args() usersArgs: UsersArgs) {
@@ -48,6 +60,20 @@ export class UsersResolver {
         return user;
     }
 
+    @Query((returns) => User)
+    @UseGuards(AuthGuard)
+    async loadUser(@AuthUser() me: User) {
+        const user = await this.usersService.findById(me.id);
+
+        if (user === null) {
+            throw new ForbiddenException('존재하지 않는 사용자입니다.');
+        }
+        // 출석 로그 추가
+        await this.attendanceService.findOrCreate(me.id);
+
+        return user;
+    }
+
     @Query((returns) => OffsetPaginatedUser)
     @UseGuards(AuthGuard)
     async followings(
@@ -61,19 +87,19 @@ export class UsersResolver {
     async addUser(@Args('input') createUserDto: CreateUserDto) {
         const { nickname, email } = createUserDto;
 
-        const usingNickname = await this.usersService.findByNickname(nickname);
+        const hasNickname = await this.usersService.hasNickname(nickname);
 
-        if (usingNickname !== null) {
+        if (hasNickname) {
             throw new ForbiddenException('사용중인 닉네임입니다.');
         }
 
-        const usingEmail = await this.usersService.findByEmail(email);
+        const hasEmail = await this.usersService.hasEmail(email);
 
-        if (usingEmail !== null) {
+        if (hasEmail) {
             throw new ForbiddenException('사용중인 이메일입니다.');
         }
 
-        return this.usersService.create(createUserDto);
+        return this.usersService.createUser(createUserDto);
     }
 
     @Mutation((returns) => User)
@@ -82,35 +108,21 @@ export class UsersResolver {
         @AuthUser() me: User,
         @Args('input') updateUserDto: UpdateUserDto,
     ) {
-        const { nickname, avatar, status, isKeep } = updateUserDto;
+        const { nickname } = updateUserDto;
 
         if (nickname) {
             if (nickname !== me.nickname) {
-                const existUser = await this.usersService.findByNickname(
+                const hasNickname = await this.usersService.hasNickname(
                     nickname,
                 );
 
-                if (existUser !== null) {
+                if (hasNickname) {
                     throw new ForbiddenException('사용중인 닉네임입니다.');
                 }
-
-                me.nickname = nickname;
             }
         }
 
-        if (avatar) {
-            me.avatar = avatar;
-        }
-
-        if (status) {
-            me.status = status;
-        }
-
-        if (typeof isKeep === 'boolean') {
-            me.isKeep = isKeep;
-        }
-
-        const user = await this.usersService.update(me);
+        const user = await this.usersService.updateUser(updateUserDto, me);
 
         user.token = user.generateToken();
 
@@ -119,31 +131,30 @@ export class UsersResolver {
 
     @Mutation((returns) => Boolean)
     async logIn(@Args('email') email: string) {
-        const user = await this.usersService.findByEmail(email);
+        const user = await this.usersService.hasEmail(email);
 
         if (user === null) {
             throw new ForbiddenException('등록되지 않은 이메일 입니다.');
         }
 
-        user.captcha = Math.floor(Math.random() * 9000 + 1000).toString();
+        const captcha = Math.floor(Math.random() * 9000 + 1000).toString();
 
         try {
-            await this.usersService.sendMail(user.email, user.captcha);
+            await this.usersService.sendMail(user.email, captcha);
         } catch (e) {
-            console.log(e);
             throw new ForbiddenException('메일 전송 중 오류가 발생했습니다.');
         }
 
-        await this.usersService.update(user);
+        await this.usersService.login(captcha, user);
 
         return true;
     }
 
     @Mutation((returns) => User)
-    async verify(@Args('input') verifyUserInput: VerifyUserInput) {
-        const { email, captcha, isKeep } = verifyUserInput;
+    async verify(@Args('input') verifyUserDto: VerifyUserDto) {
+        const { email, captcha, isKeep } = verifyUserDto;
 
-        const user = await this.usersService.findByEmail(email);
+        const user = await this.usersService.hasEmail(email);
 
         if (user === null) {
             throw new ForbiddenException('등록되지 않은 이메일 입니다.');
@@ -153,38 +164,35 @@ export class UsersResolver {
             throw new ForbiddenException('보안문자가 일치하지 않습니다.');
         }
 
-        user.isKeep = isKeep;
-
-        return this.usersService.verify(user);
+        return this.usersService.verify(isKeep, user);
     }
 
     @Mutation((returns) => User)
     async githubLogIn(@Args('code') code: string) {
         try {
-            const { data } = await this.usersService.verifyGithub(code);
+            const { data } = await this.githubService.getAccessToken(code);
 
             const fullStrToken = data.split('&')[0];
 
             const accessToken = fullStrToken.split('=')[1];
 
-            const userInfo = await this.usersService.getGithubProfile(
-                accessToken,
-            );
+            const userInfo = await this.githubService.getProfile(accessToken);
 
             const { id, login, avatar_url } = userInfo.data;
 
             let user = await this.usersService.findByGithubId(id);
 
             if (user === null) {
-                user = await this.usersService.create(
-                    { nickname: login, avatar: avatar_url, githubId: id },
-                    2,
-                );
+                const params = {
+                    nickname: login,
+                    avatar: avatar_url,
+                    githubId: id,
+                };
+
+                user = await this.usersService.createUser(params, 2);
             }
 
-            user.isKeep = true;
-
-            return this.usersService.verify(user);
+            return this.usersService.verify(true, user);
         } catch (e) {
             console.log(e.message);
 

@@ -221,14 +221,14 @@ export class User {
     @IsDateString()
     lastAccessAt?: Date;
 
-    @OneToMany(() => Notification, (noti) => noti.target, {
+    @OneToMany(() => Notification, (noti) => noti.to, {
         onDelete: 'CASCADE',
     })
     @Field(() => [Notification], { description: '받은 알림 목록' })
     @IsArray()
     receiveNotifications: Promise<Notification[]>;
 
-    @OneToMany(() => Notification, (noti) => noti.user, {
+    @OneToMany(() => Notification, (noti) => noti.from, {
         onDelete: 'CASCADE',
     })
     @Field(() => [Notification], { description: '보낸 알림 목록' })

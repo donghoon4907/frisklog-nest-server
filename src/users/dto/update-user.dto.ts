@@ -3,9 +3,5 @@ import { User } from '../user.entity';
 
 @InputType()
 export class UpdateUserDto extends PartialType(
-    PickType(
-        User,
-        ['nickname', 'avatar', 'status', 'isKeep'] as const,
-        InputType,
-    ),
+    PickType(User, ['nickname', 'avatar', 'status'] as const, InputType),
 ) {}

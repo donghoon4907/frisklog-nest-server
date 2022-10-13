@@ -1,12 +1,8 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like } from 'typeorm';
-import { HttpService } from '@nestjs/axios';
-import { AxiosResponse } from 'axios';
-import { firstValueFrom } from 'rxjs';
 
 import { User } from './user.entity';
-import { Post } from '../posts/post.entity';
 import { UsersArgs } from './dto/users.args';
 import { OffsetPaginatedUser } from './dto/users.response';
 import { OffsetPaginator } from '../common/paging/offset/offset.paginator';
@@ -15,8 +11,8 @@ import { sendMail } from '../common/nodemailer/send-mail.util';
 import { FollowingsArgs } from './dto/followings.args';
 import { RecommendersArgs } from './dto/recommenders.args';
 import { Follow } from './follow.entity';
-import { AttendanceService } from '../attendance/attendance.service';
 import { UserStatus } from './user.interface';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -25,9 +21,6 @@ export class UsersService {
         private readonly usersRepository: Repository<User>,
         @InjectRepository(Follow)
         private readonly followsRepository: Repository<Follow>,
-        @Inject(forwardRef(() => AttendanceService))
-        private readonly attendanceService: AttendanceService,
-        private readonly httpService: HttpService,
     ) {}
 
     async findAll(usersArgs: UsersArgs): Promise<OffsetPaginatedUser> {
@@ -122,77 +115,88 @@ export class UsersService {
         return following !== null;
     }
 
-    findById(id: string): Promise<User> {
+    findById(id: string) {
         return this.usersRepository.findOneBy({ id });
     }
 
-    findByNickname(nickname: string): Promise<User> {
-        return this.usersRepository.findOneBy({ nickname });
-    }
-
-    findByEmail(email: string): Promise<User> {
-        return this.usersRepository.findOneBy({ email });
-    }
-
-    findByGithubId(githubId: number): Promise<User> {
+    findByGithubId(githubId: number) {
         return this.usersRepository.findOneBy({ githubId });
     }
 
-    verifyGithub(code: string): Promise<AxiosResponse<any>> {
-        const res = this.httpService.post(
-            'https://github.com/login/oauth/access_token',
-            {
-                client_id: process.env.GITHUB_CLIENT_ID,
-                client_secret: process.env.GITHUB_CLIENT_SECRET,
-                code,
-            },
-        );
-
-        return firstValueFrom(res);
+    hasNickname(nickname: string) {
+        return this.usersRepository.findOneBy({ nickname });
     }
 
-    getGithubProfile(accessToken: string): Promise<AxiosResponse<any>> {
-        const res = this.httpService.get('https://api.github.com/user', {
-            headers: {
-                authorization: `token ${accessToken}`,
-            },
-        });
-
-        return firstValueFrom(res);
+    hasEmail(email: string) {
+        return this.usersRepository.findOneBy({ email });
     }
 
-    sendMail(email: string, captcha: string): Promise<any> {
+    sendMail(email: string, captcha: string) {
         return sendMail(email, captcha);
     }
 
-    async create(data: CreateUserDto, platformId: number = 1): Promise<User> {
-        const user = this.usersRepository.create({ ...data, platformId });
+    async createUser(createUserDto: CreateUserDto, platformId = 1) {
+        const { nickname, email, githubId, avatar } = createUserDto;
+
+        const user = new User();
+
+        user.nickname = nickname;
+
+        user.email = email;
+
+        user.platformId = platformId;
+
+        user.githubId = githubId;
+
+        user.avatar = avatar;
 
         await this.usersRepository.save(user);
 
         return user;
     }
 
-    async update(me: User) {
-        await this.usersRepository.save(me);
+    async updateUser(updateUserDto: UpdateUserDto, user: User) {
+        const { nickname, status, avatar } = updateUserDto;
 
-        return me;
+        if (nickname) {
+            user.nickname = nickname;
+        }
+
+        if (status) {
+            user.status = status;
+        }
+
+        if (avatar) {
+            user.avatar = avatar;
+        }
+
+        await this.usersRepository.save(user);
+
+        return user;
     }
 
-    async verify(me: User) {
-        me.status = UserStatus.ONLINE;
+    async login(captcha: string, user: User) {
+        user.captcha = captcha;
 
-        me.captcha = null;
+        await this.usersRepository.save(user);
 
-        me.lastAccessAt = new Date();
+        return user;
+    }
 
-        await this.update(me);
+    async verify(isKeep: boolean, user: User) {
+        user.isKeep = isKeep;
 
-        await this.attendanceService.findOrCreate(me.id);
+        user.status = UserStatus.ONLINE;
 
-        me.token = me.generateToken();
+        user.captcha = null;
 
-        return me;
+        user.lastAccessAt = new Date();
+
+        await this.usersRepository.save(user);
+
+        user.token = user.generateToken();
+
+        return user;
     }
 
     async follow(me: User, target: User): Promise<User> {

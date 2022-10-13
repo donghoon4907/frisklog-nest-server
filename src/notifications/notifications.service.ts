@@ -14,8 +14,8 @@ export class NotificationsService {
 
     async createNotification(
         createNotificationDto: CreateNotificationDto,
-        user: User,
-        target: User,
+        from: User,
+        to: User,
     ) {
         const { content, url } = createNotificationDto;
 
@@ -23,9 +23,9 @@ export class NotificationsService {
 
         noti.content = content;
 
-        noti.user = Promise.resolve(user);
+        noti.from = Promise.resolve(from);
 
-        noti.target = Promise.resolve(target);
+        noti.to = Promise.resolve(to);
 
         noti.url = url;
 

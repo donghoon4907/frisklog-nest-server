@@ -102,10 +102,10 @@ type Notification {
   id: String!
 
   """발신자"""
-  user: User!
+  from: User!
 
   """수신자"""
-  target: User!
+  to: User!
 
   """내용"""
   content: String!
@@ -241,6 +241,7 @@ type Query {
   ): OffsetPaginatedUser!
   recommenders(offset: Int = 0, limit: Int = 12): OffsetPaginatedUser!
   user(id: String!): User!
+  loadUser: User!
   followings(
     offset: Int = 0
     limit: Int = 12
@@ -268,7 +269,7 @@ type Mutation {
   addUser(input: CreateUserDto!): User!
   updateUser(input: UpdateUserDto!): User!
   logIn(email: String!): Boolean!
-  verify(input: VerifyUserInput!): User!
+  verify(input: VerifyUserDto!): User!
   githubLogIn(code: String!): User!
   follow(id: String!): User!
   unfollow(id: String!): User!
@@ -301,12 +302,9 @@ input UpdateUserDto {
 
   """상태코드"""
   status: String
-
-  """로그인유지여부"""
-  isKeep: Boolean
 }
 
-input VerifyUserInput {
+input VerifyUserDto {
   email: String!
   isKeep: Boolean!
   captcha: String!

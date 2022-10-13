@@ -21,6 +21,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { UploadController } from './upload/upload.controller';
 import { AttendanceModule } from './attendance/attendance.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { GithubModule } from './github/github.module';
 
 @Module({
     imports: [
@@ -74,6 +75,7 @@ import { NotificationsModule } from './notifications/notifications.module';
         CategoriesModule,
         AttendanceModule,
         NotificationsModule,
+        GithubModule,
     ],
     providers: [],
     controllers: [UploadController],

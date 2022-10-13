@@ -1,10 +1,9 @@
-import { Field, HideField, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { IsDateString, IsOptional } from 'class-validator';
 import {
     Entity,
     PrimaryGeneratedColumn,
     ManyToOne,
-    JoinColumn,
     CreateDateColumn,
     Column,
 } from 'typeorm';
@@ -20,19 +19,11 @@ export class Notification {
 
     @ManyToOne(() => User, (user) => user.sendNotifications)
     @Field(() => User, { description: '발신자' })
-    user: Promise<User>;
-
-    // @Column()
-    // @HideField()
-    // userId: string;
+    from: Promise<User>;
 
     @ManyToOne(() => User, (user) => user.receiveNotifications)
     @Field(() => User, { description: '수신자' })
-    target: Promise<User>;
-
-    // @Column()
-    // @HideField()
-    // targetId: string;
+    to: Promise<User>;
 
     @Column()
     @Field({ description: '내용' })
