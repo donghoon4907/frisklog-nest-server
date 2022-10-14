@@ -226,6 +226,11 @@ type OffsetPaginatedCategory {
   pageInfo: OffsetMetadata!
 }
 
+type OffsetPaginatedNotification {
+  nodes: [Notification!]
+  pageInfo: OffsetMetadata!
+}
+
 type OffsetPaginatedComment {
   nodes: [Comment!]
   pageInfo: OffsetMetadata!
@@ -262,6 +267,7 @@ type Query {
   followingPosts(offset: Int = 0, limit: Int = 12, userId: String): OffsetPaginatedPost!
   recommendCategories(offset: Int = 0, limit: Int = 12): OffsetPaginatedCategory!
   relatedCategories(content: String!): [Category!]!
+  notifications(offset: Int = 0, limit: Int = 12): OffsetPaginatedNotification!
   comments(offset: Int = 0, limit: Int = 12, postId: String!, order: [[String!]!]): OffsetPaginatedComment!
 }
 
@@ -278,6 +284,7 @@ type Mutation {
   deletePost(id: String!): Post!
   like(id: String!): Boolean!
   unlike(id: String!): Boolean!
+  readNotifications(input: ReadNotificationDto!): [Notification!]!
   addComment(input: CreateCommentDto!): Comment!
   updateComment(input: UpdateCommentDto!): Comment!
   deleteComment(id: String!): Comment!
@@ -325,6 +332,10 @@ input UpdatePostInput {
   """내용"""
   content: String!
   categories: [String!]!
+}
+
+input ReadNotificationDto {
+  notifications: [String!]!
 }
 
 input CreateCommentDto {

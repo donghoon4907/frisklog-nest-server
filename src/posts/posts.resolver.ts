@@ -21,7 +21,7 @@ import { AuthGuard } from '../users/auth/auth.guard';
 import { AuthUser } from '../users/auth/auth.decorator';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { decodeToken, getBearerToken } from 'src/common/context';
+import { decodeToken, getBearerToken } from '../common/context';
 
 @Resolver((of) => Post)
 export class PostsResolver {

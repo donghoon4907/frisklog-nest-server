@@ -1,16 +1,10 @@
-import { Field, ArgsType, Int } from '@nestjs/graphql';
-import { Min, Max, IsOptional } from 'class-validator';
+import { Field, ArgsType } from '@nestjs/graphql';
+import { IsOptional } from 'class-validator';
+
+import { OffsetPaginatedArgs } from '../../common/paging/offset/offset.args';
 
 @ArgsType()
-export class UsersArgs {
-    @Field(() => Int)
-    offset = 0;
-
-    @Field(() => Int)
-    @Min(1)
-    @Max(50)
-    limit = 12;
-
+export class UsersArgs extends OffsetPaginatedArgs {
     @Field({ description: '닉네임', nullable: true })
     @IsOptional()
     nickname?: string;

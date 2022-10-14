@@ -1,13 +1,6 @@
-import { Field, ArgsType, Int } from '@nestjs/graphql';
-import { Min, Max } from 'class-validator';
+import { ArgsType } from '@nestjs/graphql';
+
+import { OffsetPaginatedArgs } from '../../common/paging/offset/offset.args';
 
 @ArgsType()
-export class RecommendCategoriesArgs {
-    @Field(() => Int)
-    offset = 0;
-
-    @Field(() => Int)
-    @Min(1)
-    @Max(50)
-    limit = 12;
-}
+export class RecommendCategoriesArgs extends OffsetPaginatedArgs {}
