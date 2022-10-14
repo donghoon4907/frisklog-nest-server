@@ -284,7 +284,8 @@ type Mutation {
   deletePost(id: String!): Post!
   like(id: String!): Boolean!
   unlike(id: String!): Boolean!
-  readNotifications(input: ReadNotificationDto!): [Notification!]!
+  readNotifications(input: ReadNotificationsDto!): [Notification!]!
+  deleteNotifications(input: DeleteNotificationsDto!): [Notification!]!
   addComment(input: CreateCommentDto!): Comment!
   updateComment(input: UpdateCommentDto!): Comment!
   deleteComment(id: String!): Comment!
@@ -334,7 +335,11 @@ input UpdatePostInput {
   categories: [String!]!
 }
 
-input ReadNotificationDto {
+input ReadNotificationsDto {
+  notifications: [String!]!
+}
+
+input DeleteNotificationsDto {
   notifications: [String!]!
 }
 

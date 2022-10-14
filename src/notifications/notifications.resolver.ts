@@ -3,12 +3,13 @@ import { UseGuards } from '@nestjs/common';
 
 import { NotificationsService } from './notifications.service';
 import { Notification } from './notification.entity';
-import { ReadNotificationDto } from './dto/read-notification.dto';
+import { ReadNotificationsDto } from './dto/read-notifications.dto';
 import { OffsetPaginatedNotification } from './dto/notifications.response';
 import { NotificationsArgs } from './dto/notifications.args';
 import { AuthUser } from '../users/auth/auth.decorator';
 import { AuthGuard } from '../users/auth/auth.guard';
 import { User } from '../users/user.entity';
+import { DeleteNotificationsDto } from './dto/delete-notifications.dto';
 
 @Resolver((of) => Notification)
 export class NotificationsResolver {
@@ -27,7 +28,20 @@ export class NotificationsResolver {
     }
 
     @Mutation((returns) => [Notification])
-    readNotifications(@Args('input') readNotificationDto: ReadNotificationDto) {
-        return this.notificationsService.readNotifications(readNotificationDto);
+    readNotifications(
+        @Args('input') readNotificationsDto: ReadNotificationsDto,
+    ) {
+        return this.notificationsService.readNotifications(
+            readNotificationsDto,
+        );
+    }
+
+    @Mutation((returns) => [Notification])
+    deleteNotifications(
+        @Args('input') deleteNotificationsDto: DeleteNotificationsDto,
+    ) {
+        return this.notificationsService.deleteNotifications(
+            deleteNotificationsDto,
+        );
     }
 }
