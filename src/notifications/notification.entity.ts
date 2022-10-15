@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, HideField, ObjectType } from '@nestjs/graphql';
 import { IsDateString, IsOptional } from 'class-validator';
 import {
     Entity,
@@ -6,6 +6,7 @@ import {
     ManyToOne,
     CreateDateColumn,
     Column,
+    DeleteDateColumn,
 } from 'typeorm';
 
 import { User } from '../users/user.entity';
@@ -43,4 +44,8 @@ export class Notification {
     @IsOptional()
     @IsDateString()
     readedAt?: Date;
+
+    @DeleteDateColumn()
+    @HideField()
+    deletedAt?: Date;
 }
