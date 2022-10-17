@@ -18,6 +18,7 @@ import {
     BeforeUpdate,
     BeforeInsert,
     OneToMany,
+    OneToOne,
 } from 'typeorm';
 import {
     IsBoolean,
@@ -35,8 +36,9 @@ import { Post } from '../posts/post.entity';
 import { Comment } from '../comments/comment.entity';
 import { UserStatus } from './user.interface';
 import { Follow } from './follow.entity';
-import { Attendance } from 'src/attendance/attendance.entity';
-import { Notification } from 'src/notifications/notification.entity';
+import { Attendance } from '../attendance/attendance.entity';
+import { Notification } from '../notifications/notification.entity';
+import { Setting } from '../settings/setting.entity';
 
 registerEnumType(UserStatus, { name: 'UserStatus' });
 
@@ -234,6 +236,17 @@ export class User {
     @Field(() => [Notification], { description: '보낸 알림 목록' })
     @IsArray()
     sendNotifications: Promise<Notification[]>;
+
+    @Column({ default: true })
+    @Field({ description: '팔로워포스팅알림여부' })
+    @IsBoolean()
+    receivePostNotification: boolean;
+
+    // @OneToOne(() => Setting, (setting) => setting.user, {
+    //     onDelete: 'CASCADE',
+    // })
+    // @Field(() => [Setting], { description: '사용자 설정' })
+    // setting: Promise<Setting>;
 
     @BeforeInsert()
     @BeforeUpdate()

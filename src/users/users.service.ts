@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like } from 'typeorm';
 
@@ -13,6 +13,7 @@ import { RecommendersArgs } from './dto/recommenders.args';
 import { Follow } from './follow.entity';
 import { UserStatus } from './user.interface';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateSettingDto } from './dto/update-setting.dto';
 
 @Injectable()
 export class UsersService {
@@ -168,6 +169,18 @@ export class UsersService {
 
         if (avatar) {
             user.avatar = avatar;
+        }
+
+        await this.usersRepository.save(user);
+
+        return user;
+    }
+
+    async updateSetting(updateSettingDto: UpdateSettingDto, user: User) {
+        const { receivePostNotification } = updateSettingDto;
+
+        if (receivePostNotification) {
+            user.receivePostNotification = receivePostNotification;
         }
 
         await this.usersRepository.save(user);

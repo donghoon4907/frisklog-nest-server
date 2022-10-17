@@ -28,6 +28,7 @@ import { RecommendersArgs } from './dto/recommenders.args';
 import { decodeToken, getBearerToken } from '../common/context';
 import { AttendanceService } from '../attendance/attendance.service';
 import { GithubService } from '../github/github.service';
+import { UpdateSettingDto } from './dto/update-setting.dto';
 
 @Resolver((of) => User)
 export class UsersResolver {
@@ -125,6 +126,20 @@ export class UsersResolver {
         const user = await this.usersService.updateUser(updateUserDto, me);
 
         user.token = user.generateToken();
+
+        return user;
+    }
+
+    @Mutation((returns) => User)
+    @UseGuards(AuthGuard)
+    async updateSetting(
+        @AuthUser() me: User,
+        @Args('input') updateSettingDto: UpdateSettingDto,
+    ) {
+        const user = await this.usersService.updateSetting(
+            updateSettingDto,
+            me,
+        );
 
         return user;
     }

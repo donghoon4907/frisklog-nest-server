@@ -22,6 +22,7 @@ import { UploadController } from './upload/upload.controller';
 import { AttendanceModule } from './attendance/attendance.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { GithubModule } from './github/github.module';
+// import { SettingsModule } from './settings/settings.module';
 
 @Module({
     imports: [
