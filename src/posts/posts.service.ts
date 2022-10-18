@@ -189,15 +189,17 @@ export class PostsService {
 
         for (let i = 0; i < followers.length; i++) {
             const target = await followers[i].requester;
-
-            await this.notificationsService.createNotification(
-                {
-                    content: '새로운 포스트 작성',
-                    url: `/user/${user.id}`,
-                },
-                user,
-                target,
-            );
+            // 팔로우 포스트 알림 설정한 경우
+            if (target.receivePostNotification) {
+                await this.notificationsService.createNotification(
+                    {
+                        content: '새로운 포스트 작성',
+                        url: `/user/${user.id}`,
+                    },
+                    user,
+                    target,
+                );
+            }
         }
 
         return true;

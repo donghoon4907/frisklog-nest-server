@@ -179,7 +179,7 @@ export class UsersService {
     async updateSetting(updateSettingDto: UpdateSettingDto, user: User) {
         const { receivePostNotification } = updateSettingDto;
 
-        if (receivePostNotification) {
+        if (typeof receivePostNotification === 'boolean') {
             user.receivePostNotification = receivePostNotification;
         }
 
