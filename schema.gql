@@ -61,6 +61,7 @@ type Post {
   link: String
   createdAt: Date!
   updatedAt: Date!
+  deletedAt: Date
 
   """작성자"""
   user: User!
@@ -268,6 +269,7 @@ type Query {
   categoryPosts(offset: Int = 0, limit: Int = 12, category: String!): OffsetPaginatedPost!
   likePosts(offset: Int = 0, limit: Int = 12, userId: String): OffsetPaginatedPost!
   followingPosts(offset: Int = 0, limit: Int = 12, userId: String): OffsetPaginatedPost!
+  removedPosts(offset: Int = 0, limit: Int = 12): OffsetPaginatedPost!
   recommendCategories(offset: Int = 0, limit: Int = 12): OffsetPaginatedCategory!
   relatedCategories(content: String!): [Category!]!
   notifications(offset: Int = 0, limit: Int = 12): OffsetPaginatedNotification!

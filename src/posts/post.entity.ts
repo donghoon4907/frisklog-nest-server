@@ -57,7 +57,9 @@ export class Post {
     updatedAt: Date;
 
     @DeleteDateColumn()
-    @HideField()
+    @Field()
+    @IsOptional()
+    @IsDateString()
     deletedAt?: Date;
 
     @ManyToOne(() => User)

@@ -22,6 +22,7 @@ import { AuthUser } from '../users/auth/auth.decorator';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { decodeToken, getBearerToken } from '../common/context';
+import { RemovedPostsArgs } from './dto/removed-posts.args';
 
 @Resolver((of) => Post)
 export class PostsResolver {
@@ -50,6 +51,15 @@ export class PostsResolver {
         @Args() followingPostArgs: FollowingPostsArgs,
     ) {
         return this.postsService.followingPosts(followingPostArgs, me.id);
+    }
+
+    @Query((returns) => OffsetPaginatedPost)
+    @UseGuards(AuthGuard)
+    removedPosts(
+        @AuthUser() me: User,
+        @Args() removedPostsArgs: RemovedPostsArgs,
+    ) {
+        return this.postsService.removedPosts(removedPostsArgs, me.id);
     }
 
     @Mutation((returns) => Post)

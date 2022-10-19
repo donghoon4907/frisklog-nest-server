@@ -15,6 +15,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 // import { CategoryRepository } from '../categories/category.repository';
 import { CategoriesService } from '../categories/categories.service';
 import { NotificationsService } from '../notifications/notifications.service';
+import { RemovedPostsArgs } from './dto/removed-posts.args';
 
 @Injectable()
 export class PostsService {
@@ -112,7 +113,7 @@ export class PostsService {
     async followingPosts(
         followingPostArgs: FollowingPostsArgs,
         authId: string,
-    ): Promise<OffsetPaginatedPost> {
+    ) {
         const { offset, limit, userId } = followingPostArgs;
 
         const qb = this.postsRepository
@@ -132,6 +133,28 @@ export class PostsService {
                 userId,
             });
         }
+
+        const [posts, total] = await qb.getManyAndCount();
+
+        const paginator = new OffsetPaginator<Post>(offset, limit);
+
+        return paginator.response(posts, total);
+    }
+
+    async removedPosts(removedPostsArgs: RemovedPostsArgs, authId: string) {
+        const { offset, limit } = removedPostsArgs;
+
+        const qb = this.postsRepository
+            .createQueryBuilder('post')
+            .innerJoinAndSelect('post.user', 'user')
+            .loadRelationCountAndMap('post.likedCount', 'post.likers')
+            .loadRelationCountAndMap('post.commentCount', 'post.comments')
+            .where('post.deletedAt is not null')
+            .andWhere('user.id = :authId', { authId })
+            .orderBy('post.createdAt', 'DESC')
+            .withDeleted()
+            .limit(limit)
+            .offset(offset);
 
         const [posts, total] = await qb.getManyAndCount();
 
