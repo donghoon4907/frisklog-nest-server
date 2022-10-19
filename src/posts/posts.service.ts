@@ -58,7 +58,10 @@ export class PostsService {
     }
 
     async findById(id: string): Promise<Post> {
-        return this.postsRepository.findOne({ where: { id } });
+        return this.postsRepository.findOne({
+            where: { id },
+            withDeleted: true,
+        });
     }
 
     async categoryPosts(
@@ -228,8 +231,14 @@ export class PostsService {
         return true;
     }
 
-    async delete(post: Post): Promise<Post> {
+    delete(post: Post) {
         return this.postsRepository.softRemove(post);
+    }
+
+    async restore(post: Post) {
+        await this.postsRepository.restore(post.id);
+
+        return post;
     }
 
     like(post: Post, me: User) {

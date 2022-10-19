@@ -288,6 +288,7 @@ type Mutation {
   addPost(input: CreatePostDto!): Post!
   updatePost(input: UpdatePostDto!): Post!
   deletePost(id: String!): Post!
+  restorePost(id: String!): Post!
   like(id: String!): Boolean!
   unlike(id: String!): Boolean!
   readNotifications(input: ReadNotificationsDto!): [Notification!]!

@@ -94,6 +94,18 @@ export class PostsResolver {
         return this.postsService.delete(post);
     }
 
+    @Mutation((returns) => Post)
+    @UseGuards(AuthGuard)
+    async restorePost(@Args('id') id: string) {
+        const post = await this.postsService.findById(id);
+
+        if (post === null) {
+            throw new ForbiddenException('존재하지 않는 포스트입니다.');
+        }
+
+        return this.postsService.restore(post);
+    }
+
     @Mutation((returns) => Boolean)
     @UseGuards(AuthGuard)
     async like(@AuthUser() me: User, @Args('id') id: string) {
