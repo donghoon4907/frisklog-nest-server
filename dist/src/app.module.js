@@ -11,14 +11,12 @@ const apollo_1 = require("@nestjs/apollo");
 const common_1 = require("@nestjs/common");
 const graphql_1 = require("@nestjs/graphql");
 const apollo_server_core_1 = require("apollo-server-core");
-const graphql_2 = require("graphql");
 const config_1 = require("@nestjs/config");
 const typeorm_1 = require("@nestjs/typeorm");
 const platform_express_1 = require("@nestjs/platform-express");
 const serve_static_1 = require("@nestjs/serve-static");
 const Joi = require("joi");
 const path_1 = require("path");
-const upper_case_directive_1 = require("./common/directives/upper-case.directive");
 const users_module_1 = require("./users/users.module");
 const platforms_module_1 = require("./platforms/platforms.module");
 const posts_module_1 = require("./posts/posts.module");
@@ -42,11 +40,8 @@ AppModule = __decorate([
                 dest: './public/upload',
             }),
             config_1.ConfigModule.forRoot({
-                envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
+                envFilePath: '.env',
                 validationSchema: Joi.object({
-                    NODE_ENV: Joi.string()
-                        .valid('development', 'production')
-                        .default('development'),
                     DB: Joi.string().required(),
                     DB_USERNAME: Joi.string().required(),
                     DB_PASSWORD: Joi.string().required(),
@@ -64,18 +59,8 @@ AppModule = __decorate([
                 driver: apollo_1.ApolloDriver,
                 cache: 'bounded',
                 autoSchemaFile: 'schema.gql',
-                transformSchema: (schema) => (0, upper_case_directive_1.upperDirectiveTransformer)(schema, 'upper'),
-                installSubscriptionHandlers: true,
                 playground: false,
                 plugins: [(0, apollo_server_core_1.ApolloServerPluginLandingPageLocalDefault)()],
-                buildSchemaOptions: {
-                    directives: [
-                        new graphql_2.GraphQLDirective({
-                            name: 'upper',
-                            locations: [graphql_2.DirectiveLocation.FIELD_DEFINITION],
-                        }),
-                    ],
-                },
             }),
             users_module_1.UsersModule,
             platforms_module_1.PlatformsModule,

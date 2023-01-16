@@ -35,11 +35,11 @@ import { mysqlConfig } from 'ormconfig';
             dest: './public/upload',
         }),
         ConfigModule.forRoot({
-            envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
+            envFilePath: '.env',
             validationSchema: Joi.object({
-                NODE_ENV: Joi.string()
-                    .valid('development', 'production')
-                    .default('development'),
+                // NODE_ENV: Joi.string()
+                //     .valid('development', 'production')
+                //     .default('development'),
                 DB: Joi.string().required(),
                 DB_USERNAME: Joi.string().required(),
                 DB_PASSWORD: Joi.string().required(),
@@ -57,19 +57,19 @@ import { mysqlConfig } from 'ormconfig';
             driver: ApolloDriver,
             cache: 'bounded',
             autoSchemaFile: 'schema.gql',
-            transformSchema: (schema) =>
-                upperDirectiveTransformer(schema, 'upper'),
-            installSubscriptionHandlers: true,
+            // transformSchema: (schema) =>
+            //     upperDirectiveTransformer(schema, 'upper'),
+            // installSubscriptionHandlers: true,
             playground: false,
             plugins: [ApolloServerPluginLandingPageLocalDefault()],
-            buildSchemaOptions: {
-                directives: [
-                    new GraphQLDirective({
-                        name: 'upper',
-                        locations: [DirectiveLocation.FIELD_DEFINITION],
-                    }),
-                ],
-            },
+            // buildSchemaOptions: {
+            //     directives: [
+            //         new GraphQLDirective({
+            //             name: 'upper',
+            //             locations: [DirectiveLocation.FIELD_DEFINITION],
+            //         }),
+            //     ],
+            // },
         }),
         UsersModule,
         PlatformsModule,

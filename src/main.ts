@@ -10,9 +10,9 @@ async function bootstrap() {
 
     app.setGlobalPrefix('v1', { exclude: ['graphql'] });
 
-    await app.listen(4000);
+    await app.listen(process.env.PORT);
 
-    console.log(process.env.NODE_ENV);
+    // console.log(process.env.NODE_ENV);
 
     console.log(`Application is running on: ${await app.getUrl()}`);
 }

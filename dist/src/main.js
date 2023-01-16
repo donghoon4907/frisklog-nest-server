@@ -7,8 +7,7 @@ async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule, { cors: true });
     app.useGlobalPipes(new common_1.ValidationPipe());
     app.setGlobalPrefix('v1', { exclude: ['graphql'] });
-    await app.listen(4000);
-    console.log(process.env.NODE_ENV);
+    await app.listen(process.env.PORT);
     console.log(`Application is running on: ${await app.getUrl()}`);
 }
 bootstrap();
