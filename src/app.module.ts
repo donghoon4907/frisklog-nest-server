@@ -14,7 +14,7 @@ import { upperDirectiveTransformer } from './common/directives/upper-case.direct
 import { UsersModule } from './users/users.module';
 // import { LoggingPlugin } from './common/plugins/logging.plugin';
 import { PlatformsModule } from './platforms/platforms.module';
-import { mysqlConfig } from '../ormconfig';
+// import { mysqlConfig } from '../ormconfig';
 import { PostsModule } from './posts/posts.module';
 import { CommentsModule } from './comments/comments.module';
 import { CategoriesModule } from './categories/categories.module';
@@ -22,6 +22,7 @@ import { UploadController } from './upload/upload.controller';
 import { AttendanceModule } from './attendance/attendance.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { GithubModule } from './github/github.module';
+import { mysqlConfig } from 'ormconfig';
 // import { SettingsModule } from './settings/settings.module';
 
 @Module({
@@ -54,6 +55,7 @@ import { GithubModule } from './github/github.module';
         TypeOrmModule.forRoot(mysqlConfig),
         GraphQLModule.forRoot<ApolloDriverConfig>({
             driver: ApolloDriver,
+            cache: 'bounded',
             autoSchemaFile: 'schema.gql',
             transformSchema: (schema) =>
                 upperDirectiveTransformer(schema, 'upper'),

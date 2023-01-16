@@ -1,0 +1,94 @@
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AppModule = void 0;
+const apollo_1 = require("@nestjs/apollo");
+const common_1 = require("@nestjs/common");
+const graphql_1 = require("@nestjs/graphql");
+const apollo_server_core_1 = require("apollo-server-core");
+const graphql_2 = require("graphql");
+const config_1 = require("@nestjs/config");
+const typeorm_1 = require("@nestjs/typeorm");
+const platform_express_1 = require("@nestjs/platform-express");
+const serve_static_1 = require("@nestjs/serve-static");
+const Joi = require("joi");
+const path_1 = require("path");
+const upper_case_directive_1 = require("./common/directives/upper-case.directive");
+const users_module_1 = require("./users/users.module");
+const platforms_module_1 = require("./platforms/platforms.module");
+const posts_module_1 = require("./posts/posts.module");
+const comments_module_1 = require("./comments/comments.module");
+const categories_module_1 = require("./categories/categories.module");
+const upload_controller_1 = require("./upload/upload.controller");
+const attendance_module_1 = require("./attendance/attendance.module");
+const notifications_module_1 = require("./notifications/notifications.module");
+const github_module_1 = require("./github/github.module");
+const ormconfig_1 = require("../ormconfig");
+let AppModule = class AppModule {
+};
+AppModule = __decorate([
+    (0, common_1.Module)({
+        imports: [
+            serve_static_1.ServeStaticModule.forRoot({
+                rootPath: (0, path_1.join)(process.cwd(), '/public'),
+                exclude: ['/graphql'],
+            }),
+            platform_express_1.MulterModule.register({
+                dest: './public/upload',
+            }),
+            config_1.ConfigModule.forRoot({
+                envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
+                validationSchema: Joi.object({
+                    NODE_ENV: Joi.string()
+                        .valid('development', 'production')
+                        .default('development'),
+                    DB: Joi.string().required(),
+                    DB_USERNAME: Joi.string().required(),
+                    DB_PASSWORD: Joi.string().required(),
+                    JWT_SECRET: Joi.string().required(),
+                    EMAIL_ID: Joi.string().required(),
+                    EMAIL_PASSWORD: Joi.string().required(),
+                    GITHUB_CLIENT_ID: Joi.string().required(),
+                    GITHUB_CLIENT_SECRET: Joi.string().required(),
+                    BACKEND_ROOT: Joi.string().required(),
+                    FRONTEND_ROOT: Joi.string().required(),
+                }),
+            }),
+            typeorm_1.TypeOrmModule.forRoot(ormconfig_1.mysqlConfig),
+            graphql_1.GraphQLModule.forRoot({
+                driver: apollo_1.ApolloDriver,
+                cache: 'bounded',
+                autoSchemaFile: 'schema.gql',
+                transformSchema: (schema) => (0, upper_case_directive_1.upperDirectiveTransformer)(schema, 'upper'),
+                installSubscriptionHandlers: true,
+                playground: false,
+                plugins: [(0, apollo_server_core_1.ApolloServerPluginLandingPageLocalDefault)()],
+                buildSchemaOptions: {
+                    directives: [
+                        new graphql_2.GraphQLDirective({
+                            name: 'upper',
+                            locations: [graphql_2.DirectiveLocation.FIELD_DEFINITION],
+                        }),
+                    ],
+                },
+            }),
+            users_module_1.UsersModule,
+            platforms_module_1.PlatformsModule,
+            posts_module_1.PostsModule,
+            comments_module_1.CommentsModule,
+            categories_module_1.CategoriesModule,
+            attendance_module_1.AttendanceModule,
+            notifications_module_1.NotificationsModule,
+            github_module_1.GithubModule,
+        ],
+        providers: [],
+        controllers: [upload_controller_1.UploadController],
+    })
+], AppModule);
+exports.AppModule = AppModule;
+//# sourceMappingURL=app.module.js.map

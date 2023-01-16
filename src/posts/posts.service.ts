@@ -166,7 +166,7 @@ export class PostsService {
         return paginator.response(posts, total);
     }
 
-    async create(createPostInput: CreatePostDto, user: User): Promise<Post> {
+    async create(createPostInput: CreatePostDto, user: User) {
         const { content, categories } = createPostInput;
 
         const post = new Post();
@@ -184,7 +184,7 @@ export class PostsService {
         return post;
     }
 
-    async update(updatePostInput: UpdatePostInput, post: Post): Promise<Post> {
+    update(updatePostInput: UpdatePostInput, post: Post) {
         const { content, categories } = updatePostInput;
 
         post.content = content;

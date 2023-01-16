@@ -1,0 +1,33 @@
+import { User } from './user.entity';
+import { UsersService } from './users.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { VerifyUserDto } from './dto/verify-user.dto';
+import { UsersArgs } from './dto/users.args';
+import { OffsetPaginatedUser } from './dto/users.response';
+import { FollowingsArgs } from './dto/followings.args';
+import { RecommendersArgs } from './dto/recommenders.args';
+import { AttendanceService } from '../attendance/attendance.service';
+import { GithubService } from '../github/github.service';
+import { UpdateSettingDto } from './dto/update-setting.dto';
+export declare class UsersResolver {
+    private readonly usersService;
+    private readonly attendanceService;
+    private readonly githubService;
+    constructor(usersService: UsersService, attendanceService: AttendanceService, githubService: GithubService);
+    users(usersArgs: UsersArgs): Promise<OffsetPaginatedUser>;
+    recommenders(recommendersArgs: RecommendersArgs): Promise<OffsetPaginatedUser>;
+    user(id: string): Promise<User>;
+    loadUser(me: User): Promise<User>;
+    followings(me: User, followingsArgs: FollowingsArgs): Promise<OffsetPaginatedUser>;
+    addUser(createUserDto: CreateUserDto): Promise<User>;
+    updateUser(me: User, updateUserDto: UpdateUserDto): Promise<User>;
+    updateSetting(me: User, updateSettingDto: UpdateSettingDto): Promise<User>;
+    logIn(email: string): Promise<boolean>;
+    verify(verifyUserDto: VerifyUserDto): Promise<User>;
+    githubLogIn(code: string): Promise<User>;
+    follow(me: User, id: string): Promise<User>;
+    unfollow(me: User, id: string): Promise<User>;
+    isFollowing(user: User, ctx: any): false | Promise<boolean>;
+    isMe(user: User, ctx: any): Promise<boolean>;
+}
