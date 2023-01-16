@@ -13,8 +13,7 @@
         "dev": "nest start --watch",
         "debug": "nest start --debug --watch",
         "lint": "eslint '{src,apps,libs,test}/**/*.ts' --fix",
-        "seed:platform": "ts-node src/database/seeds/platform.seeder.ts",
-        "seed:platform:prod": "ts-node src/database/seeds/platform.seeder.ts"
+        "seed:platform": "ts-node src/database/seeds/platform.seeder.ts"
     },
     "dependencies": {
         "@graphql-tools/utils": "8.8.0",
