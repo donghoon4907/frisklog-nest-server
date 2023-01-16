@@ -60,8 +60,8 @@ import { mysqlConfig } from 'ormconfig';
             // transformSchema: (schema) =>
             //     upperDirectiveTransformer(schema, 'upper'),
             // installSubscriptionHandlers: true,
-            playground: false,
-            plugins: [ApolloServerPluginLandingPageLocalDefault()],
+            playground: true,
+            // plugins: [ApolloServerPluginLandingPageLocalDefault()],
             // buildSchemaOptions: {
             //     directives: [
             //         new GraphQLDirective({

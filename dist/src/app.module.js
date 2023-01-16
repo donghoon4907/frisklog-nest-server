@@ -10,7 +10,6 @@ exports.AppModule = void 0;
 const apollo_1 = require("@nestjs/apollo");
 const common_1 = require("@nestjs/common");
 const graphql_1 = require("@nestjs/graphql");
-const apollo_server_core_1 = require("apollo-server-core");
 const config_1 = require("@nestjs/config");
 const typeorm_1 = require("@nestjs/typeorm");
 const platform_express_1 = require("@nestjs/platform-express");
@@ -59,8 +58,7 @@ AppModule = __decorate([
                 driver: apollo_1.ApolloDriver,
                 cache: 'bounded',
                 autoSchemaFile: 'schema.gql',
-                playground: false,
-                plugins: [(0, apollo_server_core_1.ApolloServerPluginLandingPageLocalDefault)()],
+                playground: true,
             }),
             users_module_1.UsersModule,
             platforms_module_1.PlatformsModule,
