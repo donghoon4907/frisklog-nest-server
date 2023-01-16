@@ -175,19 +175,21 @@ export class PostsService {
 
         post.user = Promise.resolve(user);
 
-        await this.setPostCategories(post, categories);
-
         await this.postsRepository.save(post);
+
+        await this.setPostCategories(post, categories);
 
         await this.sendNotificationToFollowers(user);
 
         return post;
     }
 
-    update(updatePostInput: UpdatePostInput, post: Post) {
+    async update(updatePostInput: UpdatePostInput, post: Post) {
         const { content, categories } = updatePostInput;
 
         post.content = content;
+
+        await this.postsRepository.save(post);
 
         return this.setPostCategories(post, categories);
     }

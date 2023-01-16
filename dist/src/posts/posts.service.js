@@ -131,14 +131,15 @@ let PostsService = class PostsService {
         const post = new post_entity_1.Post();
         post.content = content;
         post.user = Promise.resolve(user);
-        await this.setPostCategories(post, categories);
         await this.postsRepository.save(post);
+        await this.setPostCategories(post, categories);
         await this.sendNotificationToFollowers(user);
         return post;
     }
-    update(updatePostInput, post) {
+    async update(updatePostInput, post) {
         const { content, categories } = updatePostInput;
         post.content = content;
+        await this.postsRepository.save(post);
         return this.setPostCategories(post, categories);
     }
     async setPostCategories(post, categories) {
