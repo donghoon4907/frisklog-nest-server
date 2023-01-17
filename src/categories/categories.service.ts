@@ -18,7 +18,7 @@ export class CategoriesService {
         const [recommendCategories, total] = await this.categoriesRepository
             .createQueryBuilder('category')
             .addSelect('COUNT(posts.id) as postCount')
-            .leftJoin('category.posts', 'posts')
+            .innerJoin('category.posts', 'posts')
             .loadRelationCountAndMap('category.postCount', 'category.posts')
             .limit(limit)
             .offset(offset)

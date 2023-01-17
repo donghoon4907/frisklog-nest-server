@@ -175,8 +175,6 @@ export class PostsService {
 
         post.user = Promise.resolve(user);
 
-        await this.postsRepository.save(post);
-
         await this.setPostCategories(post, categories);
 
         await this.sendNotificationToFollowers(user);
@@ -188,8 +186,6 @@ export class PostsService {
         const { content, categories } = updatePostInput;
 
         post.content = content;
-
-        await this.postsRepository.save(post);
 
         return this.setPostCategories(post, categories);
     }
@@ -208,6 +204,8 @@ export class PostsService {
                 postCategories.push(category);
             }
         }
+
+        await this.postsRepository.save(post);
 
         return post;
     }
