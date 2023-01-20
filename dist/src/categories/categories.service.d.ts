@@ -10,5 +10,5 @@ export declare class CategoriesService {
     findByContent(content: string): Promise<Category>;
     createCategory(content: string): Promise<Category>;
     findOrCreate(content: string): Promise<Category>;
-    relatedCategories(category: Category): Promise<Category[]>;
+    relatedCategories(category: Category): Promise<any[]>;
 }

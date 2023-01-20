@@ -64,7 +64,8 @@ let PostsService = class PostsService {
             .loadRelationCountAndMap('post.commentCount', 'post.comments')
             .where('categories.content = :category', {
             category,
-        });
+        })
+            .orderBy('post.createdAt', 'DESC');
         const [posts, total] = await qb.getManyAndCount();
         const paginator = new offset_paginator_1.OffsetPaginator(offset, limit);
         return paginator.response(posts, total);
@@ -77,7 +78,8 @@ let PostsService = class PostsService {
             .leftJoinAndSelect('post.likers', 'likers')
             .loadRelationCountAndMap('post.likedCount', 'post.likers')
             .loadRelationCountAndMap('post.commentCount', 'post.comments')
-            .where('likers.id = :authId', { authId });
+            .where('likers.id = :authId', { authId })
+            .orderBy('post.createdAt', 'DESC');
         if (userId) {
             qb.where('user.id = :userId', {
                 userId,

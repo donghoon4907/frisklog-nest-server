@@ -62,42 +62,34 @@ export class CategoriesService {
     async relatedCategories(category: Category) {
         const posts = await category.posts;
 
-        const relatedCategories = {};
-
+        const relatedCategories = [];
+        // 카테고리가 사용된 포스트에서 사용한 카테고리 구하기
         for (let i = 0; i < posts.length; i++) {
             const postCategories = await posts[i].categories;
 
             for (let j = 0; j < postCategories.length; j++) {
-                const content = postCategories[j].content;
-
-                if (content === category.content) {
+                // 동일한 카테고리 제외
+                if (postCategories[j].id === category.id) {
                     continue;
                 }
-
-                if (relatedCategories.hasOwnProperty(content)) {
-                    relatedCategories[content] += 1;
-                } else {
-                    relatedCategories[content] = 1;
+                // 이미 추가된 카테고리 제외
+                if (!relatedCategories.includes(postCategories[j].id)) {
+                    relatedCategories.push(postCategories[j].id);
                 }
             }
         }
+        // 카테고리 정보 로드
+        for (let i = 0; i < relatedCategories.length; i++) {
+            relatedCategories[i] = await this.categoriesRepository
+                .createQueryBuilder('category')
+                .innerJoin('category.posts', 'posts')
+                .loadRelationCountAndMap('category.postCount', 'category.posts')
+                .where('category.id = :id', { id: relatedCategories[i] })
+                .getOne();
+        }
+        // 내림차순으로 정렬
+        relatedCategories.sort((a, b) => b.postCount - a.postCount);
 
-        const sortedCategories = Object.keys(relatedCategories).sort((a, b) => {
-            if (relatedCategories[a] > relatedCategories[b]) {
-                return -1;
-            } else {
-                return 1;
-            }
-        });
-
-        return sortedCategories.map((content) => {
-            const entity = new Category();
-
-            entity.content = content;
-
-            entity.postCount = relatedCategories[content];
-
-            return entity;
-        });
+        return relatedCategories;
     }
 }

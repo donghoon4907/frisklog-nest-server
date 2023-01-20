@@ -11,7 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CategoriesService = void 0;
 const common_1 = require("@nestjs/common");
-const category_entity_1 = require("./category.entity");
 const offset_paginator_1 = require("../common/paging/offset/offset.paginator");
 const category_repository_1 = require("./category.repository");
 let CategoriesService = class CategoriesService {
@@ -56,36 +55,28 @@ let CategoriesService = class CategoriesService {
     }
     async relatedCategories(category) {
         const posts = await category.posts;
-        const relatedCategories = {};
+        const relatedCategories = [];
         for (let i = 0; i < posts.length; i++) {
             const postCategories = await posts[i].categories;
             for (let j = 0; j < postCategories.length; j++) {
-                const content = postCategories[j].content;
-                if (content === category.content) {
+                if (postCategories[j].id === category.id) {
                     continue;
                 }
-                if (relatedCategories.hasOwnProperty(content)) {
-                    relatedCategories[content] += 1;
-                }
-                else {
-                    relatedCategories[content] = 1;
+                if (!relatedCategories.includes(postCategories[j].id)) {
+                    relatedCategories.push(postCategories[j].id);
                 }
             }
         }
-        const sortedCategories = Object.keys(relatedCategories).sort((a, b) => {
-            if (relatedCategories[a] > relatedCategories[b]) {
-                return -1;
-            }
-            else {
-                return 1;
-            }
-        });
-        return sortedCategories.map((content) => {
-            const entity = new category_entity_1.Category();
-            entity.content = content;
-            entity.postCount = relatedCategories[content];
-            return entity;
-        });
+        for (let i = 0; i < relatedCategories.length; i++) {
+            relatedCategories[i] = await this.categoriesRepository
+                .createQueryBuilder('category')
+                .innerJoin('category.posts', 'posts')
+                .loadRelationCountAndMap('category.postCount', 'category.posts')
+                .where('category.id = :id', { id: relatedCategories[i] })
+                .getOne();
+        }
+        relatedCategories.sort((a, b) => b.postCount - a.postCount);
+        return relatedCategories;
     }
 };
 CategoriesService = __decorate([
