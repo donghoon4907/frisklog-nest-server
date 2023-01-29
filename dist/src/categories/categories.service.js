@@ -43,6 +43,8 @@ let CategoriesService = class CategoriesService {
             .loadRelationCountAndMap('category.postCount', 'category.posts')
             .groupBy('category.id')
             .orderBy('postCount', 'DESC')
+            .limit(limit)
+            .offset(offset)
             .getManyAndCount();
         const paginator = new offset_paginator_1.OffsetPaginator(offset, limit);
         return paginator.response(recommendCategories, total);

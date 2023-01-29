@@ -48,6 +48,8 @@ export class CategoriesService {
             .loadRelationCountAndMap('category.postCount', 'category.posts')
             .groupBy('category.id')
             .orderBy('postCount', 'DESC')
+            .limit(limit)
+            .offset(offset)
             .getManyAndCount();
 
         const paginator = new OffsetPaginator<Category>(offset, limit);
