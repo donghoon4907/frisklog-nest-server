@@ -17,6 +17,23 @@ let CategoriesService = class CategoriesService {
     constructor(categoriesRepository) {
         this.categoriesRepository = categoriesRepository;
     }
+    async categories(categoriesArgs) {
+        const { offset, limit, searchKeyword } = categoriesArgs;
+        const qb = this.categoriesRepository
+            .createQueryBuilder('category')
+            .innerJoin('category.posts', 'posts')
+            .loadRelationCountAndMap('category.postCount', 'category.posts')
+            .limit(limit)
+            .offset(offset);
+        if (searchKeyword) {
+            qb.andWhere('category.content like :searchKeyword', {
+                searchKeyword: `%${searchKeyword}%`,
+            });
+        }
+        const [posts, total] = await qb.getManyAndCount();
+        const paginator = new offset_paginator_1.OffsetPaginator(offset, limit);
+        return paginator.response(posts, total);
+    }
     async recommendCategories(recommendCategoriesArgs) {
         const { limit, offset } = recommendCategoriesArgs;
         const [recommendCategories, total] = await this.categoriesRepository
@@ -24,8 +41,6 @@ let CategoriesService = class CategoriesService {
             .addSelect('COUNT(posts.id) as postCount')
             .innerJoin('category.posts', 'posts')
             .loadRelationCountAndMap('category.postCount', 'category.posts')
-            .limit(limit)
-            .offset(offset)
             .groupBy('category.id')
             .orderBy('postCount', 'DESC')
             .getManyAndCount();

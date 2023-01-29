@@ -268,6 +268,13 @@ type Query {
   likePosts(offset: Int = 0, limit: Int = 12, userId: String): OffsetPaginatedPost!
   followingPosts(offset: Int = 0, limit: Int = 12, userId: String): OffsetPaginatedPost!
   removedPosts(offset: Int = 0, limit: Int = 12): OffsetPaginatedPost!
+  categories(
+    offset: Int = 0
+    limit: Int = 12
+
+    """검색어"""
+    searchKeyword: String
+  ): OffsetPaginatedCategory!
   recommendCategories(offset: Int = 0, limit: Int = 12): OffsetPaginatedCategory!
   relatedCategories(content: String!): [Category!]!
   notifications(offset: Int = 0, limit: Int = 12): OffsetPaginatedNotification!

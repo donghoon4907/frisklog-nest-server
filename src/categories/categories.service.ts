@@ -5,10 +5,36 @@ import { OffsetPaginatedCategory } from './dto/categories.response';
 import { RecommendCategoriesArgs } from './dto/recommend-categories.args';
 import { OffsetPaginator } from '../common/paging/offset/offset.paginator';
 import { CategoryRepository } from './category.repository';
+import { CategoriesArgs } from './dto/categories.args';
 
 @Injectable()
 export class CategoriesService {
     constructor(private readonly categoriesRepository: CategoryRepository) {}
+
+    async categories(
+        categoriesArgs: CategoriesArgs,
+    ): Promise<OffsetPaginatedCategory> {
+        const { offset, limit, searchKeyword } = categoriesArgs;
+
+        const qb = this.categoriesRepository
+            .createQueryBuilder('category')
+            .innerJoin('category.posts', 'posts')
+            .loadRelationCountAndMap('category.postCount', 'category.posts')
+            .limit(limit)
+            .offset(offset);
+
+        if (searchKeyword) {
+            qb.andWhere('category.content like :searchKeyword', {
+                searchKeyword: `%${searchKeyword}%`,
+            });
+        }
+
+        const [posts, total] = await qb.getManyAndCount();
+
+        const paginator = new OffsetPaginator<Category>(offset, limit);
+
+        return paginator.response(posts, total);
+    }
 
     async recommendCategories(
         recommendCategoriesArgs: RecommendCategoriesArgs,
@@ -20,8 +46,6 @@ export class CategoriesService {
             .addSelect('COUNT(posts.id) as postCount')
             .innerJoin('category.posts', 'posts')
             .loadRelationCountAndMap('category.postCount', 'category.posts')
-            .limit(limit)
-            .offset(offset)
             .groupBy('category.id')
             .orderBy('postCount', 'DESC')
             .getManyAndCount();

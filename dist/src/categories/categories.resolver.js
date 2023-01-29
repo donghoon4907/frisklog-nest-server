@@ -18,9 +18,13 @@ const categories_service_1 = require("./categories.service");
 const category_entity_1 = require("./category.entity");
 const categories_response_1 = require("./dto/categories.response");
 const recommend_categories_args_1 = require("./dto/recommend-categories.args");
+const categories_args_1 = require("./dto/categories.args");
 let CategoriesResolver = class CategoriesResolver {
     constructor(categoriesService) {
         this.categoriesService = categoriesService;
+    }
+    categories(categoriesArgs) {
+        return this.categoriesService.categories(categoriesArgs);
     }
     recommendCategories(recommendCategoriesArgs) {
         return this.categoriesService.recommendCategories(recommendCategoriesArgs);
@@ -33,6 +37,13 @@ let CategoriesResolver = class CategoriesResolver {
         return this.categoriesService.relatedCategories(category);
     }
 };
+__decorate([
+    (0, graphql_1.Query)((returns) => categories_response_1.OffsetPaginatedCategory),
+    __param(0, (0, graphql_1.Args)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [categories_args_1.CategoriesArgs]),
+    __metadata("design:returntype", void 0)
+], CategoriesResolver.prototype, "categories", null);
 __decorate([
     (0, graphql_1.Query)((returns) => categories_response_1.OffsetPaginatedCategory),
     __param(0, (0, graphql_1.Args)()),

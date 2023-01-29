@@ -4,10 +4,16 @@ import { CategoriesService } from './categories.service';
 import { Category } from './category.entity';
 import { OffsetPaginatedCategory } from './dto/categories.response';
 import { RecommendCategoriesArgs } from './dto/recommend-categories.args';
+import { CategoriesArgs } from './dto/categories.args';
 
 @Resolver((of) => Category)
 export class CategoriesResolver {
     constructor(private readonly categoriesService: CategoriesService) {}
+
+    @Query((returns) => OffsetPaginatedCategory)
+    categories(@Args() categoriesArgs: CategoriesArgs) {
+        return this.categoriesService.categories(categoriesArgs);
+    }
 
     @Query((returns) => OffsetPaginatedCategory)
     recommendCategories(
