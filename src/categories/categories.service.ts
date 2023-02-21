@@ -90,10 +90,14 @@ export class CategoriesService {
 
         const relatedCategories = [];
         // 카테고리가 사용된 포스트에서 사용한 카테고리 구하기
-        for (let i = 0; i < posts.length; i++) {
+        outer: for (let i = 0; i < posts.length; i++) {
             const postCategories = await posts[i].categories;
 
             for (let j = 0; j < postCategories.length; j++) {
+                // 최대 10개 제한
+                if(relatedCategories.length >= 10) {
+                    break outer;
+                }
                 // 동일한 카테고리 제외
                 if (postCategories[j].id === category.id) {
                     continue;
