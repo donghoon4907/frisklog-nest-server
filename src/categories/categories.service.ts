@@ -93,14 +93,14 @@ export class CategoriesService {
         outer: for (let i = 0; i < posts.length; i++) {
             const postCategories = await posts[i].categories;
 
-            for (let j = 0; j < postCategories.length; j++) {
-                // 최대 10개 제한
-                if(relatedCategories.length >= 10) {
+            inner: for (let j = 0; j < postCategories.length; j++) {
+                // 5개 제한
+                if (relatedCategories.length >= 5) {
                     break outer;
                 }
                 // 동일한 카테고리 제외
                 if (postCategories[j].id === category.id) {
-                    continue;
+                    continue inner;
                 }
                 // 이미 추가된 카테고리 제외
                 if (!relatedCategories.includes(postCategories[j].id)) {

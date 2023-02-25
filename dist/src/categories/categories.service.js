@@ -73,11 +73,14 @@ let CategoriesService = class CategoriesService {
     async relatedCategories(category) {
         const posts = await category.posts;
         const relatedCategories = [];
-        for (let i = 0; i < posts.length; i++) {
+        outer: for (let i = 0; i < posts.length; i++) {
             const postCategories = await posts[i].categories;
-            for (let j = 0; j < postCategories.length; j++) {
+            inner: for (let j = 0; j < postCategories.length; j++) {
+                if (relatedCategories.length >= 5) {
+                    break outer;
+                }
                 if (postCategories[j].id === category.id) {
-                    continue;
+                    continue inner;
                 }
                 if (!relatedCategories.includes(postCategories[j].id)) {
                     relatedCategories.push(postCategories[j].id);
