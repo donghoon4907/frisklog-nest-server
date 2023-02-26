@@ -72,15 +72,12 @@ let CategoriesService = class CategoriesService {
     }
     async relatedCategories(category) {
         const posts = await category.posts;
-        const relatedCategories = [];
-        outer: for (let i = 0; i < posts.length; i++) {
+        let relatedCategories = [];
+        for (let i = 0; i < posts.length; i++) {
             const postCategories = await posts[i].categories;
-            inner: for (let j = 0; j < postCategories.length; j++) {
-                if (relatedCategories.length >= 5) {
-                    break outer;
-                }
+            for (let j = 0; j < postCategories.length; j++) {
                 if (postCategories[j].id === category.id) {
-                    continue inner;
+                    continue;
                 }
                 if (!relatedCategories.includes(postCategories[j].id)) {
                     relatedCategories.push(postCategories[j].id);
@@ -95,7 +92,9 @@ let CategoriesService = class CategoriesService {
                 .where('category.id = :id', { id: relatedCategories[i] })
                 .getOne();
         }
-        relatedCategories.sort((a, b) => b.postCount - a.postCount);
+        relatedCategories = relatedCategories
+            .sort((a, b) => b.postCount - a.postCount)
+            .slice(0, 5);
         return relatedCategories;
     }
 };

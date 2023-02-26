@@ -88,19 +88,15 @@ export class CategoriesService {
     async relatedCategories(category: Category) {
         const posts = await category.posts;
 
-        const relatedCategories = [];
+        let relatedCategories = [];
         // 카테고리가 사용된 포스트에서 사용한 카테고리 구하기
-        outer: for (let i = 0; i < posts.length; i++) {
+        for (let i = 0; i < posts.length; i++) {
             const postCategories = await posts[i].categories;
 
-            inner: for (let j = 0; j < postCategories.length; j++) {
-                // 5개 제한
-                if (relatedCategories.length >= 5) {
-                    break outer;
-                }
+            for (let j = 0; j < postCategories.length; j++) {
                 // 동일한 카테고리 제외
                 if (postCategories[j].id === category.id) {
-                    continue inner;
+                    continue;
                 }
                 // 이미 추가된 카테고리 제외
                 if (!relatedCategories.includes(postCategories[j].id)) {
@@ -117,8 +113,10 @@ export class CategoriesService {
                 .where('category.id = :id', { id: relatedCategories[i] })
                 .getOne();
         }
-        // 내림차순으로 정렬
-        relatedCategories.sort((a, b) => b.postCount - a.postCount);
+        // 내림차순으로 정렬, 5개로 제한
+        relatedCategories = relatedCategories
+            .sort((a, b) => b.postCount - a.postCount)
+            .slice(0, 5);
 
         return relatedCategories;
     }
