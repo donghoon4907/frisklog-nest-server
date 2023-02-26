@@ -91,7 +91,7 @@ export class PostsService {
         likePostsArgs: LikePostsArgs,
         authId: string,
     ): Promise<OffsetPaginatedPost> {
-        const { offset, limit, userId } = likePostsArgs;
+        const { offset, limit } = likePostsArgs;
 
         const qb = this.postsRepository
             .createQueryBuilder('post')
@@ -101,12 +101,6 @@ export class PostsService {
             .loadRelationCountAndMap('post.commentCount', 'post.comments')
             .where('likers.id = :authId', { authId })
             .orderBy('post.createdAt', 'DESC');
-
-        if (userId) {
-            qb.where('user.id = :userId', {
-                userId,
-            });
-        }
 
         const [posts, total] = await qb.getManyAndCount();
 

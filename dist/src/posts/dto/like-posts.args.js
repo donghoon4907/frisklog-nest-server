@@ -12,7 +12,6 @@ const posts_args_1 = require("./posts.args");
 let LikePostsArgs = class LikePostsArgs extends (0, graphql_1.PickType)(posts_args_1.PostsArgs, [
     'offset',
     'limit',
-    'userId',
 ]) {
     static _GRAPHQL_METADATA_FACTORY() {
         return {};

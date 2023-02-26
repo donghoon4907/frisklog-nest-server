@@ -5,5 +5,4 @@ import { PostsArgs } from './posts.args';
 export class LikePostsArgs extends PickType(PostsArgs, [
     'offset',
     'limit',
-    'userId',
 ] as const) {}

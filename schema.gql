@@ -265,7 +265,7 @@ type Query {
     userId: String
   ): OffsetPaginatedPost!
   categoryPosts(offset: Int = 0, limit: Int = 12, category: String!): OffsetPaginatedPost!
-  likePosts(offset: Int = 0, limit: Int = 12, userId: String): OffsetPaginatedPost!
+  likePosts(offset: Int = 0, limit: Int = 12): OffsetPaginatedPost!
   followingPosts(offset: Int = 0, limit: Int = 12, userId: String): OffsetPaginatedPost!
   removedPosts(offset: Int = 0, limit: Int = 12): OffsetPaginatedPost!
   categories(

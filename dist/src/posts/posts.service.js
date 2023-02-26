@@ -71,7 +71,7 @@ let PostsService = class PostsService {
         return paginator.response(posts, total);
     }
     async likePosts(likePostsArgs, authId) {
-        const { offset, limit, userId } = likePostsArgs;
+        const { offset, limit } = likePostsArgs;
         const qb = this.postsRepository
             .createQueryBuilder('post')
             .innerJoinAndSelect('post.user', 'user')
@@ -80,11 +80,6 @@ let PostsService = class PostsService {
             .loadRelationCountAndMap('post.commentCount', 'post.comments')
             .where('likers.id = :authId', { authId })
             .orderBy('post.createdAt', 'DESC');
-        if (userId) {
-            qb.where('user.id = :userId', {
-                userId,
-            });
-        }
         const [posts, total] = await qb.getManyAndCount();
         const paginator = new offset_paginator_1.OffsetPaginator(offset, limit);
         return paginator.response(posts, total);
