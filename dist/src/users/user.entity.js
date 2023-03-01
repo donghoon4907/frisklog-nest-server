@@ -34,10 +34,6 @@ let User = class User {
         if (!avatar) {
             avatar = 'default-avatar.png';
         }
-        const hasDomain = avatar.includes('http');
-        if (!hasDomain) {
-            this.avatar = `${process.env.BACKEND_HOST}/${avatar}`;
-        }
     }
     generateToken() {
         const { id, isKeep } = this;

@@ -18,7 +18,7 @@ const platform_express_1 = require("@nestjs/platform-express");
 const error_filter_1 = require("../common/filters/error.filter");
 let UploadController = class UploadController {
     uploadImage(file) {
-        return `upload/${file.filename}`;
+        return `${process.env.BACKEND_HOST}/upload/${file.filename}`;
     }
 };
 __decorate([

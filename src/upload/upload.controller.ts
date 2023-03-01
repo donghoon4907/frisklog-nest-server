@@ -31,6 +31,6 @@ export class UploadController {
         @UploadedFile()
         file: Express.Multer.File,
     ) {
-        return `upload/${file.filename}`;
+        return `${process.env.BACKEND_HOST}/upload/${file.filename}`;
     }
 }

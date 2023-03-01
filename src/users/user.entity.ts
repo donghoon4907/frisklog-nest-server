@@ -257,11 +257,11 @@ export class User {
             avatar = 'default-avatar.png';
         }
 
-        const hasDomain = avatar.includes('http');
+        // const hasDomain = avatar.includes('http');
 
-        if (!hasDomain) {
-            this.avatar = `${process.env.BACKEND_HOST}/${avatar}`;
-        }
+        // if (!hasDomain) {
+        //     this.avatar = `${process.env.BACKEND_HOST}/${avatar}`;
+        // }
     }
 
     generateToken() {
