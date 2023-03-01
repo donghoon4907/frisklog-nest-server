@@ -254,7 +254,7 @@ export class User {
         let avatar = this.avatar;
 
         if (!avatar) {
-            avatar = 'default-avatar.png';
+            this.avatar = `${process.env.BACKEND_HOST}/static/default-avatar.png`;
         }
 
         // const hasDomain = avatar.includes('http');

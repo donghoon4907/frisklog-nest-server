@@ -32,7 +32,7 @@ let User = class User {
     updateAvatar() {
         let avatar = this.avatar;
         if (!avatar) {
-            avatar = 'default-avatar.png';
+            this.avatar = `${process.env.BACKEND_HOST}/static/default-avatar.png`;
         }
     }
     generateToken() {
