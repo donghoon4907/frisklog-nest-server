@@ -7,12 +7,12 @@ const platform_entity_1 = require("../../platforms/platform.entity");
 const PLATFORM_DATA = [
     {
         platformName: 'frisklog',
-        logoUrl: `${process.env.BACKEND_ROOT}/frisklog-icon.png`,
-        domainUrl: process.env.FRONTEND_ROOT,
+        logoUrl: `${process.env.BACKEND_HOST}/static/frisklog-icon.png`,
+        domainUrl: process.env.BACKEND_HOST,
     },
     {
         platformName: 'github',
-        logoUrl: `${process.env.BACKEND_ROOT}/github-icon.png`,
+        logoUrl: `${process.env.BACKEND_HOST}/static/github-icon.png`,
         domainUrl: 'https://github.com',
     },
 ];

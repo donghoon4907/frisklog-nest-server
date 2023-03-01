@@ -36,7 +36,7 @@ let User = class User {
         }
         const hasDomain = avatar.includes('http');
         if (!hasDomain) {
-            this.avatar = `${process.env.BACKEND_ROOT}/${avatar}`;
+            this.avatar = `${process.env.BACKEND_HOST}/${avatar}`;
         }
     }
     generateToken() {

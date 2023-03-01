@@ -28,7 +28,8 @@ Frisklog는 여러 사용자들이 작성한 글을 공유할 수 있도록 만�
 -   `EMAIL_PASSWORD` - 메일에 사용할 암호, 구글의 경우 APP 발급 튜토리얼 숙지 필요
 -   `GITHUB_CLIENT_ID` - GitHub OAuth App Client ID
 -   `GITHUB_CLIENT_SECRET` - GitHub OAuth App Secret
--   `BACKEND_ROOT` - 서버 도메인
+-   `FRONTEND_HOST` - 프론트엔드 호스트명
+-   `BACKEND_HOST` - 백엔드 호스트명
 
 ## API
 

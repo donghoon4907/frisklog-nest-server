@@ -20,7 +20,7 @@ let UserSubscriber = class UserSubscriber {
         return user_entity_1.User;
     }
     afterLoad(user) {
-        user.link = `/user/${user.id}`;
+        user.link = `${process.env.FRONTEND_HOST}/user/${user.id}`;
         const { status } = user;
         let statusText = null;
         if (status === 'online') {

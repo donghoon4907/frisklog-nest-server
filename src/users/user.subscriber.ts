@@ -17,7 +17,7 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
     }
 
     afterLoad(user: User) {
-        user.link = `/user/${user.id}`;
+        user.link = `${process.env.FRONTEND_HOST}/user/${user.id}`;
 
         const { status } = user;
 
