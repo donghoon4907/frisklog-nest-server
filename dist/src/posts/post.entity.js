@@ -19,9 +19,11 @@ const user_entity_1 = require("../users/user.entity");
 const comment_entity_1 = require("../comments/comment.entity");
 const category_entity_1 = require("../categories/category.entity");
 const class_validator_1 = require("class-validator");
+const post_interface_1 = require("./post.interface");
+(0, graphql_1.registerEnumType)(post_interface_1.PostVisibility, { name: 'PostVisibility' });
 let Post = class Post {
     static _GRAPHQL_METADATA_FACTORY() {
-        return { id: { type: () => String }, content: { type: () => String }, link: { nullable: true, type: () => String }, createdAt: { type: () => Date }, updatedAt: { type: () => Date }, deletedAt: { nullable: true, type: () => Date }, user: { type: () => require("../users/user.entity").User }, likers: { type: () => [require("../users/user.entity").User] }, isLiked: { nullable: true, type: () => Boolean }, likedCount: { nullable: true, type: () => Number }, categories: { type: () => [require("../categories/category.entity").Category] }, comments: { type: () => [require("../comments/comment.entity").Comment] }, commentCount: { nullable: true, type: () => Number } };
+        return { id: { type: () => String }, content: { type: () => String }, visibility: { type: () => String }, link: { nullable: true, type: () => String }, createdAt: { type: () => Date }, updatedAt: { type: () => Date }, deletedAt: { nullable: true, type: () => Date }, user: { type: () => require("../users/user.entity").User }, likers: { type: () => [require("../users/user.entity").User] }, isLiked: { nullable: true, type: () => Boolean }, likedCount: { nullable: true, type: () => Number }, categories: { type: () => [require("../categories/category.entity").Category] }, comments: { type: () => [require("../comments/comment.entity").Comment] }, commentCount: { nullable: true, type: () => Number } };
     }
 };
 __decorate([
@@ -38,6 +40,18 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], Post.prototype, "content", void 0);
+__decorate([
+    (0, typeorm_1.Column)({
+        comment: '노출설정',
+        type: 'enum',
+        enum: post_interface_1.PostVisibility,
+        default: post_interface_1.PostVisibility.PUBLIC,
+    }),
+    (0, graphql_1.Field)(() => String, { description: '노출설정' }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsEnum)(post_interface_1.PostVisibility),
+    __metadata("design:type", String)
+], Post.prototype, "visibility", void 0);
 __decorate([
     (0, typeorm_1.Column)({ comment: '링크', nullable: true }),
     (0, graphql_1.Field)({ description: '링크', nullable: true }),

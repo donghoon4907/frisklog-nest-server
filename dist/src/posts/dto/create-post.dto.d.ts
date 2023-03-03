@@ -1,5 +1,5 @@
 import { Post } from '../post.entity';
-declare const CreatePostDto_base: import("@nestjs/common").Type<Pick<Post, "content">>;
+declare const CreatePostDto_base: import("@nestjs/common").Type<Pick<Post, "content" | "visibility">>;
 export declare class CreatePostDto extends CreatePostDto_base {
     categories: string[];
 }

@@ -6,6 +6,7 @@ import { CreatePostDto } from './create-post.dto';
 export class UpdatePostInput extends PickType(CreatePostDto, [
     'content',
     'categories',
+    'visibility',
 ] as const) {}
 
 @InputType()

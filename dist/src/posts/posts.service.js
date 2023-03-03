@@ -124,17 +124,19 @@ let PostsService = class PostsService {
         return paginator.response(posts, total);
     }
     async create(createPostInput, user) {
-        const { content, categories } = createPostInput;
+        const { content, categories, visibility } = createPostInput;
         const post = new post_entity_1.Post();
         post.content = content;
+        post.visibility = visibility;
         post.user = Promise.resolve(user);
         await this.setPostCategories(post, categories);
         await this.sendNotificationToFollowers(user);
         return post;
     }
     async update(updatePostInput, post) {
-        const { content, categories } = updatePostInput;
+        const { content, categories, visibility } = updatePostInput;
         post.content = content;
+        post.visibility = visibility;
         return this.setPostCategories(post, categories);
     }
     async setPostCategories(post, categories) {

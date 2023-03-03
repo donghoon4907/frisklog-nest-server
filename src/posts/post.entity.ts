@@ -1,4 +1,4 @@
-import { Field, HideField, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import {
     Column,
     Entity,
@@ -20,10 +20,14 @@ import {
     IsArray,
     IsBoolean,
     IsDateString,
+    IsEnum,
     IsNumber,
     IsOptional,
     IsString,
 } from 'class-validator';
+import { PostVisibility } from './post.interface';
+
+registerEnumType(PostVisibility, { name: 'PostVisibility' });
 
 @Entity('posts')
 @ObjectType()
@@ -39,6 +43,17 @@ export class Post {
     @Field({ description: '내용' })
     @IsString()
     content: string;
+
+    @Column({
+        comment: '노출설정',
+        type: 'enum',
+        enum: PostVisibility,
+        default: PostVisibility.PUBLIC,
+    })
+    @Field(() => String, { description: '노출설정' })
+    @IsString()
+    @IsEnum(PostVisibility)
+    visibility: string;
 
     @Column({ comment: '링크', nullable: true })
     @Field({ description: '링크', nullable: true })

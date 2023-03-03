@@ -4,6 +4,7 @@ import { Category } from '../categories/category.entity';
 export declare class Post {
     id: string;
     content: string;
+    visibility: string;
     link?: string;
     createdAt: Date;
     updatedAt: Date;

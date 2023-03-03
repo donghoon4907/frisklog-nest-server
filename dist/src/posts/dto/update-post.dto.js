@@ -15,6 +15,7 @@ const create_post_dto_1 = require("./create-post.dto");
 let UpdatePostInput = class UpdatePostInput extends (0, graphql_1.PickType)(create_post_dto_1.CreatePostDto, [
     'content',
     'categories',
+    'visibility',
 ]) {
 };
 UpdatePostInput = __decorate([

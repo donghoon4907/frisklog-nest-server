@@ -163,11 +163,13 @@ export class PostsService {
     }
 
     async create(createPostInput: CreatePostDto, user: User) {
-        const { content, categories } = createPostInput;
+        const { content, categories, visibility } = createPostInput;
 
         const post = new Post();
 
         post.content = content;
+
+        post.visibility = visibility;
 
         post.user = Promise.resolve(user);
 
@@ -179,9 +181,11 @@ export class PostsService {
     }
 
     async update(updatePostInput: UpdatePostInput, post: Post) {
-        const { content, categories } = updatePostInput;
+        const { content, categories, visibility } = updatePostInput;
 
         post.content = content;
+
+        post.visibility = visibility;
 
         return this.setPostCategories(post, categories);
     }
