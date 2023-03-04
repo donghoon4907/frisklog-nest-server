@@ -20,6 +20,7 @@ const post_entity_1 = require("./post.entity");
 const offset_paginator_1 = require("../common/paging/offset/offset.paginator");
 const categories_service_1 = require("../categories/categories.service");
 const notifications_service_1 = require("../notifications/notifications.service");
+const post_interface_1 = require("./post.interface");
 let PostsService = class PostsService {
     constructor(postsRepository, categoriesService, notificationsService) {
         this.postsRepository = postsRepository;
@@ -27,7 +28,7 @@ let PostsService = class PostsService {
         this.notificationsService = notificationsService;
     }
     async posts(postsArgs) {
-        const { offset, limit, searchKeyword, userId } = postsArgs;
+        const { offset, limit, searchKeyword, userId, visibility } = postsArgs;
         const qb = this.postsRepository
             .createQueryBuilder('post')
             .innerJoinAndSelect('post.user', 'user')
@@ -40,6 +41,9 @@ let PostsService = class PostsService {
             qb.andWhere('post.content like :searchKeyword', {
                 searchKeyword: `%${searchKeyword}%`,
             }).orWhere('user.nickname like :searchKeyword');
+        }
+        if (visibility) {
+            qb.andWhere('post.visibility = :visibility', { visibility });
         }
         if (userId) {
             qb.andWhere('user.id = :userId', { userId });
@@ -65,7 +69,12 @@ let PostsService = class PostsService {
             .where('categories.content = :category', {
             category,
         })
-            .orderBy('post.createdAt', 'DESC');
+            .where('post.visibility = :visibility', {
+            visibility: post_interface_1.PostVisibility.PUBLIC,
+        })
+            .orderBy('post.createdAt', 'DESC')
+            .limit(limit)
+            .offset(offset);
         const [posts, total] = await qb.getManyAndCount();
         const paginator = new offset_paginator_1.OffsetPaginator(offset, limit);
         return paginator.response(posts, total);
@@ -79,6 +88,9 @@ let PostsService = class PostsService {
             .loadRelationCountAndMap('post.likedCount', 'post.likers')
             .loadRelationCountAndMap('post.commentCount', 'post.comments')
             .where('likers.id = :authId', { authId })
+            .where('post.visibility = :visibility', {
+            visibility: post_interface_1.PostVisibility.PUBLIC,
+        })
             .orderBy('post.createdAt', 'DESC');
         const [posts, total] = await qb.getManyAndCount();
         const paginator = new offset_paginator_1.OffsetPaginator(offset, limit);
@@ -94,6 +106,9 @@ let PostsService = class PostsService {
             .loadRelationCountAndMap('post.likedCount', 'post.likers')
             .loadRelationCountAndMap('post.commentCount', 'post.comments')
             .where('requester.id = :authId', { authId })
+            .where('post.visibility = :visibility', {
+            visibility: post_interface_1.PostVisibility.PUBLIC,
+        })
             .orderBy('post.createdAt', 'DESC')
             .limit(limit)
             .offset(offset);

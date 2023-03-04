@@ -16,6 +16,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { CategoriesService } from '../categories/categories.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { RemovedPostsArgs } from './dto/removed-posts.args';
+import { PostVisibility } from './post.interface';
 
 @Injectable()
 export class PostsService {
@@ -29,7 +30,7 @@ export class PostsService {
     ) {}
 
     async posts(postsArgs: PostsArgs): Promise<OffsetPaginatedPost> {
-        const { offset, limit, searchKeyword, userId } = postsArgs;
+        const { offset, limit, searchKeyword, userId, visibility } = postsArgs;
 
         const qb = this.postsRepository
             .createQueryBuilder('post')
@@ -44,6 +45,10 @@ export class PostsService {
             qb.andWhere('post.content like :searchKeyword', {
                 searchKeyword: `%${searchKeyword}%`,
             }).orWhere('user.nickname like :searchKeyword');
+        }
+
+        if (visibility) {
+            qb.andWhere('post.visibility = :visibility', { visibility });
         }
 
         if (userId) {
@@ -78,7 +83,12 @@ export class PostsService {
             .where('categories.content = :category', {
                 category,
             })
-            .orderBy('post.createdAt', 'DESC');
+            .where('post.visibility = :visibility', {
+                visibility: PostVisibility.PUBLIC,
+            })
+            .orderBy('post.createdAt', 'DESC')
+            .limit(limit)
+            .offset(offset);
 
         const [posts, total] = await qb.getManyAndCount();
 
@@ -100,6 +110,9 @@ export class PostsService {
             .loadRelationCountAndMap('post.likedCount', 'post.likers')
             .loadRelationCountAndMap('post.commentCount', 'post.comments')
             .where('likers.id = :authId', { authId })
+            .where('post.visibility = :visibility', {
+                visibility: PostVisibility.PUBLIC,
+            })
             .orderBy('post.createdAt', 'DESC');
 
         const [posts, total] = await qb.getManyAndCount();
@@ -123,6 +136,9 @@ export class PostsService {
             .loadRelationCountAndMap('post.likedCount', 'post.likers')
             .loadRelationCountAndMap('post.commentCount', 'post.comments')
             .where('requester.id = :authId', { authId })
+            .where('post.visibility = :visibility', {
+                visibility: PostVisibility.PUBLIC,
+            })
             .orderBy('post.createdAt', 'DESC')
             .limit(limit)
             .offset(offset);

@@ -10,12 +10,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostsArgs = void 0;
+const eager_import_0 = require("../post.interface");
 const graphql_1 = require("@nestjs/graphql");
 const class_validator_1 = require("class-validator");
 const offset_args_1 = require("../../common/paging/offset/offset.args");
+const post_interface_1 = require("../post.interface");
 let PostsArgs = class PostsArgs extends offset_args_1.OffsetPaginatedArgs {
     static _GRAPHQL_METADATA_FACTORY() {
-        return { searchKeyword: { nullable: true, type: () => String }, userId: { nullable: true, type: () => String } };
+        return { searchKeyword: { nullable: true, type: () => String }, userId: { nullable: true, type: () => String }, visibility: { nullable: true, type: () => require("../post.interface").PostVisibility } };
     }
 };
 __decorate([
@@ -24,10 +26,15 @@ __decorate([
     __metadata("design:type", String)
 ], PostsArgs.prototype, "searchKeyword", void 0);
 __decorate([
-    (0, graphql_1.Field)(() => String, { nullable: true }),
+    (0, graphql_1.Field)({ description: '사용자 ID', nullable: true }),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], PostsArgs.prototype, "userId", void 0);
+__decorate([
+    (0, graphql_1.Field)({ nullable: true }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], PostsArgs.prototype, "visibility", void 0);
 PostsArgs = __decorate([
     (0, graphql_1.ArgsType)()
 ], PostsArgs);

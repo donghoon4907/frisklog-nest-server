@@ -1,6 +1,7 @@
 import { Field, ArgsType } from '@nestjs/graphql';
 import { IsOptional } from 'class-validator';
 import { OffsetPaginatedArgs } from 'src/common/paging/offset/offset.args';
+import { PostVisibility } from '../post.interface';
 
 @ArgsType()
 export class PostsArgs extends OffsetPaginatedArgs {
@@ -8,7 +9,11 @@ export class PostsArgs extends OffsetPaginatedArgs {
     @IsOptional()
     searchKeyword?: string;
 
-    @Field(() => String, { nullable: true })
+    @Field({ description: '사용자 ID', nullable: true })
     @IsOptional()
     userId?: string;
+
+    @Field({ nullable: true })
+    @IsOptional()
+    visibility?: PostVisibility;
 }
