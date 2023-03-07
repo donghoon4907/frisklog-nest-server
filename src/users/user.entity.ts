@@ -237,10 +237,15 @@ export class User {
     @IsArray()
     sendNotifications: Promise<Notification[]>;
 
-    @Column({ default: true })
+    @Column({ comment: '팔로워포스팅알림여부', default: true })
     @Field({ description: '팔로워포스팅알림여부' })
     @IsBoolean()
     receivePostNotification: boolean;
+
+    @Column({ comment: '좋아요알림여부', default: true })
+    @Field({ description: '좋아요알림여부' })
+    @IsBoolean()
+    receiveLikeNotification: boolean;
 
     // @OneToOne(() => Setting, (setting) => setting.user, {
     //     onDelete: 'CASCADE',

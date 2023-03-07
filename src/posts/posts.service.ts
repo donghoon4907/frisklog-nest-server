@@ -191,7 +191,22 @@ export class PostsService {
 
         await this.setPostCategories(post, categories);
 
-        await this.sendNotificationToFollowers(user);
+        const followers = await user.followers;
+
+        for (let i = 0; i < followers.length; i++) {
+            const target = await followers[i].requester;
+            // 팔로우 포스트 알림 설정한 경우
+            if (target.receivePostNotification) {
+                await this.notificationsService.createNotification(
+                    {
+                        content: '새로운 포스트 작성',
+                        url: `/user/${user.id}`,
+                    },
+                    user,
+                    target,
+                );
+            }
+        }
 
         return post;
     }
@@ -226,27 +241,6 @@ export class PostsService {
         return post;
     }
 
-    async sendNotificationToFollowers(user: User) {
-        const followers = await user.followers;
-
-        for (let i = 0; i < followers.length; i++) {
-            const target = await followers[i].requester;
-            // 팔로우 포스트 알림 설정한 경우
-            if (target.receivePostNotification) {
-                await this.notificationsService.createNotification(
-                    {
-                        content: '새로운 포스트 작성',
-                        url: `/user/${user.id}`,
-                    },
-                    user,
-                    target,
-                );
-            }
-        }
-
-        return true;
-    }
-
     delete(post: Post) {
         return this.postsRepository.softRemove(post);
     }
@@ -257,12 +251,25 @@ export class PostsService {
         return post;
     }
 
-    like(post: Post, me: User) {
-        return this.postsRepository
+    async like(post: Post, me: User) {
+        await this.postsRepository
             .createQueryBuilder('post')
             .relation('likers')
             .of(post)
             .add(me);
+
+        const writer = await post.user;
+
+        if (writer.receivePostNotification) {
+            await this.notificationsService.createNotification(
+                {
+                    content: `나의 포스트에 좋아요`,
+                    url: `/user/${me.id}`,
+                },
+                me,
+                writer,
+            );
+        }
     }
 
     unlike(post: Post, me: User) {

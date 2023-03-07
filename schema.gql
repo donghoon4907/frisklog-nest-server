@@ -192,6 +192,9 @@ type User {
 
   """팔로워포스팅알림여부"""
   receivePostNotification: Boolean!
+
+  """좋아요알림여부"""
+  receiveLikeNotification: Boolean!
 }
 
 type OffsetMetadata {
@@ -339,6 +342,9 @@ input UpdateUserDto {
 input UpdateSettingDto {
   """팔로워포스팅알림여부"""
   receivePostNotification: Boolean
+
+  """좋아요알림여부"""
+  receiveLikeNotification: Boolean
 }
 
 input VerifyUserDto {

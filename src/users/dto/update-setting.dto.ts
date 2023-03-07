@@ -3,5 +3,9 @@ import { User } from '../user.entity';
 
 @InputType()
 export class UpdateSettingDto extends PartialType(
-    PickType(User, ['receivePostNotification'] as const, InputType),
+    PickType(
+        User,
+        ['receivePostNotification', 'receiveLikeNotification'] as const,
+        InputType,
+    ),
 ) {}

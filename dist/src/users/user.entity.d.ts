@@ -37,6 +37,7 @@ export declare class User {
     receiveNotifications: Promise<Notification[]>;
     sendNotifications: Promise<Notification[]>;
     receivePostNotification: boolean;
+    receiveLikeNotification: boolean;
     updateAvatar(): void;
     generateToken(): string;
 }

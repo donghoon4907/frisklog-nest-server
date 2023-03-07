@@ -9,7 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateSettingDto = void 0;
 const graphql_1 = require("@nestjs/graphql");
 const user_entity_1 = require("../user.entity");
-let UpdateSettingDto = class UpdateSettingDto extends (0, graphql_1.PartialType)((0, graphql_1.PickType)(user_entity_1.User, ['receivePostNotification'], graphql_1.InputType)) {
+let UpdateSettingDto = class UpdateSettingDto extends (0, graphql_1.PartialType)((0, graphql_1.PickType)(user_entity_1.User, ['receivePostNotification', 'receiveLikeNotification'], graphql_1.InputType)) {
 };
 UpdateSettingDto = __decorate([
     (0, graphql_1.InputType)()

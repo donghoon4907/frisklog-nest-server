@@ -136,9 +136,12 @@ let UsersService = class UsersService {
         return user;
     }
     async updateSetting(updateSettingDto, user) {
-        const { receivePostNotification } = updateSettingDto;
+        const { receivePostNotification, receiveLikeNotification } = updateSettingDto;
         if (typeof receivePostNotification === 'boolean') {
             user.receivePostNotification = receivePostNotification;
+        }
+        if (typeof receiveLikeNotification === 'boolean') {
+            user.receiveLikeNotification = receiveLikeNotification;
         }
         await this.usersRepository.save(user);
         return user;

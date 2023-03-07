@@ -44,7 +44,7 @@ let User = class User {
         return (0, jsonwebtoken_1.sign)({ id }, process.env.JWT_SECRET, { expiresIn });
     }
     static _GRAPHQL_METADATA_FACTORY() {
-        return { id: { type: () => String }, nickname: { type: () => String }, avatar: { type: () => String }, isMaster: { type: () => Boolean }, status: { type: () => String }, isKeep: { nullable: true, type: () => Boolean }, token: { nullable: true, type: () => String }, statusText: { type: () => String }, link: { type: () => String }, createdAt: { type: () => Date }, updatedAt: { type: () => Date }, platform: { type: () => require("../platforms/platform.entity").Platform }, posts: { type: () => [require("../posts/post.entity").Post] }, postCount: { nullable: true, type: () => Number }, comments: { type: () => [require("../comments/comment.entity").Comment] }, likes: { type: () => [require("../posts/post.entity").Post] }, followers: { type: () => [require("./follow.entity").Follow] }, followerCount: { nullable: true, type: () => Number }, followings: { type: () => [require("./follow.entity").Follow] }, followingCount: { nullable: true, type: () => Number }, isFollowing: { nullable: true, type: () => Boolean }, isMe: { nullable: true, type: () => Boolean }, attendances: { type: () => [require("../attendance/attendance.entity").Attendance] }, lastAccessAt: { nullable: true, type: () => Date }, receiveNotifications: { type: () => [require("../notifications/notification.entity").Notification] }, sendNotifications: { type: () => [require("../notifications/notification.entity").Notification] }, receivePostNotification: { type: () => Boolean } };
+        return { id: { type: () => String }, nickname: { type: () => String }, avatar: { type: () => String }, isMaster: { type: () => Boolean }, status: { type: () => String }, isKeep: { nullable: true, type: () => Boolean }, token: { nullable: true, type: () => String }, statusText: { type: () => String }, link: { type: () => String }, createdAt: { type: () => Date }, updatedAt: { type: () => Date }, platform: { type: () => require("../platforms/platform.entity").Platform }, posts: { type: () => [require("../posts/post.entity").Post] }, postCount: { nullable: true, type: () => Number }, comments: { type: () => [require("../comments/comment.entity").Comment] }, likes: { type: () => [require("../posts/post.entity").Post] }, followers: { type: () => [require("./follow.entity").Follow] }, followerCount: { nullable: true, type: () => Number }, followings: { type: () => [require("./follow.entity").Follow] }, followingCount: { nullable: true, type: () => Number }, isFollowing: { nullable: true, type: () => Boolean }, isMe: { nullable: true, type: () => Boolean }, attendances: { type: () => [require("../attendance/attendance.entity").Attendance] }, lastAccessAt: { nullable: true, type: () => Date }, receiveNotifications: { type: () => [require("../notifications/notification.entity").Notification] }, sendNotifications: { type: () => [require("../notifications/notification.entity").Notification] }, receivePostNotification: { type: () => Boolean }, receiveLikeNotification: { type: () => Boolean } };
     }
 };
 __decorate([
@@ -242,11 +242,17 @@ __decorate([
     __metadata("design:type", Promise)
 ], User.prototype, "sendNotifications", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ default: true }),
+    (0, typeorm_1.Column)({ comment: '팔로워포스팅알림여부', default: true }),
     (0, graphql_1.Field)({ description: '팔로워포스팅알림여부' }),
     (0, class_validator_1.IsBoolean)(),
     __metadata("design:type", Boolean)
 ], User.prototype, "receivePostNotification", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ comment: '좋아요알림여부', default: true }),
+    (0, graphql_1.Field)({ description: '좋아요알림여부' }),
+    (0, class_validator_1.IsBoolean)(),
+    __metadata("design:type", Boolean)
+], User.prototype, "receiveLikeNotification", void 0);
 __decorate([
     (0, typeorm_1.BeforeInsert)(),
     (0, typeorm_1.BeforeUpdate)(),

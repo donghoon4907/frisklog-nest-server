@@ -25,7 +25,6 @@ export declare class PostsService {
     create(createPostInput: CreatePostDto, user: User): Promise<Post>;
     update(updatePostInput: UpdatePostInput, post: Post): Promise<Post>;
     setPostCategories(post: Post, categories: string[]): Promise<Post>;
-    sendNotificationToFollowers(user: User): Promise<boolean>;
     delete(post: Post): Promise<Post>;
     restore(post: Post): Promise<Post>;
     like(post: Post, me: User): Promise<void>;

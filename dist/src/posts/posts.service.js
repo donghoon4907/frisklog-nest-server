@@ -145,7 +145,16 @@ let PostsService = class PostsService {
         post.visibility = visibility;
         post.user = Promise.resolve(user);
         await this.setPostCategories(post, categories);
-        await this.sendNotificationToFollowers(user);
+        const followers = await user.followers;
+        for (let i = 0; i < followers.length; i++) {
+            const target = await followers[i].requester;
+            if (target.receivePostNotification) {
+                await this.notificationsService.createNotification({
+                    content: '새로운 포스트 작성',
+                    url: `/user/${user.id}`,
+                }, user, target);
+            }
+        }
         return post;
     }
     async update(updatePostInput, post) {
@@ -166,19 +175,6 @@ let PostsService = class PostsService {
         await this.postsRepository.save(post);
         return post;
     }
-    async sendNotificationToFollowers(user) {
-        const followers = await user.followers;
-        for (let i = 0; i < followers.length; i++) {
-            const target = await followers[i].requester;
-            if (target.receivePostNotification) {
-                await this.notificationsService.createNotification({
-                    content: '새로운 포스트 작성',
-                    url: `/user/${user.id}`,
-                }, user, target);
-            }
-        }
-        return true;
-    }
     delete(post) {
         return this.postsRepository.softRemove(post);
     }
@@ -186,12 +182,19 @@ let PostsService = class PostsService {
         await this.postsRepository.restore(post.id);
         return post;
     }
-    like(post, me) {
-        return this.postsRepository
+    async like(post, me) {
+        await this.postsRepository
             .createQueryBuilder('post')
             .relation('likers')
             .of(post)
             .add(me);
+        const writer = await post.user;
+        if (writer.receivePostNotification) {
+            await this.notificationsService.createNotification({
+                content: `나의 포스트에 좋아요`,
+                url: `/user/${me.id}`,
+            }, me, writer);
+        }
     }
     unlike(post, me) {
         return this.postsRepository
