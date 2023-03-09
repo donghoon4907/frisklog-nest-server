@@ -38,9 +38,6 @@ export class PostsService {
             .loadRelationCountAndMap('post.likedCount', 'post.likers')
             .loadRelationCountAndMap('post.commentCount', 'post.comments')
             .orderBy('post.createdAt', 'DESC')
-            .where('post.visibility = :visibility', {
-                visibility: PostVisibility.PUBLIC,
-            })
             .limit(limit)
             .offset(offset);
 
