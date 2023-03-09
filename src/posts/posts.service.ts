@@ -83,7 +83,7 @@ export class PostsService {
             .where('categories.content = :category', {
                 category,
             })
-            .where('post.visibility = :visibility', {
+            .andWhere('post.visibility = :visibility', {
                 visibility: PostVisibility.PUBLIC,
             })
             .orderBy('post.createdAt', 'DESC')
@@ -110,7 +110,7 @@ export class PostsService {
             .loadRelationCountAndMap('post.likedCount', 'post.likers')
             .loadRelationCountAndMap('post.commentCount', 'post.comments')
             .where('likers.id = :authId', { authId })
-            .where('post.visibility = :visibility', {
+            .andWhere('post.visibility = :visibility', {
                 visibility: PostVisibility.PUBLIC,
             })
             .orderBy('post.createdAt', 'DESC');
@@ -136,7 +136,7 @@ export class PostsService {
             .loadRelationCountAndMap('post.likedCount', 'post.likers')
             .loadRelationCountAndMap('post.commentCount', 'post.comments')
             .where('requester.id = :authId', { authId })
-            .where('post.visibility = :visibility', {
+            .andWhere('post.visibility = :visibility', {
                 visibility: PostVisibility.PUBLIC,
             })
             .orderBy('post.createdAt', 'DESC')
