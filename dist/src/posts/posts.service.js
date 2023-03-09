@@ -40,7 +40,7 @@ let PostsService = class PostsService {
         if (searchKeyword) {
             qb.andWhere('post.content like :searchKeyword', {
                 searchKeyword: `%${searchKeyword}%`,
-            }).orWhere('user.nickname like :searchKeyword');
+            });
         }
         if (visibility) {
             qb.andWhere('post.visibility = :visibility', { visibility });

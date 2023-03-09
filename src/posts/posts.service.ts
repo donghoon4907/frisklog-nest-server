@@ -44,7 +44,7 @@ export class PostsService {
         if (searchKeyword) {
             qb.andWhere('post.content like :searchKeyword', {
                 searchKeyword: `%${searchKeyword}%`,
-            }).orWhere('user.nickname like :searchKeyword');
+            });
         }
 
         if (visibility) {
