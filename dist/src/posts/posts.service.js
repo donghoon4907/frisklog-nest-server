@@ -35,6 +35,9 @@ let PostsService = class PostsService {
             .loadRelationCountAndMap('post.likedCount', 'post.likers')
             .loadRelationCountAndMap('post.commentCount', 'post.comments')
             .orderBy('post.createdAt', 'DESC')
+            .where('post.visibility = :visibility', {
+            visibility: post_interface_1.PostVisibility.PUBLIC,
+        })
             .limit(limit)
             .offset(offset);
         if (searchKeyword) {
@@ -189,7 +192,7 @@ let PostsService = class PostsService {
             .of(post)
             .add(me);
         const writer = await post.user;
-        if (writer.receivePostNotification) {
+        if (writer.receiveLikeNotification) {
             await this.notificationsService.createNotification({
                 content: `나의 포스트에 좋아요`,
                 url: `/user/${me.id}`,

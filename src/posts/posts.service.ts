@@ -38,6 +38,9 @@ export class PostsService {
             .loadRelationCountAndMap('post.likedCount', 'post.likers')
             .loadRelationCountAndMap('post.commentCount', 'post.comments')
             .orderBy('post.createdAt', 'DESC')
+            .where('post.visibility = :visibility', {
+                visibility: PostVisibility.PUBLIC,
+            })
             .limit(limit)
             .offset(offset);
 
@@ -260,7 +263,7 @@ export class PostsService {
 
         const writer = await post.user;
 
-        if (writer.receivePostNotification) {
+        if (writer.receiveLikeNotification) {
             await this.notificationsService.createNotification(
                 {
                     content: `나의 포스트에 좋아요`,
