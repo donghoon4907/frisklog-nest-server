@@ -332,6 +332,7 @@ type Mutation {
   addComment(input: CreateCommentDto!): Comment!
   updateComment(input: UpdateCommentDto!): Comment!
   deleteComment(id: String!): Comment!
+  deletePhoto(id: String!): Photo!
 }
 
 input CreateUserDto {

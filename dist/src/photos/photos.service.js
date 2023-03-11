@@ -21,6 +21,23 @@ let PhotosService = class PhotosService {
     constructor(photosRepository) {
         this.photosRepository = photosRepository;
     }
+    findById(id) {
+        return this.photosRepository.findOne({
+            where: { id },
+        });
+    }
+    async createPhoto(createPhotoInput, user) {
+        const { src, type } = createPhotoInput;
+        const photo = new photo_entity_1.Photo();
+        photo.src = src;
+        photo.type = type;
+        photo.user = Promise.resolve(user);
+        await this.photosRepository.save(photo);
+        return photo;
+    }
+    deletePhoto(photo) {
+        return this.photosRepository.softRemove(photo);
+    }
 };
 PhotosService = __decorate([
     (0, common_1.Injectable)(),
