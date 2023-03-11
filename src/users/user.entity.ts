@@ -39,6 +39,7 @@ import { Follow } from './follow.entity';
 import { Attendance } from '../attendance/attendance.entity';
 import { Notification } from '../notifications/notification.entity';
 import { Setting } from '../settings/setting.entity';
+import { Photo } from 'src/photos/photo.entity';
 
 registerEnumType(UserStatus, { name: 'UserStatus' });
 
@@ -246,6 +247,13 @@ export class User {
     @Field({ description: '좋아요알림여부' })
     @IsBoolean()
     receiveLikeNotification: boolean;
+
+    @OneToMany(() => Photo, (photo) => photo.user, {
+        onDelete: 'CASCADE',
+    })
+    @Field(() => [Photo], { description: '업로드한사진목록' })
+    @IsArray()
+    photos: Promise<Photo[]>;
 
     // @OneToOne(() => Setting, (setting) => setting.user, {
     //     onDelete: 'CASCADE',

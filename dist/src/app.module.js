@@ -16,6 +16,7 @@ const platform_express_1 = require("@nestjs/platform-express");
 const serve_static_1 = require("@nestjs/serve-static");
 const Joi = require("joi");
 const path_1 = require("path");
+const ormconfig_1 = require("../ormconfig");
 const users_module_1 = require("./users/users.module");
 const platforms_module_1 = require("./platforms/platforms.module");
 const posts_module_1 = require("./posts/posts.module");
@@ -25,7 +26,7 @@ const upload_controller_1 = require("./upload/upload.controller");
 const attendance_module_1 = require("./attendance/attendance.module");
 const notifications_module_1 = require("./notifications/notifications.module");
 const github_module_1 = require("./github/github.module");
-const ormconfig_1 = require("../ormconfig");
+const photos_module_1 = require("./photos/photos.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -68,6 +69,7 @@ AppModule = __decorate([
             attendance_module_1.AttendanceModule,
             notifications_module_1.NotificationsModule,
             github_module_1.GithubModule,
+            photos_module_1.PhotosModule,
         ],
         providers: [],
         controllers: [upload_controller_1.UploadController],

@@ -4,6 +4,7 @@ import { Comment } from '../comments/comment.entity';
 import { Follow } from './follow.entity';
 import { Attendance } from '../attendance/attendance.entity';
 import { Notification } from '../notifications/notification.entity';
+import { Photo } from 'src/photos/photo.entity';
 export declare class User {
     id: string;
     githubId?: number;
@@ -38,6 +39,7 @@ export declare class User {
     sendNotifications: Promise<Notification[]>;
     receivePostNotification: boolean;
     receiveLikeNotification: boolean;
+    photos: Promise<Photo[]>;
     updateAvatar(): void;
     generateToken(): string;
 }

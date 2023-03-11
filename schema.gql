@@ -118,6 +118,19 @@ type Notification {
   readedAt: Date
 }
 
+type Photo {
+  id: String!
+
+  """업로드주소"""
+  src: String!
+
+  """사진타입"""
+  type: String!
+
+  """사용자"""
+  user: User!
+}
+
 type User {
   id: String!
 
@@ -195,6 +208,9 @@ type User {
 
   """좋아요알림여부"""
   receiveLikeNotification: Boolean!
+
+  """업로드한사진목록"""
+  photos: [Photo!]!
 }
 
 type OffsetMetadata {

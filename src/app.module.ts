@@ -1,16 +1,17 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
-import { DirectiveLocation, GraphQLDirective } from 'graphql';
+// import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
+// import { DirectiveLocation, GraphQLDirective } from 'graphql';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MulterModule } from '@nestjs/platform-express';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import * as Joi from 'joi';
 import { join } from 'path';
+import { mysqlConfig } from 'ormconfig';
 
-import { upperDirectiveTransformer } from './common/directives/upper-case.directive';
+// import { upperDirectiveTransformer } from './common/directives/upper-case.directive';
 import { UsersModule } from './users/users.module';
 // import { LoggingPlugin } from './common/plugins/logging.plugin';
 import { PlatformsModule } from './platforms/platforms.module';
@@ -22,7 +23,7 @@ import { UploadController } from './upload/upload.controller';
 import { AttendanceModule } from './attendance/attendance.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { GithubModule } from './github/github.module';
-import { mysqlConfig } from 'ormconfig';
+import { PhotosModule } from './photos/photos.module';
 // import { SettingsModule } from './settings/settings.module';
 
 @Module({
@@ -79,6 +80,7 @@ import { mysqlConfig } from 'ormconfig';
         AttendanceModule,
         NotificationsModule,
         GithubModule,
+        PhotosModule,
     ],
     providers: [],
     controllers: [UploadController],

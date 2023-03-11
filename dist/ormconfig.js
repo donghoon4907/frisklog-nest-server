@@ -10,7 +10,7 @@ exports.mysqlConfig = {
     password: process.env.DB_PASSWORD,
     database: process.env.DB,
     autoLoadEntities: true,
-    synchronize: false,
+    synchronize: true,
     logging: false,
     timezone: 'local',
     charset: 'utf8mb4',

@@ -16,6 +16,7 @@ const eager_import_2 = require("../comments/comment.entity");
 const eager_import_3 = require("./follow.entity");
 const eager_import_4 = require("../attendance/attendance.entity");
 const eager_import_5 = require("../notifications/notification.entity");
+const eager_import_6 = require("../photos/photo.entity");
 const graphql_1 = require("@nestjs/graphql");
 const typeorm_1 = require("typeorm");
 const class_validator_1 = require("class-validator");
@@ -27,6 +28,7 @@ const user_interface_1 = require("./user.interface");
 const follow_entity_1 = require("./follow.entity");
 const attendance_entity_1 = require("../attendance/attendance.entity");
 const notification_entity_1 = require("../notifications/notification.entity");
+const photo_entity_1 = require("../photos/photo.entity");
 (0, graphql_1.registerEnumType)(user_interface_1.UserStatus, { name: 'UserStatus' });
 let User = class User {
     updateAvatar() {
@@ -44,7 +46,7 @@ let User = class User {
         return (0, jsonwebtoken_1.sign)({ id }, process.env.JWT_SECRET, { expiresIn });
     }
     static _GRAPHQL_METADATA_FACTORY() {
-        return { id: { type: () => String }, nickname: { type: () => String }, avatar: { type: () => String }, isMaster: { type: () => Boolean }, status: { type: () => String }, isKeep: { nullable: true, type: () => Boolean }, token: { nullable: true, type: () => String }, statusText: { type: () => String }, link: { type: () => String }, createdAt: { type: () => Date }, updatedAt: { type: () => Date }, platform: { type: () => require("../platforms/platform.entity").Platform }, posts: { type: () => [require("../posts/post.entity").Post] }, postCount: { nullable: true, type: () => Number }, comments: { type: () => [require("../comments/comment.entity").Comment] }, likes: { type: () => [require("../posts/post.entity").Post] }, followers: { type: () => [require("./follow.entity").Follow] }, followerCount: { nullable: true, type: () => Number }, followings: { type: () => [require("./follow.entity").Follow] }, followingCount: { nullable: true, type: () => Number }, isFollowing: { nullable: true, type: () => Boolean }, isMe: { nullable: true, type: () => Boolean }, attendances: { type: () => [require("../attendance/attendance.entity").Attendance] }, lastAccessAt: { nullable: true, type: () => Date }, receiveNotifications: { type: () => [require("../notifications/notification.entity").Notification] }, sendNotifications: { type: () => [require("../notifications/notification.entity").Notification] }, receivePostNotification: { type: () => Boolean }, receiveLikeNotification: { type: () => Boolean } };
+        return { id: { type: () => String }, nickname: { type: () => String }, avatar: { type: () => String }, isMaster: { type: () => Boolean }, status: { type: () => String }, isKeep: { nullable: true, type: () => Boolean }, token: { nullable: true, type: () => String }, statusText: { type: () => String }, link: { type: () => String }, createdAt: { type: () => Date }, updatedAt: { type: () => Date }, platform: { type: () => require("../platforms/platform.entity").Platform }, posts: { type: () => [require("../posts/post.entity").Post] }, postCount: { nullable: true, type: () => Number }, comments: { type: () => [require("../comments/comment.entity").Comment] }, likes: { type: () => [require("../posts/post.entity").Post] }, followers: { type: () => [require("./follow.entity").Follow] }, followerCount: { nullable: true, type: () => Number }, followings: { type: () => [require("./follow.entity").Follow] }, followingCount: { nullable: true, type: () => Number }, isFollowing: { nullable: true, type: () => Boolean }, isMe: { nullable: true, type: () => Boolean }, attendances: { type: () => [require("../attendance/attendance.entity").Attendance] }, lastAccessAt: { nullable: true, type: () => Date }, receiveNotifications: { type: () => [require("../notifications/notification.entity").Notification] }, sendNotifications: { type: () => [require("../notifications/notification.entity").Notification] }, receivePostNotification: { type: () => Boolean }, receiveLikeNotification: { type: () => Boolean }, photos: { type: () => [require("../photos/photo.entity").Photo] } };
     }
 };
 __decorate([
@@ -253,6 +255,14 @@ __decorate([
     (0, class_validator_1.IsBoolean)(),
     __metadata("design:type", Boolean)
 ], User.prototype, "receiveLikeNotification", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => photo_entity_1.Photo, (photo) => photo.user, {
+        onDelete: 'CASCADE',
+    }),
+    (0, graphql_1.Field)(() => [photo_entity_1.Photo], { description: '업로드한사진목록' }),
+    (0, class_validator_1.IsArray)(),
+    __metadata("design:type", Promise)
+], User.prototype, "photos", void 0);
 __decorate([
     (0, typeorm_1.BeforeInsert)(),
     (0, typeorm_1.BeforeUpdate)(),
