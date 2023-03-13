@@ -7,7 +7,6 @@ import {
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { JwtPayload, verify } from 'jsonwebtoken';
 
 import { User } from '../user.entity';
 import { decodeToken, getBearerToken } from 'src/common/context';

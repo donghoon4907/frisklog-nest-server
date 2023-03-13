@@ -16,13 +16,24 @@ exports.UploadController = void 0;
 const common_1 = require("@nestjs/common");
 const platform_express_1 = require("@nestjs/platform-express");
 const error_filter_1 = require("../common/filters/error.filter");
+const upload_service_1 = require("./upload.service");
+const auth_guard_1 = require("../users/auth/auth.guard");
+const auth_decorator_1 = require("../users/auth/auth.decorator");
+const user_entity_1 = require("../users/user.entity");
 let UploadController = class UploadController {
-    uploadImage(file) {
-        return `${process.env.BACKEND_HOST}/upload/${file.filename}`;
+    constructor(uploadService) {
+        this.uploadService = uploadService;
+    }
+    uploadImage(me, file, type) {
+        return this.uploadService.uploadImage({
+            src: `${process.env.BACKEND_HOST}/upload/${file.filename}`,
+            type,
+        }, me);
     }
 };
 __decorate([
     (0, common_1.Post)('image'),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', {
         fileFilter: (req, file, callback) => {
             if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
@@ -31,14 +42,17 @@ __decorate([
             callback(null, true);
         },
     })),
-    __param(0, (0, common_1.UploadedFile)()),
+    __param(0, (0, auth_decorator_1.AuthUser)()),
+    __param(1, (0, common_1.UploadedFile)()),
+    __param(2, (0, common_1.Query)('type')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [user_entity_1.User, Object, String]),
     __metadata("design:returntype", void 0)
 ], UploadController.prototype, "uploadImage", null);
 UploadController = __decorate([
     (0, common_1.Controller)('upload'),
-    (0, common_1.UseFilters)(new error_filter_1.ErrorFilter())
+    (0, common_1.UseFilters)(new error_filter_1.ErrorFilter()),
+    __metadata("design:paramtypes", [upload_service_1.UploadService])
 ], UploadController);
 exports.UploadController = UploadController;
 //# sourceMappingURL=upload.controller.js.map

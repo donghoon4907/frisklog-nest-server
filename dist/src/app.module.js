@@ -12,7 +12,6 @@ const common_1 = require("@nestjs/common");
 const graphql_1 = require("@nestjs/graphql");
 const config_1 = require("@nestjs/config");
 const typeorm_1 = require("@nestjs/typeorm");
-const platform_express_1 = require("@nestjs/platform-express");
 const serve_static_1 = require("@nestjs/serve-static");
 const Joi = require("joi");
 const path_1 = require("path");
@@ -22,11 +21,11 @@ const platforms_module_1 = require("./platforms/platforms.module");
 const posts_module_1 = require("./posts/posts.module");
 const comments_module_1 = require("./comments/comments.module");
 const categories_module_1 = require("./categories/categories.module");
-const upload_controller_1 = require("./upload/upload.controller");
 const attendance_module_1 = require("./attendance/attendance.module");
 const notifications_module_1 = require("./notifications/notifications.module");
 const github_module_1 = require("./github/github.module");
 const photos_module_1 = require("./photos/photos.module");
+const upload_module_1 = require("./upload/upload.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -35,9 +34,6 @@ AppModule = __decorate([
             serve_static_1.ServeStaticModule.forRoot({
                 rootPath: (0, path_1.join)(process.cwd(), '/public'),
                 exclude: ['/graphql'],
-            }),
-            platform_express_1.MulterModule.register({
-                dest: './public/upload',
             }),
             config_1.ConfigModule.forRoot({
                 envFilePath: '.env',
@@ -70,9 +66,9 @@ AppModule = __decorate([
             notifications_module_1.NotificationsModule,
             github_module_1.GithubModule,
             photos_module_1.PhotosModule,
+            upload_module_1.UploadModule,
         ],
         providers: [],
-        controllers: [upload_controller_1.UploadController],
     })
 ], AppModule);
 exports.AppModule = AppModule;

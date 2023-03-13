@@ -5,7 +5,6 @@ import { GraphQLModule } from '@nestjs/graphql';
 // import { DirectiveLocation, GraphQLDirective } from 'graphql';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MulterModule } from '@nestjs/platform-express';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import * as Joi from 'joi';
 import { join } from 'path';
@@ -19,11 +18,11 @@ import { PlatformsModule } from './platforms/platforms.module';
 import { PostsModule } from './posts/posts.module';
 import { CommentsModule } from './comments/comments.module';
 import { CategoriesModule } from './categories/categories.module';
-import { UploadController } from './upload/upload.controller';
 import { AttendanceModule } from './attendance/attendance.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { GithubModule } from './github/github.module';
 import { PhotosModule } from './photos/photos.module';
+import { UploadModule } from './upload/upload.module';
 // import { SettingsModule } from './settings/settings.module';
 
 @Module({
@@ -31,9 +30,6 @@ import { PhotosModule } from './photos/photos.module';
         ServeStaticModule.forRoot({
             rootPath: join(process.cwd(), '/public'),
             exclude: ['/graphql'],
-        }),
-        MulterModule.register({
-            dest: './public/upload',
         }),
         ConfigModule.forRoot({
             envFilePath: '.env',
@@ -81,8 +77,8 @@ import { PhotosModule } from './photos/photos.module';
         NotificationsModule,
         GithubModule,
         PhotosModule,
+        UploadModule,
     ],
     providers: [],
-    controllers: [UploadController],
 })
 export class AppModule {}

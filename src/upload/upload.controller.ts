@@ -1,18 +1,27 @@
 import {
     Controller,
     Post,
+    Query,
     UploadedFile,
     UseFilters,
+    UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 import { ErrorFilter } from '../common/filters/error.filter';
+import { UploadService } from './upload.service';
+import { AuthGuard } from '../users/auth/auth.guard';
+import { AuthUser } from '../users/auth/auth.decorator';
+import { User } from '../users/user.entity';
 
 @Controller('upload')
 @UseFilters(new ErrorFilter())
 export class UploadController {
+    constructor(private readonly uploadService: UploadService) {}
+
     @Post('image')
+    @UseGuards(AuthGuard)
     @UseInterceptors(
         FileInterceptor('file', {
             fileFilter: (req, file, callback) => {
@@ -28,9 +37,17 @@ export class UploadController {
         }),
     )
     uploadImage(
+        @AuthUser() me: User,
         @UploadedFile()
         file: Express.Multer.File,
+        @Query('type') type: string,
     ) {
-        return `${process.env.BACKEND_HOST}/upload/${file.filename}`;
+        return this.uploadService.uploadImage(
+            {
+                src: `${process.env.BACKEND_HOST}/upload/${file.filename}`,
+                type,
+            },
+            me,
+        );
     }
 }
