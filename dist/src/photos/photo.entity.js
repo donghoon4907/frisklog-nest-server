@@ -18,7 +18,7 @@ const photo_interface_1 = require("./photo.interface");
 const user_entity_1 = require("../users/user.entity");
 let Photo = class Photo {
     static _GRAPHQL_METADATA_FACTORY() {
-        return { id: { type: () => String }, src: { type: () => String }, type: { type: () => String }, user: { type: () => require("../users/user.entity").User } };
+        return { id: { type: () => String }, src: { type: () => String }, type: { type: () => String }, user: { type: () => require("../users/user.entity").User }, createdAt: { type: () => Date } };
     }
 };
 __decorate([
@@ -49,6 +49,17 @@ __decorate([
     (0, graphql_1.Field)(() => user_entity_1.User, { description: '사용자' }),
     __metadata("design:type", Promise)
 ], Photo.prototype, "user", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)(),
+    (0, graphql_1.Field)(),
+    (0, class_validator_1.IsDateString)(),
+    __metadata("design:type", Date)
+], Photo.prototype, "createdAt", void 0);
+__decorate([
+    (0, typeorm_1.DeleteDateColumn)(),
+    (0, graphql_1.HideField)(),
+    __metadata("design:type", Date)
+], Photo.prototype, "deletedAt", void 0);
 Photo = __decorate([
     (0, typeorm_1.Entity)('photos'),
     (0, graphql_1.ObjectType)()

@@ -1,11 +1,13 @@
-import { Field, ObjectType } from '@nestjs/graphql';
-import { IsEnum, IsString } from 'class-validator';
+import { Field, HideField, ObjectType } from '@nestjs/graphql';
+import { IsDateString, IsEnum, IsString } from 'class-validator';
 import {
     Column,
     Entity,
     PrimaryGeneratedColumn,
     ManyToOne,
     JoinColumn,
+    CreateDateColumn,
+    DeleteDateColumn,
 } from 'typeorm';
 
 import { PhotoType } from './photo.interface';
@@ -37,4 +39,13 @@ export class Photo {
     @JoinColumn({ name: 'userId' })
     @Field(() => User, { description: '사용자' })
     user: Promise<User>;
+
+    @CreateDateColumn()
+    @Field()
+    @IsDateString()
+    createdAt: Date;
+
+    @DeleteDateColumn()
+    @HideField()
+    deletedAt?: Date;
 }

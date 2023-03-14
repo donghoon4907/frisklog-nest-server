@@ -9,18 +9,24 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AttendanceResolver = void 0;
+exports.PhotosArgs = void 0;
 const graphql_1 = require("@nestjs/graphql");
-const attendance_entity_1 = require("./attendance.entity");
-const attendance_service_1 = require("./attendance.service");
-let AttendanceResolver = class AttendanceResolver {
-    constructor(attendanceService) {
-        this.attendanceService = attendanceService;
+const class_validator_1 = require("class-validator");
+const photo_interface_1 = require("../photo.interface");
+const offset_args_1 = require("../../common/paging/offset/offset.args");
+let PhotosArgs = class PhotosArgs extends offset_args_1.OffsetPaginatedArgs {
+    static _GRAPHQL_METADATA_FACTORY() {
+        return { type: { nullable: true, type: () => String } };
     }
 };
-AttendanceResolver = __decorate([
-    (0, graphql_1.Resolver)((of) => attendance_entity_1.Attendance),
-    __metadata("design:paramtypes", [attendance_service_1.AttendanceService])
-], AttendanceResolver);
-exports.AttendanceResolver = AttendanceResolver;
-//# sourceMappingURL=attendance.resolver.js.map
+__decorate([
+    (0, graphql_1.Field)({ description: '사진타입', nullable: true }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsEnum)(photo_interface_1.PhotoType),
+    __metadata("design:type", String)
+], PhotosArgs.prototype, "type", void 0);
+PhotosArgs = __decorate([
+    (0, graphql_1.ArgsType)()
+], PhotosArgs);
+exports.PhotosArgs = PhotosArgs;
+//# sourceMappingURL=photos.args.js.map

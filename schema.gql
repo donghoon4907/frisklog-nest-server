@@ -129,6 +129,7 @@ type Photo {
 
   """사용자"""
   user: User!
+  createdAt: Date!
 }
 
 type User {
@@ -260,6 +261,11 @@ type OffsetPaginatedComment {
   pageInfo: OffsetMetadata!
 }
 
+type OffsetPaginatedPhoto {
+  nodes: [Photo!]
+  pageInfo: OffsetMetadata!
+}
+
 type Query {
   users(
     offset: Int = 0
@@ -310,6 +316,13 @@ type Query {
   relatedCategories(content: String!): [Category!]!
   notifications(offset: Int = 0, limit: Int = 12): OffsetPaginatedNotification!
   comments(offset: Int = 0, limit: Int = 12, postId: String!, order: [[String!]!]): OffsetPaginatedComment!
+  photos(
+    offset: Int = 0
+    limit: Int = 12
+
+    """사진타입"""
+    type: String
+  ): OffsetPaginatedPhoto!
 }
 
 type Mutation {

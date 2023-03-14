@@ -17,9 +17,28 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const photo_entity_1 = require("./photo.entity");
+const offset_paginator_1 = require("../common/paging/offset/offset.paginator");
 let PhotosService = class PhotosService {
     constructor(photosRepository) {
         this.photosRepository = photosRepository;
+    }
+    async photos(photosArgs, authId) {
+        const { offset, limit, type } = photosArgs;
+        const qb = this.photosRepository
+            .createQueryBuilder('photo')
+            .innerJoinAndSelect('photo.user', 'user')
+            .where('user.id = :authId', { authId })
+            .orderBy('photo.createdAt', 'DESC')
+            .limit(limit)
+            .offset(offset);
+        if (type) {
+            qb.andWhere('photo.type = :type', {
+                type,
+            });
+        }
+        const [photos, total] = await qb.getManyAndCount();
+        const paginator = new offset_paginator_1.OffsetPaginator(offset, limit);
+        return paginator.response(photos, total);
     }
     findById(id) {
         return this.photosRepository.findOne({

@@ -4,4 +4,6 @@ export declare class Photo {
     src: string;
     type: string;
     user: Promise<User>;
+    createdAt: Date;
+    deletedAt?: Date;
 }

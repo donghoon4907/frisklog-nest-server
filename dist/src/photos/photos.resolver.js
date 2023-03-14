@@ -18,9 +18,16 @@ const common_1 = require("@nestjs/common");
 const photo_entity_1 = require("./photo.entity");
 const photos_service_1 = require("./photos.service");
 const auth_guard_1 = require("../users/auth/auth.guard");
+const photos_response_1 = require("./dto/photos.response");
+const auth_decorator_1 = require("../users/auth/auth.decorator");
+const user_entity_1 = require("../users/user.entity");
+const photos_args_1 = require("./dto/photos.args");
 let PhotosResolver = class PhotosResolver {
     constructor(photosService) {
         this.photosService = photosService;
+    }
+    async photos(me, photosArgs) {
+        return this.photosService.photos(photosArgs, me.id);
     }
     async deletePhoto(id) {
         const photo = await this.photosService.findById(id);
@@ -30,6 +37,15 @@ let PhotosResolver = class PhotosResolver {
         return this.photosService.deletePhoto(photo);
     }
 };
+__decorate([
+    (0, graphql_1.Query)((returns) => photos_response_1.OffsetPaginatedPhoto),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    __param(0, (0, auth_decorator_1.AuthUser)()),
+    __param(1, (0, graphql_1.Args)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [user_entity_1.User, photos_args_1.PhotosArgs]),
+    __metadata("design:returntype", Promise)
+], PhotosResolver.prototype, "photos", null);
 __decorate([
     (0, graphql_1.Mutation)((returns) => photo_entity_1.Photo),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
