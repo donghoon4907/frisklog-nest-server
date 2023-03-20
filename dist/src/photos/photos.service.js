@@ -13,6 +13,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PhotosService = void 0;
+const fs = require("fs");
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
@@ -54,8 +55,17 @@ let PhotosService = class PhotosService {
         await this.photosRepository.save(photo);
         return photo;
     }
-    deletePhoto(photo) {
-        return this.photosRepository.softRemove(photo);
+    async deletePhoto(photo) {
+        await this.photosRepository.softRemove(photo);
+        const fileNameStartIndex = photo.src.lastIndexOf('/');
+        const fileName = photo.src.substring(fileNameStartIndex);
+        try {
+            fs.unlinkSync(`${process.cwd()}/public/upload${fileName}`);
+        }
+        catch (_a) {
+            console.log('삭제를 요청한 파일을 찾을 수 없습니다.');
+        }
+        return photo;
     }
 };
 PhotosService = __decorate([

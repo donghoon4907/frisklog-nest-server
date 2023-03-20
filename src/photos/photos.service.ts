@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -61,7 +62,19 @@ export class PhotosService {
         return photo;
     }
 
-    deletePhoto(photo: Photo) {
-        return this.photosRepository.softRemove(photo);
+    async deletePhoto(photo: Photo) {
+        await this.photosRepository.softRemove(photo);
+
+        const fileNameStartIndex = photo.src.lastIndexOf('/');
+
+        const fileName = photo.src.substring(fileNameStartIndex);
+
+        try {
+            fs.unlinkSync(`${process.cwd()}/public/upload${fileName}`);
+        } catch {
+            console.log('삭제를 요청한 파일을 찾을 수 없습니다.');
+        }
+
+        return photo;
     }
 }
