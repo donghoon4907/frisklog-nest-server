@@ -17,10 +17,13 @@ const fs = require("fs");
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
+const nest_winston_1 = require("nest-winston");
+const winston_1 = require("winston");
 const photo_entity_1 = require("./photo.entity");
 const offset_paginator_1 = require("../common/paging/offset/offset.paginator");
 let PhotosService = class PhotosService {
-    constructor(photosRepository) {
+    constructor(logger, photosRepository) {
+        this.logger = logger;
         this.photosRepository = photosRepository;
     }
     async photos(photosArgs, authId) {
@@ -59,19 +62,28 @@ let PhotosService = class PhotosService {
         await this.photosRepository.softRemove(photo);
         const fileNameStartIndex = photo.src.lastIndexOf('/');
         const fileName = photo.src.substring(fileNameStartIndex);
+        const uri = `${process.cwd()}/public/upload${fileName}`;
+        try {
+            fs.readFileSync(uri);
+        }
+        catch (_a) {
+            this.logger.warn(`PhotosService->deletePhoto: ${fileName} 파일이 존재하지 않습니다.`);
+        }
         try {
             fs.unlinkSync(`${process.cwd()}/public/upload${fileName}`);
         }
-        catch (_a) {
-            console.log('삭제를 요청한 파일을 찾을 수 없습니다.');
+        catch (_b) {
+            this.logger.warn(`PhotosService->deletePhoto: ${fileName} 파일 삭제 중 오류가 발생했습니다.`);
         }
         return photo;
     }
 };
 PhotosService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, typeorm_1.InjectRepository)(photo_entity_1.Photo)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __param(0, (0, common_1.Inject)(nest_winston_1.WINSTON_MODULE_PROVIDER)),
+    __param(1, (0, typeorm_1.InjectRepository)(photo_entity_1.Photo)),
+    __metadata("design:paramtypes", [winston_1.Logger,
+        typeorm_2.Repository])
 ], PhotosService);
 exports.PhotosService = PhotosService;
 //# sourceMappingURL=photos.service.js.map

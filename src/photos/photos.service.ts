@@ -1,17 +1,20 @@
 import * as fs from 'fs';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { Logger } from 'winston';
 
 import { Photo } from './photo.entity';
 import { CreatePhotoDto } from './dto/create-photo.dto';
 import { User } from '../users/user.entity';
 import { PhotosArgs } from './dto/photos.args';
-import { OffsetPaginator } from 'src/common/paging/offset/offset.paginator';
+import { OffsetPaginator } from '../common/paging/offset/offset.paginator';
 
 @Injectable()
 export class PhotosService {
     constructor(
+        @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
         @InjectRepository(Photo)
         private readonly photosRepository: Repository<Photo>,
     ) {}
@@ -69,10 +72,22 @@ export class PhotosService {
 
         const fileName = photo.src.substring(fileNameStartIndex);
 
+        const uri = `${process.cwd()}/public/upload${fileName}`;
+
+        try {
+            fs.readFileSync(uri);
+        } catch {
+            this.logger.warn(
+                `PhotosService->deletePhoto: ${fileName} 파일이 존재하지 않습니다.`,
+            );
+        }
+
         try {
             fs.unlinkSync(`${process.cwd()}/public/upload${fileName}`);
         } catch {
-            console.log('삭제를 요청한 파일을 찾을 수 없습니다.');
+            this.logger.warn(
+                `PhotosService->deletePhoto: ${fileName} 파일 삭제 중 오류가 발생했습니다.`,
+            );
         }
 
         return photo;

@@ -24,6 +24,7 @@ import { GithubModule } from './github/github.module';
 import { PhotosModule } from './photos/photos.module';
 import { UploadModule } from './upload/upload.module';
 // import { SettingsModule } from './settings/settings.module';
+import { LoggerModule } from './logger/logger.module';
 
 @Module({
     imports: [
@@ -78,6 +79,7 @@ import { UploadModule } from './upload/upload.module';
         GithubModule,
         PhotosModule,
         UploadModule,
+        LoggerModule,
     ],
     providers: [],
 })

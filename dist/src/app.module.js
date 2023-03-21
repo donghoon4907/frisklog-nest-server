@@ -26,6 +26,7 @@ const notifications_module_1 = require("./notifications/notifications.module");
 const github_module_1 = require("./github/github.module");
 const photos_module_1 = require("./photos/photos.module");
 const upload_module_1 = require("./upload/upload.module");
+const logger_module_1 = require("./logger/logger.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -67,6 +68,7 @@ AppModule = __decorate([
             github_module_1.GithubModule,
             photos_module_1.PhotosModule,
             upload_module_1.UploadModule,
+            logger_module_1.LoggerModule,
         ],
         providers: [],
     })

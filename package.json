@@ -40,6 +40,7 @@
         "jsonwebtoken": "^8.5.1",
         "moment": "^2.29.4",
         "mysql2": "2.3.3",
+        "nest-winston": "^1.9.1",
         "nodemailer": "^6.7.8",
         "nodemailer-smtp-pool": "^2.8.3",
         "reflect-metadata": "0.1.13",
@@ -47,7 +48,9 @@
         "rxjs": "7.5.5",
         "typeorm": "0.3.7",
         "typeorm-cursor-pagination": "^0.9.1",
-        "uuid": "^8.3.2"
+        "uuid": "^8.3.2",
+        "winston": "^3.8.2",
+        "winston-daily-rotate-file": "^4.7.1"
     },
     "devDependencies": {
         "@nestjs/cli": "9.0.0",
