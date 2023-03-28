@@ -60,6 +60,11 @@ __decorate([
     __metadata("design:type", Number)
 ], User.prototype, "githubId", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ comment: 'naver_id', nullable: true, unique: true }),
+    (0, graphql_1.HideField)(),
+    __metadata("design:type", String)
+], User.prototype, "naverId", void 0);
+__decorate([
     (0, typeorm_1.Column)({ comment: '이메일', nullable: true, unique: true }),
     (0, graphql_1.HideField)(),
     __metadata("design:type", String)

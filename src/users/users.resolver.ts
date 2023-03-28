@@ -29,6 +29,7 @@ import { decodeToken, getBearerToken } from '../common/context';
 import { AttendanceService } from '../attendance/attendance.service';
 import { GithubService } from '../github/github.service';
 import { UpdateSettingDto } from './dto/update-setting.dto';
+import { NaverService } from '../naver/naver.service';
 
 @Resolver((of) => User)
 export class UsersResolver {
@@ -38,6 +39,8 @@ export class UsersResolver {
         private readonly attendanceService: AttendanceService,
         @Inject(forwardRef(() => GithubService))
         private readonly githubService: GithubService,
+        @Inject(forwardRef(() => NaverService))
+        private readonly naverService: NaverService,
     ) {}
 
     @Query((returns) => OffsetPaginatedUser)
@@ -210,6 +213,37 @@ export class UsersResolver {
             return this.usersService.verify(true, user);
         } catch (e) {
             console.log(e.message);
+
+            return null;
+        }
+    }
+
+    @Mutation((returns) => User)
+    async naverLogIn(@Args('code') code: string) {
+        try {
+            const { data } = await this.naverService.getAccessToken(code);
+
+            const { access_token } = data;
+
+            const userInfo = await this.naverService.getProfile(access_token);
+
+            const { id, nickname, profile_image } = userInfo.data.response;
+
+            let user = await this.usersService.findByNaverId(id);
+
+            if (user === null) {
+                const params = {
+                    nickname,
+                    avatar: profile_image,
+                    naverId: id,
+                };
+
+                user = await this.usersService.createUser(params, 3);
+            }
+
+            return this.usersService.verify(true, user);
+        } catch (e) {
+            console.log(e);
 
             return null;
         }

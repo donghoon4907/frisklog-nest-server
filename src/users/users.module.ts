@@ -9,12 +9,14 @@ import { DateScalar } from '../common/scalars/date.scalar';
 import { Follow } from './follow.entity';
 import { AttendanceModule } from '../attendance/attendance.module';
 import { GithubModule } from '../github/github.module';
+import { NaverModule } from '../naver/naver.module';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([User, Follow]),
         forwardRef(() => AttendanceModule),
         forwardRef(() => GithubModule),
+        forwardRef(() => NaverModule),
     ],
     providers: [UsersService, UsersResolver, UserSubscriber, DateScalar],
 })

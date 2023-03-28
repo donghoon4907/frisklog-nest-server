@@ -32,6 +32,12 @@ __decorate([
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreateUserOptionalInput.prototype, "githubId", void 0);
+__decorate([
+    (0, graphql_1.Field)({ nullable: true }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateUserOptionalInput.prototype, "naverId", void 0);
 CreateUserOptionalInput = __decorate([
     (0, graphql_1.InputType)()
 ], CreateUserOptionalInput);

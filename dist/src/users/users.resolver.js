@@ -30,11 +30,13 @@ const context_1 = require("../common/context");
 const attendance_service_1 = require("../attendance/attendance.service");
 const github_service_1 = require("../github/github.service");
 const update_setting_dto_1 = require("./dto/update-setting.dto");
+const naver_service_1 = require("../naver/naver.service");
 let UsersResolver = class UsersResolver {
-    constructor(usersService, attendanceService, githubService) {
+    constructor(usersService, attendanceService, githubService, naverService) {
         this.usersService = usersService;
         this.attendanceService = attendanceService;
         this.githubService = githubService;
+        this.naverService = naverService;
     }
     users(usersArgs) {
         return this.usersService.findAll(usersArgs);
@@ -136,6 +138,28 @@ let UsersResolver = class UsersResolver {
         }
         catch (e) {
             console.log(e.message);
+            return null;
+        }
+    }
+    async naverLogIn(code) {
+        try {
+            const { data } = await this.naverService.getAccessToken(code);
+            const { access_token } = data;
+            const userInfo = await this.naverService.getProfile(access_token);
+            const { id, nickname, profile_image } = userInfo.data.response;
+            let user = await this.usersService.findByNaverId(id);
+            if (user === null) {
+                const params = {
+                    nickname,
+                    avatar: profile_image,
+                    naverId: id,
+                };
+                user = await this.usersService.createUser(params, 3);
+            }
+            return this.usersService.verify(true, user);
+        }
+        catch (e) {
+            console.log(e);
             return null;
         }
     }
@@ -267,6 +291,13 @@ __decorate([
 ], UsersResolver.prototype, "githubLogIn", null);
 __decorate([
     (0, graphql_1.Mutation)((returns) => user_entity_1.User),
+    __param(0, (0, graphql_1.Args)('code')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UsersResolver.prototype, "naverLogIn", null);
+__decorate([
+    (0, graphql_1.Mutation)((returns) => user_entity_1.User),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     __param(0, (0, auth_decorator_1.AuthUser)()),
     __param(1, (0, graphql_1.Args)('id')),
@@ -303,9 +334,11 @@ UsersResolver = __decorate([
     (0, graphql_1.Resolver)((of) => user_entity_1.User),
     __param(1, (0, common_1.Inject)((0, common_1.forwardRef)(() => attendance_service_1.AttendanceService))),
     __param(2, (0, common_1.Inject)((0, common_1.forwardRef)(() => github_service_1.GithubService))),
+    __param(3, (0, common_1.Inject)((0, common_1.forwardRef)(() => naver_service_1.NaverService))),
     __metadata("design:paramtypes", [users_service_1.UsersService,
         attendance_service_1.AttendanceService,
-        github_service_1.GithubService])
+        github_service_1.GithubService,
+        naver_service_1.NaverService])
 ], UsersResolver);
 exports.UsersResolver = UsersResolver;
 //# sourceMappingURL=users.resolver.js.map

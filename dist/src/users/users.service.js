@@ -101,6 +101,9 @@ let UsersService = class UsersService {
     findByGithubId(githubId) {
         return this.usersRepository.findOneBy({ githubId });
     }
+    findByNaverId(naverId) {
+        return this.usersRepository.findOneBy({ naverId });
+    }
     hasNickname(nickname) {
         return this.usersRepository.findOneBy({ nickname });
     }
@@ -111,12 +114,13 @@ let UsersService = class UsersService {
         return (0, send_mail_util_1.sendMail)(email, captcha);
     }
     async createUser(createUserDto, platformId = 1) {
-        const { nickname, email, githubId, avatar } = createUserDto;
+        const { nickname, email, githubId, naverId, avatar } = createUserDto;
         const user = new user_entity_1.User();
         user.nickname = nickname;
         user.email = email;
         user.platformId = platformId;
         user.githubId = githubId;
+        user.naverId = naverId;
         user.avatar = avatar;
         await this.usersRepository.save(user);
         return user;

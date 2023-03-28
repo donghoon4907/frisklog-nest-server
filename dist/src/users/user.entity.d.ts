@@ -8,6 +8,7 @@ import { Photo } from 'src/photos/photo.entity';
 export declare class User {
     id: string;
     githubId?: number;
+    naverId?: string;
     email?: string;
     nickname: string;
     avatar: string;

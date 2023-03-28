@@ -6,6 +6,7 @@ declare const CreateUserOptionalInput_base: import("@nestjs/common").Type<Partia
 declare class CreateUserOptionalInput extends CreateUserOptionalInput_base {
     email?: string;
     githubId?: number;
+    naverId?: string;
 }
 declare const CreateUserDto_base: import("@nestjs/common").Type<CreateUserRequiredInput & CreateUserOptionalInput>;
 export declare class CreateUserDto extends CreateUserDto_base {

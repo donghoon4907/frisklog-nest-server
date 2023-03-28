@@ -332,6 +332,7 @@ type Mutation {
   logIn(email: String!): Boolean!
   verify(input: VerifyUserDto!): User!
   githubLogIn(code: String!): User!
+  naverLogIn(code: String!): User!
   follow(id: String!): User!
   unfollow(id: String!): User!
   addPost(input: CreatePostDto!): Post!
@@ -356,6 +357,7 @@ input CreateUserDto {
   avatar: String
   email: String
   githubId: Float
+  naverId: String
 }
 
 input UpdateUserDto {

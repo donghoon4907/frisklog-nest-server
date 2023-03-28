@@ -54,6 +54,10 @@ export class User {
     @HideField()
     githubId?: number;
 
+    @Column({ comment: 'naver_id', nullable: true, unique: true })
+    @HideField()
+    naverId?: string;
+
     @Column({ comment: '이메일', nullable: true, unique: true })
     @HideField()
     email?: string;

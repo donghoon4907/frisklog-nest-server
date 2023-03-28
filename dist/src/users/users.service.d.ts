@@ -18,6 +18,7 @@ export declare class UsersService {
     isFollowing(acceptorId: string, requesterId: string): Promise<boolean>;
     findById(id: string): Promise<User>;
     findByGithubId(githubId: number): Promise<User>;
+    findByNaverId(naverId: string): Promise<User>;
     hasNickname(nickname: string): Promise<User>;
     hasEmail(email: string): Promise<User>;
     sendMail(email: string, captcha: string): Promise<import("nodemailer/lib/smtp-transport").SentMessageInfo>;

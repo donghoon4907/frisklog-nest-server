@@ -124,6 +124,10 @@ export class UsersService {
         return this.usersRepository.findOneBy({ githubId });
     }
 
+    findByNaverId(naverId: string) {
+        return this.usersRepository.findOneBy({ naverId });
+    }
+
     hasNickname(nickname: string) {
         return this.usersRepository.findOneBy({ nickname });
     }
@@ -137,7 +141,7 @@ export class UsersService {
     }
 
     async createUser(createUserDto: CreateUserDto, platformId = 1) {
-        const { nickname, email, githubId, avatar } = createUserDto;
+        const { nickname, email, githubId, naverId, avatar } = createUserDto;
 
         const user = new User();
 
@@ -148,6 +152,8 @@ export class UsersService {
         user.platformId = platformId;
 
         user.githubId = githubId;
+
+        user.naverId = naverId;
 
         user.avatar = avatar;
 

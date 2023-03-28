@@ -5,7 +5,7 @@ import {
     PartialType,
     PickType,
 } from '@nestjs/graphql';
-import { IsEmail, IsNumber, IsOptional } from 'class-validator';
+import { IsEmail, IsNumber, IsOptional, IsString } from 'class-validator';
 
 import { User } from '../user.entity';
 
@@ -29,6 +29,11 @@ class CreateUserOptionalInput extends PartialType(
     @IsOptional()
     @IsNumber()
     githubId?: number;
+
+    @Field({ nullable: true })
+    @IsOptional()
+    @IsString()
+    naverId?: string;
 }
 
 @InputType()

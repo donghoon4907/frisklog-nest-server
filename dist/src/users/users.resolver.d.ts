@@ -10,11 +10,13 @@ import { RecommendersArgs } from './dto/recommenders.args';
 import { AttendanceService } from '../attendance/attendance.service';
 import { GithubService } from '../github/github.service';
 import { UpdateSettingDto } from './dto/update-setting.dto';
+import { NaverService } from '../naver/naver.service';
 export declare class UsersResolver {
     private readonly usersService;
     private readonly attendanceService;
     private readonly githubService;
-    constructor(usersService: UsersService, attendanceService: AttendanceService, githubService: GithubService);
+    private readonly naverService;
+    constructor(usersService: UsersService, attendanceService: AttendanceService, githubService: GithubService, naverService: NaverService);
     users(usersArgs: UsersArgs): Promise<OffsetPaginatedUser>;
     recommenders(recommendersArgs: RecommendersArgs): Promise<OffsetPaginatedUser>;
     user(id: string): Promise<User>;
@@ -26,6 +28,7 @@ export declare class UsersResolver {
     logIn(email: string): Promise<boolean>;
     verify(verifyUserDto: VerifyUserDto): Promise<User>;
     githubLogIn(code: string): Promise<User>;
+    naverLogIn(code: string): Promise<User>;
     follow(me: User, id: string): Promise<User>;
     unfollow(me: User, id: string): Promise<User>;
     isFollowing(user: User, ctx: any): false | Promise<boolean>;
