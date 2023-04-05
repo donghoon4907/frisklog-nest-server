@@ -36,7 +36,7 @@ __decorate([
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', {
         fileFilter: (req, file, callback) => {
-            if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+            if (!file.originalname.match(/\.(jpg|JPG|png|PNG|gif|GIF)$/)) {
                 return callback(new Error('허용되지 않은 확장자입니다.'), false);
             }
             callback(null, true);
