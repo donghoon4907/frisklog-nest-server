@@ -26,7 +26,7 @@ export const sendMail = async (email: string, token: string) => {
     return transporter.sendMail({
         from: `Frisklog ${mailConfig.auth.user}`,
         to: email,
-        subject: 'Frisklog 로그인 인증 코드',
+        subject: 'Frisklog 인증 코드',
         html: `
     <table width="100%" border="0" cellspacing="0" cellpadding="0" style="width: 100% !important;">
         <tbody>
@@ -42,7 +42,7 @@ export const sendMail = async (email: string, token: string) => {
                                                 <tr>
                                                     <td align="center">
                                                         <h1 style="color: #000; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif; font-size: 24px; font-weight: normal; margin: 30px 0; margin-top: 15px; padding: 0;">
-                                                            <b><span>Frisklog</span></b>에 로그인
+                                                            <b><span>Frisklog</span></b>
                                                         </h1>
                                                     </td>
                                                 </tr>

@@ -11,6 +11,7 @@ import { AttendanceService } from '../attendance/attendance.service';
 import { GithubService } from '../github/github.service';
 import { UpdateSettingDto } from './dto/update-setting.dto';
 import { NaverService } from '../naver/naver.service';
+import { SendEmailDto } from './dto/send-email.dto';
 export declare class UsersResolver {
     private readonly usersService;
     private readonly attendanceService;
@@ -26,6 +27,7 @@ export declare class UsersResolver {
     updateUser(me: User, updateUserDto: UpdateUserDto): Promise<User>;
     updateSetting(me: User, updateSettingDto: UpdateSettingDto): Promise<User>;
     logIn(email: string): Promise<boolean>;
+    sendEmail(sendEmailDto: SendEmailDto): Promise<boolean>;
     verify(verifyUserDto: VerifyUserDto): Promise<User>;
     githubLogIn(code: string): Promise<User>;
     naverLogIn(code: string): Promise<User>;

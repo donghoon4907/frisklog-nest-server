@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersResolver = void 0;
 const graphql_1 = require("@nestjs/graphql");
 const common_1 = require("@nestjs/common");
+const CryptoJS = require("crypto-js");
 const user_entity_1 = require("./user.entity");
 const users_service_1 = require("./users.service");
 const create_user_dto_1 = require("./dto/create-user.dto");
@@ -31,6 +32,7 @@ const attendance_service_1 = require("../attendance/attendance.service");
 const github_service_1 = require("../github/github.service");
 const update_setting_dto_1 = require("./dto/update-setting.dto");
 const naver_service_1 = require("../naver/naver.service");
+const send_email_dto_1 = require("./dto/send-email.dto");
 let UsersResolver = class UsersResolver {
     constructor(usersService, attendanceService, githubService, naverService) {
         this.usersService = usersService;
@@ -105,6 +107,22 @@ let UsersResolver = class UsersResolver {
             throw new common_1.ForbiddenException('메일 전송 중 오류가 발생했습니다.');
         }
         await this.usersService.login(captcha, user);
+        return true;
+    }
+    async sendEmail(sendEmailDto) {
+        const { email, captcha } = sendEmailDto;
+        const user = await this.usersService.hasEmail(email);
+        if (user !== null) {
+            throw new common_1.ForbiddenException('사용중인 이메일 입니다.');
+        }
+        try {
+            const bytes = CryptoJS.AES.decrypt(captcha, process.env.CRYPTO_SECRET);
+            const decryptedCaptcha = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+            await this.usersService.sendMail(email, decryptedCaptcha);
+        }
+        catch (_a) {
+            throw new common_1.ForbiddenException('메일 전송 중 오류가 발생했습니다.');
+        }
         return true;
     }
     async verify(verifyUserDto) {
@@ -275,6 +293,13 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UsersResolver.prototype, "logIn", null);
+__decorate([
+    (0, graphql_1.Mutation)((returns) => Boolean),
+    __param(0, (0, graphql_1.Args)('input')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [send_email_dto_1.SendEmailDto]),
+    __metadata("design:returntype", Promise)
+], UsersResolver.prototype, "sendEmail", null);
 __decorate([
     (0, graphql_1.Mutation)((returns) => user_entity_1.User),
     __param(0, (0, graphql_1.Args)('input')),

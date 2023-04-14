@@ -13,6 +13,7 @@ import {
     Inject,
     UseGuards,
 } from '@nestjs/common';
+import * as CryptoJS from 'crypto-js';
 
 import { User } from './user.entity';
 import { UsersService } from './users.service';
@@ -30,6 +31,7 @@ import { AttendanceService } from '../attendance/attendance.service';
 import { GithubService } from '../github/github.service';
 import { UpdateSettingDto } from './dto/update-setting.dto';
 import { NaverService } from '../naver/naver.service';
+import { SendEmailDto } from './dto/send-email.dto';
 
 @Resolver((of) => User)
 export class UsersResolver {
@@ -164,6 +166,34 @@ export class UsersResolver {
         }
 
         await this.usersService.login(captcha, user);
+
+        return true;
+    }
+
+    @Mutation((returns) => Boolean)
+    async sendEmail(@Args('input') sendEmailDto: SendEmailDto) {
+        const { email, captcha } = sendEmailDto;
+
+        const user = await this.usersService.hasEmail(email);
+
+        if (user !== null) {
+            throw new ForbiddenException('사용중인 이메일 입니다.');
+        }
+
+        try {
+            const bytes = CryptoJS.AES.decrypt(
+                captcha,
+                process.env.CRYPTO_SECRET,
+            );
+
+            const decryptedCaptcha = JSON.parse(
+                bytes.toString(CryptoJS.enc.Utf8),
+            );
+
+            await this.usersService.sendMail(email, decryptedCaptcha);
+        } catch {
+            throw new ForbiddenException('메일 전송 중 오류가 발생했습니다.');
+        }
 
         return true;
     }

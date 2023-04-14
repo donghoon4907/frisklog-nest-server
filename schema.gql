@@ -330,6 +330,7 @@ type Mutation {
   updateUser(input: UpdateUserDto!): User!
   updateSetting(input: UpdateSettingDto!): User!
   logIn(email: String!): Boolean!
+  sendEmail(input: SendEmailDto!): Boolean!
   verify(input: VerifyUserDto!): User!
   githubLogIn(code: String!): User!
   naverLogIn(code: String!): User!
@@ -377,6 +378,11 @@ input UpdateSettingDto {
 
   """좋아요알림여부"""
   receiveLikeNotification: Boolean
+}
+
+input SendEmailDto {
+  email: String!
+  captcha: String!
 }
 
 input VerifyUserDto {
