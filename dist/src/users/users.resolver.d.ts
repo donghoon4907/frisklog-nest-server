@@ -28,6 +28,7 @@ export declare class UsersResolver {
     updateSetting(me: User, updateSettingDto: UpdateSettingDto): Promise<User>;
     logIn(email: string): Promise<boolean>;
     sendEmail(sendEmailDto: SendEmailDto): Promise<boolean>;
+    checkNickname(nickname: string): Promise<boolean>;
     verify(verifyUserDto: VerifyUserDto): Promise<User>;
     githubLogIn(code: string): Promise<User>;
     naverLogIn(code: string): Promise<User>;

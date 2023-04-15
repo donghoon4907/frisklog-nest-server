@@ -125,6 +125,13 @@ let UsersResolver = class UsersResolver {
         }
         return true;
     }
+    async checkNickname(nickname) {
+        const user = await this.usersService.hasNickname(nickname);
+        if (user !== null) {
+            throw new common_1.ForbiddenException('사용중인 닉네임 입니다.');
+        }
+        return true;
+    }
     async verify(verifyUserDto) {
         const { email, captcha, isKeep } = verifyUserDto;
         const user = await this.usersService.hasEmail(email);
@@ -300,6 +307,13 @@ __decorate([
     __metadata("design:paramtypes", [send_email_dto_1.SendEmailDto]),
     __metadata("design:returntype", Promise)
 ], UsersResolver.prototype, "sendEmail", null);
+__decorate([
+    (0, graphql_1.Mutation)((returns) => Boolean),
+    __param(0, (0, graphql_1.Args)('nickname')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UsersResolver.prototype, "checkNickname", null);
 __decorate([
     (0, graphql_1.Mutation)((returns) => user_entity_1.User),
     __param(0, (0, graphql_1.Args)('input')),

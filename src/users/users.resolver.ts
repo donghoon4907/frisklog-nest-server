@@ -198,6 +198,17 @@ export class UsersResolver {
         return true;
     }
 
+    @Mutation((returns) => Boolean)
+    async checkNickname(@Args('nickname') nickname: string) {
+        const user = await this.usersService.hasNickname(nickname);
+
+        if (user !== null) {
+            throw new ForbiddenException('사용중인 닉네임 입니다.');
+        }
+
+        return true;
+    }
+
     @Mutation((returns) => User)
     async verify(@Args('input') verifyUserDto: VerifyUserDto) {
         const { email, captcha, isKeep } = verifyUserDto;

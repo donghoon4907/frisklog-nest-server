@@ -331,6 +331,7 @@ type Mutation {
   updateSetting(input: UpdateSettingDto!): User!
   logIn(email: String!): Boolean!
   sendEmail(input: SendEmailDto!): Boolean!
+  checkNickname(nickname: String!): Boolean!
   verify(input: VerifyUserDto!): User!
   githubLogIn(code: String!): User!
   naverLogIn(code: String!): User!
