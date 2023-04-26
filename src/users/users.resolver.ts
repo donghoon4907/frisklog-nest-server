@@ -32,6 +32,7 @@ import { GithubService } from '../github/github.service';
 import { UpdateSettingDto } from './dto/update-setting.dto';
 import { NaverService } from '../naver/naver.service';
 import { SendEmailDto } from './dto/send-email.dto';
+import { GoogleService } from '../google/google.service';
 
 @Resolver((of) => User)
 export class UsersResolver {
@@ -43,6 +44,8 @@ export class UsersResolver {
         private readonly githubService: GithubService,
         @Inject(forwardRef(() => NaverService))
         private readonly naverService: NaverService,
+        @Inject(forwardRef(() => GoogleService))
+        private readonly googleService: GoogleService,
     ) {}
 
     @Query((returns) => OffsetPaginatedUser)
@@ -277,6 +280,33 @@ export class UsersResolver {
                     nickname,
                     avatar: profile_image,
                     naverId: id,
+                };
+
+                user = await this.usersService.createUser(params, 3);
+            }
+
+            return this.usersService.verify(true, user);
+        } catch (e) {
+            console.log(e);
+
+            return null;
+        }
+    }
+
+    @Mutation((returns) => User)
+    async googleLogIn(@Args('token') token: string) {
+        try {
+            const userInfo = await this.googleService.getProfile(token);
+
+            const { id, email, name, picture } = userInfo.data;
+
+            let user = await this.usersService.hasEmail(email);
+
+            if (user === null) {
+                const params = {
+                    nickname: name,
+                    avatar: picture,
+                    email,
                 };
 
                 user = await this.usersService.createUser(params, 3);

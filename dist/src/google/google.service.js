@@ -9,39 +9,23 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NaverService = void 0;
+exports.GoogleService = void 0;
 const common_1 = require("@nestjs/common");
 const axios_1 = require("@nestjs/axios");
 const rxjs_1 = require("rxjs");
-let NaverService = class NaverService {
+let GoogleService = class GoogleService {
     constructor(httpService) {
         this.httpService = httpService;
     }
-    getAccessToken(code) {
-        const uri = 'https://nid.naver.com/oauth2.0/token?grant_type=authorization_code';
-        const params = {
-            client_id: process.env.NAVER_CLIENT_ID,
-            client_secret: process.env.NAVER_CLIENT_SECRET,
-            redirect_uri: process.env.REDIRECT_URI,
-            code,
-        };
-        const res = this.httpService.get(uri, { params });
-        return (0, rxjs_1.firstValueFrom)(res);
-    }
     getProfile(accessToken) {
-        const uri = 'https://openapi.naver.com/v1/nid/me';
-        const params = {
-            headers: {
-                authorization: `Bearer ${accessToken}`,
-            },
-        };
-        const res = this.httpService.get(uri, params);
+        const uri = `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${accessToken}`;
+        const res = this.httpService.get(uri);
         return (0, rxjs_1.firstValueFrom)(res);
     }
 };
-NaverService = __decorate([
+GoogleService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [axios_1.HttpService])
-], NaverService);
-exports.NaverService = NaverService;
-//# sourceMappingURL=naver.service.js.map
+], GoogleService);
+exports.GoogleService = GoogleService;
+//# sourceMappingURL=google.service.js.map

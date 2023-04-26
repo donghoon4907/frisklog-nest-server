@@ -18,6 +18,7 @@ const follow_entity_1 = require("./follow.entity");
 const attendance_module_1 = require("../attendance/attendance.module");
 const github_module_1 = require("../github/github.module");
 const naver_module_1 = require("../naver/naver.module");
+const google_module_1 = require("../google/google.module");
 let UsersModule = class UsersModule {
 };
 UsersModule = __decorate([
@@ -27,6 +28,7 @@ UsersModule = __decorate([
             (0, common_1.forwardRef)(() => attendance_module_1.AttendanceModule),
             (0, common_1.forwardRef)(() => github_module_1.GithubModule),
             (0, common_1.forwardRef)(() => naver_module_1.NaverModule),
+            (0, common_1.forwardRef)(() => google_module_1.GoogleModule),
         ],
         providers: [users_service_1.UsersService, users_resolver_1.UsersResolver, user_subscriber_1.UserSubscriber, date_scalar_1.DateScalar],
     })

@@ -335,6 +335,7 @@ type Mutation {
   verify(input: VerifyUserDto!): User!
   githubLogIn(code: String!): User!
   naverLogIn(code: String!): User!
+  googleLogIn(token: String!): User!
   follow(id: String!): User!
   unfollow(id: String!): User!
   addPost(input: CreatePostDto!): Post!

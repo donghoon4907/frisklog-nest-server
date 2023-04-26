@@ -33,12 +33,14 @@ const github_service_1 = require("../github/github.service");
 const update_setting_dto_1 = require("./dto/update-setting.dto");
 const naver_service_1 = require("../naver/naver.service");
 const send_email_dto_1 = require("./dto/send-email.dto");
+const google_service_1 = require("../google/google.service");
 let UsersResolver = class UsersResolver {
-    constructor(usersService, attendanceService, githubService, naverService) {
+    constructor(usersService, attendanceService, githubService, naverService, googleService) {
         this.usersService = usersService;
         this.attendanceService = attendanceService;
         this.githubService = githubService;
         this.naverService = naverService;
+        this.googleService = googleService;
     }
     users(usersArgs) {
         return this.usersService.findAll(usersArgs);
@@ -178,6 +180,26 @@ let UsersResolver = class UsersResolver {
                     nickname,
                     avatar: profile_image,
                     naverId: id,
+                };
+                user = await this.usersService.createUser(params, 3);
+            }
+            return this.usersService.verify(true, user);
+        }
+        catch (e) {
+            console.log(e);
+            return null;
+        }
+    }
+    async googleLogIn(token) {
+        try {
+            const userInfo = await this.googleService.getProfile(token);
+            const { id, email, name, picture } = userInfo.data;
+            let user = await this.usersService.hasEmail(email);
+            if (user === null) {
+                const params = {
+                    nickname: name,
+                    avatar: picture,
+                    email,
                 };
                 user = await this.usersService.createUser(params, 3);
             }
@@ -337,6 +359,13 @@ __decorate([
 ], UsersResolver.prototype, "naverLogIn", null);
 __decorate([
     (0, graphql_1.Mutation)((returns) => user_entity_1.User),
+    __param(0, (0, graphql_1.Args)('token')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UsersResolver.prototype, "googleLogIn", null);
+__decorate([
+    (0, graphql_1.Mutation)((returns) => user_entity_1.User),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     __param(0, (0, auth_decorator_1.AuthUser)()),
     __param(1, (0, graphql_1.Args)('id')),
@@ -374,10 +403,12 @@ UsersResolver = __decorate([
     __param(1, (0, common_1.Inject)((0, common_1.forwardRef)(() => attendance_service_1.AttendanceService))),
     __param(2, (0, common_1.Inject)((0, common_1.forwardRef)(() => github_service_1.GithubService))),
     __param(3, (0, common_1.Inject)((0, common_1.forwardRef)(() => naver_service_1.NaverService))),
+    __param(4, (0, common_1.Inject)((0, common_1.forwardRef)(() => google_service_1.GoogleService))),
     __metadata("design:paramtypes", [users_service_1.UsersService,
         attendance_service_1.AttendanceService,
         github_service_1.GithubService,
-        naver_service_1.NaverService])
+        naver_service_1.NaverService,
+        google_service_1.GoogleService])
 ], UsersResolver);
 exports.UsersResolver = UsersResolver;
 //# sourceMappingURL=users.resolver.js.map

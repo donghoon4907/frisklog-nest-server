@@ -18,23 +18,24 @@ let GithubService = class GithubService {
         this.httpService = httpService;
     }
     getAccessToken(code) {
-        const url = 'https://github.com/login/oauth/access_token';
+        const uri = 'https://github.com/login/oauth/access_token';
         const params = {
             client_id: process.env.GITHUB_CLIENT_ID,
             client_secret: process.env.GITHUB_CLIENT_SECRET,
+            redirect_uri: process.env.REDIRECT_URI,
             code,
         };
-        const res = this.httpService.post(url, params);
+        const res = this.httpService.post(uri, params);
         return (0, rxjs_1.firstValueFrom)(res);
     }
     getProfile(accessToken) {
-        const url = 'https://api.github.com/user';
+        const uri = 'https://api.github.com/user';
         const params = {
             headers: {
                 authorization: `token ${accessToken}`,
             },
         };
-        const res = this.httpService.get(url, params);
+        const res = this.httpService.get(uri, params);
         return (0, rxjs_1.firstValueFrom)(res);
     }
 };

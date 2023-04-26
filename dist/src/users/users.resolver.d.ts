@@ -12,12 +12,14 @@ import { GithubService } from '../github/github.service';
 import { UpdateSettingDto } from './dto/update-setting.dto';
 import { NaverService } from '../naver/naver.service';
 import { SendEmailDto } from './dto/send-email.dto';
+import { GoogleService } from '../google/google.service';
 export declare class UsersResolver {
     private readonly usersService;
     private readonly attendanceService;
     private readonly githubService;
     private readonly naverService;
-    constructor(usersService: UsersService, attendanceService: AttendanceService, githubService: GithubService, naverService: NaverService);
+    private readonly googleService;
+    constructor(usersService: UsersService, attendanceService: AttendanceService, githubService: GithubService, naverService: NaverService, googleService: GoogleService);
     users(usersArgs: UsersArgs): Promise<OffsetPaginatedUser>;
     recommenders(recommendersArgs: RecommendersArgs): Promise<OffsetPaginatedUser>;
     user(id: string): Promise<User>;
@@ -32,6 +34,7 @@ export declare class UsersResolver {
     verify(verifyUserDto: VerifyUserDto): Promise<User>;
     githubLogIn(code: string): Promise<User>;
     naverLogIn(code: string): Promise<User>;
+    googleLogIn(token: string): Promise<User>;
     follow(me: User, id: string): Promise<User>;
     unfollow(me: User, id: string): Promise<User>;
     isFollowing(user: User, ctx: any): false | Promise<boolean>;

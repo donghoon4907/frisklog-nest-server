@@ -25,6 +25,7 @@ import { PhotosModule } from './photos/photos.module';
 import { UploadModule } from './upload/upload.module';
 // import { SettingsModule } from './settings/settings.module';
 import { LoggerModule } from './logger/logger.module';
+import { GoogleModule } from './google/google.module';
 
 @Module({
     imports: [
@@ -84,6 +85,7 @@ import { LoggerModule } from './logger/logger.module';
         PhotosModule,
         UploadModule,
         LoggerModule,
+        GoogleModule,
     ],
     providers: [],
 })

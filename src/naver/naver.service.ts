@@ -7,7 +7,7 @@ export class NaverService {
     constructor(private readonly httpService: HttpService) {}
 
     getAccessToken(code: string) {
-        const url =
+        const uri =
             'https://nid.naver.com/oauth2.0/token?grant_type=authorization_code';
 
         const params = {
@@ -17,13 +17,13 @@ export class NaverService {
             code,
         };
 
-        const res = this.httpService.get(url, { params });
+        const res = this.httpService.get(uri, { params });
 
         return firstValueFrom(res);
     }
 
     getProfile(accessToken: string) {
-        const url = 'https://openapi.naver.com/v1/nid/me';
+        const uri = 'https://openapi.naver.com/v1/nid/me';
 
         const params = {
             headers: {
@@ -31,7 +31,7 @@ export class NaverService {
             },
         };
 
-        const res = this.httpService.get(url, params);
+        const res = this.httpService.get(uri, params);
 
         return firstValueFrom(res);
     }

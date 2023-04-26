@@ -10,6 +10,7 @@ import { Follow } from './follow.entity';
 import { AttendanceModule } from '../attendance/attendance.module';
 import { GithubModule } from '../github/github.module';
 import { NaverModule } from '../naver/naver.module';
+import { GoogleModule } from '../google/google.module';
 
 @Module({
     imports: [
@@ -17,6 +18,7 @@ import { NaverModule } from '../naver/naver.module';
         forwardRef(() => AttendanceModule),
         forwardRef(() => GithubModule),
         forwardRef(() => NaverModule),
+        forwardRef(() => GoogleModule),
     ],
     providers: [UsersService, UsersResolver, UserSubscriber, DateScalar],
 })

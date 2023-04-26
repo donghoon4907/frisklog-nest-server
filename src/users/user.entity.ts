@@ -38,7 +38,6 @@ import { UserStatus } from './user.interface';
 import { Follow } from './follow.entity';
 import { Attendance } from '../attendance/attendance.entity';
 import { Notification } from '../notifications/notification.entity';
-import { Setting } from '../settings/setting.entity';
 import { Photo } from 'src/photos/photo.entity';
 
 registerEnumType(UserStatus, { name: 'UserStatus' });
