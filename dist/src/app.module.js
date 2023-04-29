@@ -28,6 +28,7 @@ const photos_module_1 = require("./photos/photos.module");
 const upload_module_1 = require("./upload/upload.module");
 const logger_module_1 = require("./logger/logger.module");
 const google_module_1 = require("./google/google.module");
+const search_keywords_module_1 = require("./search-keywords/search-keywords.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -75,6 +76,7 @@ AppModule = __decorate([
             upload_module_1.UploadModule,
             logger_module_1.LoggerModule,
             google_module_1.GoogleModule,
+            search_keywords_module_1.SearchKeywordsModule,
         ],
         providers: [],
     })

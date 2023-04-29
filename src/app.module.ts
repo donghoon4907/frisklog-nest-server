@@ -26,6 +26,7 @@ import { UploadModule } from './upload/upload.module';
 // import { SettingsModule } from './settings/settings.module';
 import { LoggerModule } from './logger/logger.module';
 import { GoogleModule } from './google/google.module';
+import { SearchKeywordsModule } from './search-keywords/search-keywords.module';
 
 @Module({
     imports: [
@@ -86,6 +87,7 @@ import { GoogleModule } from './google/google.module';
         UploadModule,
         LoggerModule,
         GoogleModule,
+        SearchKeywordsModule,
     ],
     providers: [],
 })
