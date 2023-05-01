@@ -12,29 +12,36 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SearchKeywordsService = void 0;
+exports.AuthMiddleware = void 0;
 const common_1 = require("@nestjs/common");
+const graphql_1 = require("@nestjs/graphql");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
-const search_keywords_entity_1 = require("./search-keywords.entity");
-let SearchKeywordsService = class SearchKeywordsService {
-    constructor(searchKeywordsRepository) {
-        this.searchKeywordsRepository = searchKeywordsRepository;
+const user_entity_1 = require("../user.entity");
+const context_1 = require("../../common/context");
+let AuthMiddleware = class AuthMiddleware {
+    constructor(usersRepository) {
+        this.usersRepository = usersRepository;
     }
-    async createSearchKeyword(createSearchKeywordDto) {
-        const { keyword, ip, userId } = createSearchKeywordDto;
-        const searchKeyword = new search_keywords_entity_1.SearchKeyword();
-        searchKeyword.keyword = keyword;
-        searchKeyword.ip = ip;
-        searchKeyword.userId = userId;
-        await this.searchKeywordsRepository.save(searchKeyword);
-        return searchKeyword;
+    async canActivate(context) {
+        const ctx = graphql_1.GqlExecutionContext.create(context);
+        const token = (0, context_1.getBearerToken)(ctx.getContext());
+        if (token) {
+            const { id } = (0, context_1.decodeToken)(token);
+            if (id) {
+                const user = await this.usersRepository.findOneBy({ id });
+                if (user !== null) {
+                    ctx.getContext().user = user;
+                }
+            }
+        }
+        return true;
     }
 };
-SearchKeywordsService = __decorate([
+AuthMiddleware = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, typeorm_1.InjectRepository)(search_keywords_entity_1.SearchKeyword)),
+    __param(0, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
     __metadata("design:paramtypes", [typeorm_2.Repository])
-], SearchKeywordsService);
-exports.SearchKeywordsService = SearchKeywordsService;
-//# sourceMappingURL=search-keywords.service.js.map
+], AuthMiddleware);
+exports.AuthMiddleware = AuthMiddleware;
+//# sourceMappingURL=auth.middleware.js.map

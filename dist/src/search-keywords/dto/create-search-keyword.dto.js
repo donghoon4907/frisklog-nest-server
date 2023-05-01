@@ -9,18 +9,20 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SearchKeywordsResolver = void 0;
+exports.CreateSearchKeywordDto = void 0;
 const graphql_1 = require("@nestjs/graphql");
-const search_keywords_entity_1 = require("./search-keywords.entity");
-const search_keywords_service_1 = require("./search-keywords.service");
-let SearchKeywordsResolver = class SearchKeywordsResolver {
-    constructor(searchKeywordsService) {
-        this.searchKeywordsService = searchKeywordsService;
-    }
+const class_validator_1 = require("class-validator");
+const search_keywords_entity_1 = require("../search-keywords.entity");
+let CreateSearchKeywordDto = class CreateSearchKeywordDto extends (0, graphql_1.PickType)(search_keywords_entity_1.SearchKeyword, ['keyword', 'ip'], graphql_1.InputType) {
 };
-SearchKeywordsResolver = __decorate([
-    (0, graphql_1.Resolver)((of) => search_keywords_entity_1.SearchKeyword),
-    __metadata("design:paramtypes", [search_keywords_service_1.SearchKeywordsService])
-], SearchKeywordsResolver);
-exports.SearchKeywordsResolver = SearchKeywordsResolver;
-//# sourceMappingURL=search-keywords.resolver.js.map
+__decorate([
+    (0, graphql_1.Field)({ nullable: true }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateSearchKeywordDto.prototype, "userId", void 0);
+CreateSearchKeywordDto = __decorate([
+    (0, graphql_1.InputType)()
+], CreateSearchKeywordDto);
+exports.CreateSearchKeywordDto = CreateSearchKeywordDto;
+//# sourceMappingURL=create-search-keyword.dto.js.map

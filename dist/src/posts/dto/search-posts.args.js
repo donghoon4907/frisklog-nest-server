@@ -11,7 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostsArgs = void 0;
 const eager_import_0 = require("../post.interface");
-const eager_import_1 = require("../../users/user.entity");
 const graphql_1 = require("@nestjs/graphql");
 const class_validator_1 = require("class-validator");
 const offset_args_1 = require("../../common/paging/offset/offset.args");
@@ -24,29 +23,25 @@ let PostsArgs = class PostsArgs extends offset_args_1.OffsetPaginatedArgs {
 __decorate([
     (0, graphql_1.Field)({ description: '포스트 검색어', nullable: true }),
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], PostsArgs.prototype, "searchKeyword", void 0);
 __decorate([
-    (0, graphql_1.Field)({ description: '작성자 ID', nullable: true }),
+    (0, graphql_1.Field)({ description: '사용자 ID', nullable: true }),
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], PostsArgs.prototype, "userId", void 0);
 __decorate([
-    (0, graphql_1.Field)({ description: '공개 여부', nullable: true }),
+    (0, graphql_1.Field)({ nullable: true }),
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsEnum)(post_interface_1.PostVisibility),
     __metadata("design:type", String)
 ], PostsArgs.prototype, "visibility", void 0);
 __decorate([
-    (0, graphql_1.Field)({ description: '사용자 IP', nullable: true }),
+    (0, graphql_1.Field)({ nullable: true }),
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], PostsArgs.prototype, "ip", void 0);
 PostsArgs = __decorate([
     (0, graphql_1.ArgsType)()
 ], PostsArgs);
 exports.PostsArgs = PostsArgs;
-//# sourceMappingURL=posts.args.js.map
+//# sourceMappingURL=search-posts.args.js.map

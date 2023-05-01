@@ -11,12 +11,14 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { CategoriesService } from '../categories/categories.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { RemovedPostsArgs } from './dto/removed-posts.args';
+import { SearchKeywordsService } from '../search-keywords/search-keywords.service';
 export declare class PostsService {
     private readonly postsRepository;
     private readonly categoriesService;
     private readonly notificationsService;
-    constructor(postsRepository: Repository<Post>, categoriesService: CategoriesService, notificationsService: NotificationsService);
-    posts(postsArgs: PostsArgs): Promise<OffsetPaginatedPost>;
+    private readonly searchKeywordsService;
+    constructor(postsRepository: Repository<Post>, categoriesService: CategoriesService, notificationsService: NotificationsService, searchKeywordsService: SearchKeywordsService);
+    posts(postsArgs: PostsArgs, me?: User): Promise<OffsetPaginatedPost>;
     findById(id: string): Promise<Post>;
     categoryPosts(categoryPostsArgs: CategoryPostsArgs): Promise<OffsetPaginatedPost>;
     likePosts(likePostsArgs: LikePostsArgs, authId: string): Promise<OffsetPaginatedPost>;

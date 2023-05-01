@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, HideField, ObjectType } from '@nestjs/graphql';
 import {
     Column,
     Entity,
@@ -25,8 +25,8 @@ export class SearchKeyword {
     @IsString()
     keyword: string;
 
-    @Column({ comment: 'ip' })
-    @Field({ description: 'ip' })
+    @Column({ comment: '사용자 IP' })
+    @Field({ description: '사용자 IP' })
     @IsOptional()
     @IsString()
     ip: string;
@@ -39,5 +39,9 @@ export class SearchKeyword {
     @ManyToOne(() => User)
     @JoinColumn({ name: 'userId' })
     @Field(() => User, { description: '검색 사용자' })
-    userId: Promise<User>;
+    user: Promise<User>;
+
+    @Column({ name: 'userId', nullable: true })
+    @HideField()
+    userId?: string;
 }

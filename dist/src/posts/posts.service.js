@@ -21,14 +21,16 @@ const offset_paginator_1 = require("../common/paging/offset/offset.paginator");
 const categories_service_1 = require("../categories/categories.service");
 const notifications_service_1 = require("../notifications/notifications.service");
 const post_interface_1 = require("./post.interface");
+const search_keywords_service_1 = require("../search-keywords/search-keywords.service");
 let PostsService = class PostsService {
-    constructor(postsRepository, categoriesService, notificationsService) {
+    constructor(postsRepository, categoriesService, notificationsService, searchKeywordsService) {
         this.postsRepository = postsRepository;
         this.categoriesService = categoriesService;
         this.notificationsService = notificationsService;
+        this.searchKeywordsService = searchKeywordsService;
     }
-    async posts(postsArgs) {
-        const { offset, limit, searchKeyword, userId, visibility } = postsArgs;
+    async posts(postsArgs, me = null) {
+        const { offset, limit, searchKeyword, userId, visibility, ip } = postsArgs;
         const qb = this.postsRepository
             .createQueryBuilder('post')
             .innerJoinAndSelect('post.user', 'user')
@@ -38,6 +40,11 @@ let PostsService = class PostsService {
             .limit(limit)
             .offset(offset);
         if (searchKeyword) {
+            await this.searchKeywordsService.createSearchKeyword({
+                keyword: searchKeyword,
+                userId: me ? me.id : null,
+                ip,
+            });
             qb.andWhere('post.content like :searchKeyword', {
                 searchKeyword: `%${searchKeyword}%`,
             });
@@ -220,9 +227,11 @@ PostsService = __decorate([
     __param(0, (0, typeorm_1.InjectRepository)(post_entity_1.Post)),
     __param(1, (0, common_1.Inject)((0, common_1.forwardRef)(() => categories_service_1.CategoriesService))),
     __param(2, (0, common_1.Inject)((0, common_1.forwardRef)(() => notifications_service_1.NotificationsService))),
+    __param(3, (0, common_1.Inject)((0, common_1.forwardRef)(() => search_keywords_service_1.SearchKeywordsService))),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         categories_service_1.CategoriesService,
-        notifications_service_1.NotificationsService])
+        notifications_service_1.NotificationsService,
+        search_keywords_service_1.SearchKeywordsService])
 ], PostsService);
 exports.PostsService = PostsService;
 //# sourceMappingURL=posts.service.js.map

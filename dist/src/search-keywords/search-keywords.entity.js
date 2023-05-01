@@ -17,7 +17,7 @@ const user_entity_1 = require("../users/user.entity");
 const class_validator_1 = require("class-validator");
 let SearchKeyword = class SearchKeyword {
     static _GRAPHQL_METADATA_FACTORY() {
-        return { id: { type: () => String }, keyword: { type: () => String }, ip: { type: () => String }, createdAt: { type: () => Date }, userId: { type: () => require("../users/user.entity").User } };
+        return { id: { type: () => String }, keyword: { type: () => String }, ip: { type: () => String }, createdAt: { type: () => Date }, user: { type: () => require("../users/user.entity").User } };
     }
 };
 __decorate([
@@ -34,8 +34,8 @@ __decorate([
     __metadata("design:type", String)
 ], SearchKeyword.prototype, "keyword", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ comment: 'ip' }),
-    (0, graphql_1.Field)({ description: 'ip' }),
+    (0, typeorm_1.Column)({ comment: '사용자 IP' }),
+    (0, graphql_1.Field)({ description: '사용자 IP' }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
@@ -51,6 +51,11 @@ __decorate([
     (0, typeorm_1.JoinColumn)({ name: 'userId' }),
     (0, graphql_1.Field)(() => user_entity_1.User, { description: '검색 사용자' }),
     __metadata("design:type", Promise)
+], SearchKeyword.prototype, "user", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'userId', nullable: true }),
+    (0, graphql_1.HideField)(),
+    __metadata("design:type", String)
 ], SearchKeyword.prototype, "userId", void 0);
 SearchKeyword = __decorate([
     (0, typeorm_1.Entity)('searchKeywords'),

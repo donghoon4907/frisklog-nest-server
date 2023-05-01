@@ -15,6 +15,7 @@ const posts_service_1 = require("./posts.service");
 const posts_resolver_1 = require("./posts.resolver");
 const categories_module_1 = require("../categories/categories.module");
 const notifications_module_1 = require("../notifications/notifications.module");
+const search_keywords_module_1 = require("../search-keywords/search-keywords.module");
 let PostsModule = class PostsModule {
 };
 PostsModule = __decorate([
@@ -23,6 +24,7 @@ PostsModule = __decorate([
             typeorm_1.TypeOrmModule.forFeature([user_entity_1.User, post_entity_1.Post]),
             (0, common_1.forwardRef)(() => categories_module_1.CategoriesModule),
             (0, common_1.forwardRef)(() => notifications_module_1.NotificationsModule),
+            (0, common_1.forwardRef)(() => search_keywords_module_1.SearchKeywordsModule),
         ],
         providers: [
             posts_service_1.PostsService,

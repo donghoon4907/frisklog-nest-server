@@ -17,6 +17,7 @@ import { CategoriesService } from '../categories/categories.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { RemovedPostsArgs } from './dto/removed-posts.args';
 import { PostVisibility } from './post.interface';
+import { SearchKeywordsService } from '../search-keywords/search-keywords.service';
 
 @Injectable()
 export class PostsService {
@@ -26,11 +27,17 @@ export class PostsService {
         @Inject(forwardRef(() => CategoriesService))
         private readonly categoriesService: CategoriesService,
         @Inject(forwardRef(() => NotificationsService))
-        private readonly notificationsService: NotificationsService, // private readonly categoriesRepository: CategoryRepository,
+        private readonly notificationsService: NotificationsService,
+        @Inject(forwardRef(() => SearchKeywordsService))
+        private readonly searchKeywordsService: SearchKeywordsService,
     ) {}
 
-    async posts(postsArgs: PostsArgs): Promise<OffsetPaginatedPost> {
-        const { offset, limit, searchKeyword, userId, visibility } = postsArgs;
+    async posts(
+        postsArgs: PostsArgs,
+        me: User = null,
+    ): Promise<OffsetPaginatedPost> {
+        const { offset, limit, searchKeyword, userId, visibility, ip } =
+            postsArgs;
 
         const qb = this.postsRepository
             .createQueryBuilder('post')
@@ -42,6 +49,13 @@ export class PostsService {
             .offset(offset);
 
         if (searchKeyword) {
+            // 검색 로그 생성
+            await this.searchKeywordsService.createSearchKeyword({
+                keyword: searchKeyword,
+                userId: me ? me.id : null,
+                ip,
+            });
+
             qb.andWhere('post.content like :searchKeyword', {
                 searchKeyword: `%${searchKeyword}%`,
             });

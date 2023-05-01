@@ -7,7 +7,7 @@ import {
     Parent,
     Context,
 } from '@nestjs/graphql';
-import { ForbiddenException, UseGuards } from '@nestjs/common';
+import { ForbiddenException, Ip, UseGuards } from '@nestjs/common';
 
 import { Post } from './post.entity';
 import { User } from '../users/user.entity';
@@ -23,14 +23,21 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { decodeToken, getBearerToken } from '../common/context';
 import { RemovedPostsArgs } from './dto/removed-posts.args';
+import { GetIp } from '../common/decorators/req.decorator';
+import { AuthMiddleware } from '../users/auth/auth.middleware';
 
 @Resolver((of) => Post)
 export class PostsResolver {
     constructor(private readonly postsService: PostsService) {}
 
     @Query((returns) => OffsetPaginatedPost)
-    posts(@Args() postsArgs: PostsArgs) {
-        return this.postsService.posts(postsArgs);
+    @UseGuards(AuthMiddleware)
+    posts(
+        @GetIp() ip: string,
+        @AuthUser() me: User,
+        @Args() postsArgs: PostsArgs,
+    ) {
+        return this.postsService.posts({ ...postsArgs, ip }, me);
     }
 
     @Query((returns) => OffsetPaginatedPost)

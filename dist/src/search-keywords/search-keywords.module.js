@@ -18,6 +18,7 @@ SearchKeywordsModule = __decorate([
     (0, common_1.Module)({
         imports: [typeorm_1.TypeOrmModule.forFeature([search_keywords_entity_1.SearchKeyword])],
         providers: [search_keywords_resolver_1.SearchKeywordsResolver, search_keywords_service_1.SearchKeywordsService],
+        exports: [search_keywords_service_1.SearchKeywordsService],
     })
 ], SearchKeywordsModule);
 exports.SearchKeywordsModule = SearchKeywordsModule;

@@ -4,5 +4,6 @@ export declare class SearchKeyword {
     keyword: string;
     ip: string;
     createdAt: Date;
-    userId: Promise<User>;
+    user: Promise<User>;
+    userId?: string;
 }

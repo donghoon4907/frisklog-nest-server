@@ -291,9 +291,14 @@ type Query {
     """포스트 검색어"""
     searchKeyword: String
 
-    """사용자 ID"""
+    """작성자 ID"""
     userId: String
+
+    """공개 여부"""
     visibility: String
+
+    """사용자 IP"""
+    ip: String
   ): OffsetPaginatedPost!
   categoryPosts(offset: Int = 0, limit: Int = 12, category: String!): OffsetPaginatedPost!
   likePosts(offset: Int = 0, limit: Int = 12): OffsetPaginatedPost!
@@ -301,7 +306,7 @@ type Query {
     offset: Int = 0
     limit: Int = 12
 
-    """사용자 ID"""
+    """작성자 ID"""
     userId: String
   ): OffsetPaginatedPost!
   removedPosts(offset: Int = 0, limit: Int = 12): OffsetPaginatedPost!

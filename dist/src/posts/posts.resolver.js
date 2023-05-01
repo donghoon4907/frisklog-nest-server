@@ -29,12 +29,14 @@ const create_post_dto_1 = require("./dto/create-post.dto");
 const update_post_dto_1 = require("./dto/update-post.dto");
 const context_1 = require("../common/context");
 const removed_posts_args_1 = require("./dto/removed-posts.args");
+const req_decorator_1 = require("../common/decorators/req.decorator");
+const auth_middleware_1 = require("../users/auth/auth.middleware");
 let PostsResolver = class PostsResolver {
     constructor(postsService) {
         this.postsService = postsService;
     }
-    posts(postsArgs) {
-        return this.postsService.posts(postsArgs);
+    posts(ip, me, postsArgs) {
+        return this.postsService.posts(Object.assign(Object.assign({}, postsArgs), { ip }), me);
     }
     categoryPosts(categoryPostsArgs) {
         return this.postsService.categoryPosts(categoryPostsArgs);
@@ -104,9 +106,13 @@ let PostsResolver = class PostsResolver {
 };
 __decorate([
     (0, graphql_1.Query)((returns) => posts_response_1.OffsetPaginatedPost),
-    __param(0, (0, graphql_1.Args)()),
+    (0, common_1.UseGuards)(auth_middleware_1.AuthMiddleware),
+    __param(0, (0, req_decorator_1.GetIp)()),
+    __param(1, (0, auth_decorator_1.AuthUser)()),
+    __param(2, (0, graphql_1.Args)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [posts_args_1.PostsArgs]),
+    __metadata("design:paramtypes", [String, user_entity_1.User,
+        posts_args_1.PostsArgs]),
     __metadata("design:returntype", void 0)
 ], PostsResolver.prototype, "posts", null);
 __decorate([

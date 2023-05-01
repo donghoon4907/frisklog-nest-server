@@ -12,7 +12,7 @@ import { RemovedPostsArgs } from './dto/removed-posts.args';
 export declare class PostsResolver {
     private readonly postsService;
     constructor(postsService: PostsService);
-    posts(postsArgs: PostsArgs): Promise<OffsetPaginatedPost>;
+    posts(ip: string, me: User, postsArgs: PostsArgs): Promise<OffsetPaginatedPost>;
     categoryPosts(categoryPostsArgs: CategoryPostsArgs): Promise<OffsetPaginatedPost>;
     likePosts(me: User, likePostsArgs: LikePostsArgs): Promise<OffsetPaginatedPost>;
     followingPosts(me: User, followingPostArgs: FollowingPostsArgs): Promise<import("../common/paging/offset/offset.interface").IOffsetPaginatedType<Post>>;
