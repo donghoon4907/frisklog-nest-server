@@ -17,7 +17,7 @@ const user_entity_1 = require("../users/user.entity");
 const class_validator_1 = require("class-validator");
 let SearchKeyword = class SearchKeyword {
     static _GRAPHQL_METADATA_FACTORY() {
-        return { id: { type: () => String }, keyword: { type: () => String }, ip: { type: () => String }, createdAt: { type: () => Date }, user: { type: () => require("../users/user.entity").User } };
+        return { id: { type: () => String }, keyword: { type: () => String }, ip: { type: () => String }, createdAt: { type: () => Date }, user: { type: () => require("../users/user.entity").User }, searchCount: { nullable: true, type: () => Number } };
     }
 };
 __decorate([
@@ -57,6 +57,12 @@ __decorate([
     (0, graphql_1.HideField)(),
     __metadata("design:type", String)
 ], SearchKeyword.prototype, "userId", void 0);
+__decorate([
+    (0, graphql_1.Field)({ description: '검색 횟수', nullable: true }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], SearchKeyword.prototype, "searchCount", void 0);
 SearchKeyword = __decorate([
     (0, typeorm_1.Entity)('searchKeywords'),
     (0, graphql_1.ObjectType)()

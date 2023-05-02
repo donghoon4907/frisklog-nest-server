@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 
 import { User } from '../users/user.entity';
-import { IsDateString, IsOptional, IsString } from 'class-validator';
+import { IsDateString, IsNumber, IsOptional, IsString } from 'class-validator';
 
 @Entity('searchKeywords')
 @ObjectType()
@@ -44,4 +44,9 @@ export class SearchKeyword {
     @Column({ name: 'userId', nullable: true })
     @HideField()
     userId?: string;
+
+    @Field({ description: '검색 횟수', nullable: true })
+    @IsOptional()
+    @IsNumber()
+    searchCount?: number;
 }

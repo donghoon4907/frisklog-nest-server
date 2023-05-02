@@ -6,4 +6,5 @@ export declare class SearchKeyword {
     createdAt: Date;
     user: Promise<User>;
     userId?: string;
+    searchCount?: number;
 }

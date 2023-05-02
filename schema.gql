@@ -241,6 +241,23 @@ type UserEdge {
   node: User!
 }
 
+type SearchKeyword {
+  id: String!
+
+  """검색 키워드"""
+  keyword: String!
+
+  """사용자 IP"""
+  ip: String!
+  createdAt: Date!
+
+  """검색 사용자"""
+  user: User!
+
+  """검색 횟수"""
+  searchCount: Float
+}
+
 type OffsetPaginatedPost {
   nodes: [Post!]
   pageInfo: OffsetMetadata!
@@ -320,6 +337,7 @@ type Query {
   recommendCategories(offset: Int = 0, limit: Int = 12): OffsetPaginatedCategory!
   relatedCategories(content: String!): [Category!]!
   notifications(offset: Int = 0, limit: Int = 12): OffsetPaginatedNotification!
+  searchKeywords(offset: Int = 0, limit: Int = 12): [SearchKeyword!]!
   comments(offset: Int = 0, limit: Int = 12, postId: String!, order: [[String!]!]): OffsetPaginatedComment!
   photos(
     offset: Int = 0

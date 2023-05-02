@@ -17,9 +17,25 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const search_keywords_entity_1 = require("./search-keywords.entity");
+const class_transformer_1 = require("class-transformer");
 let SearchKeywordsService = class SearchKeywordsService {
     constructor(searchKeywordsRepository) {
         this.searchKeywordsRepository = searchKeywordsRepository;
+    }
+    async searchKeywords(searchKeywordsArgs) {
+        const { limit } = searchKeywordsArgs;
+        const searchKeywords = await this.searchKeywordsRepository
+            .createQueryBuilder('searchKeywords')
+            .select([
+            'searchKeywords.id as id',
+            'searchKeywords.keyword as keyword',
+        ])
+            .addSelect('COUNT(searchKeywords.keyword) as searchCount')
+            .limit(limit)
+            .groupBy('searchKeywords.keyword')
+            .orderBy('searchCount', 'DESC')
+            .getRawMany();
+        return (0, class_transformer_1.plainToInstance)(search_keywords_entity_1.SearchKeyword, searchKeywords);
     }
     async createSearchKeyword(createSearchKeywordDto) {
         const { keyword, ip, userId } = createSearchKeywordDto;
