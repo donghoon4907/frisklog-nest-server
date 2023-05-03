@@ -273,6 +273,11 @@ type OffsetPaginatedNotification {
   pageInfo: OffsetMetadata!
 }
 
+type OffsetPaginatedSearchKeyword {
+  nodes: [SearchKeyword!]
+  pageInfo: OffsetMetadata!
+}
+
 type OffsetPaginatedComment {
   nodes: [Comment!]
   pageInfo: OffsetMetadata!
@@ -338,6 +343,7 @@ type Query {
   relatedCategories(content: String!): [Category!]!
   notifications(offset: Int = 0, limit: Int = 12): OffsetPaginatedNotification!
   searchKeywords(offset: Int = 0, limit: Int = 12): [SearchKeyword!]!
+  searchLogs(offset: Int = 0, limit: Int = 12): OffsetPaginatedSearchKeyword!
   comments(offset: Int = 0, limit: Int = 12, postId: String!, order: [[String!]!]): OffsetPaginatedComment!
   photos(
     offset: Int = 0

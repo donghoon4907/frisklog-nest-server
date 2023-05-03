@@ -10,13 +10,14 @@ exports.SearchKeywordsModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const search_keywords_entity_1 = require("./search-keywords.entity");
+const user_entity_1 = require("../users/user.entity");
 const search_keywords_resolver_1 = require("./search-keywords.resolver");
 const search_keywords_service_1 = require("./search-keywords.service");
 let SearchKeywordsModule = class SearchKeywordsModule {
 };
 SearchKeywordsModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([search_keywords_entity_1.SearchKeyword])],
+        imports: [typeorm_1.TypeOrmModule.forFeature([search_keywords_entity_1.SearchKeyword, user_entity_1.User])],
         providers: [search_keywords_resolver_1.SearchKeywordsResolver, search_keywords_service_1.SearchKeywordsService],
         exports: [search_keywords_service_1.SearchKeywordsService],
     })

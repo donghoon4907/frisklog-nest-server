@@ -16,8 +16,9 @@ exports.SearchKeywordsService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
-const search_keywords_entity_1 = require("./search-keywords.entity");
 const class_transformer_1 = require("class-transformer");
+const search_keywords_entity_1 = require("./search-keywords.entity");
+const offset_paginator_1 = require("../common/paging/offset/offset.paginator");
 let SearchKeywordsService = class SearchKeywordsService {
     constructor(searchKeywordsRepository) {
         this.searchKeywordsRepository = searchKeywordsRepository;
@@ -36,6 +37,18 @@ let SearchKeywordsService = class SearchKeywordsService {
             .orderBy('searchCount', 'DESC')
             .getRawMany();
         return (0, class_transformer_1.plainToInstance)(search_keywords_entity_1.SearchKeyword, searchKeywords);
+    }
+    async searchLogs(searchLogsArgs, authId) {
+        const { offset, limit } = searchLogsArgs;
+        const [searchLogs, total] = await this.searchKeywordsRepository
+            .createQueryBuilder('searchKeywords')
+            .where('searchKeywords.userId = :authId', { authId })
+            .orderBy('searchKeywords.createdAt', 'DESC')
+            .limit(limit)
+            .offset(offset)
+            .getManyAndCount();
+        const paginator = new offset_paginator_1.OffsetPaginator(offset, limit);
+        return paginator.response(searchLogs, total);
     }
     async createSearchKeyword(createSearchKeywordDto) {
         const { keyword, ip, userId } = createSearchKeywordDto;

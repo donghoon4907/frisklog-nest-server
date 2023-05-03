@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { plainToInstance } from 'class-transformer';
 
 import { CreateSearchKeywordDto } from './dto/create-search-keyword.dto';
 import { SearchKeywordsArgs } from './dto/search-keywords.args';
 import { SearchKeyword } from './search-keywords.entity';
-import { plainToInstance } from 'class-transformer';
+import { SearchLogsArgs } from './dto/search-logs.args';
+import { OffsetPaginator } from '../common/paging/offset/offset.paginator';
 
 @Injectable()
 export class SearchKeywordsService {
@@ -30,6 +32,22 @@ export class SearchKeywordsService {
             .getRawMany();
 
         return plainToInstance(SearchKeyword, searchKeywords);
+    }
+
+    async searchLogs(searchLogsArgs: SearchLogsArgs, authId: string) {
+        const { offset, limit } = searchLogsArgs;
+
+        const [searchLogs, total] = await this.searchKeywordsRepository
+            .createQueryBuilder('searchKeywords')
+            .where('searchKeywords.userId = :authId', { authId })
+            .orderBy('searchKeywords.createdAt', 'DESC')
+            .limit(limit)
+            .offset(offset)
+            .getManyAndCount();
+
+        const paginator = new OffsetPaginator<SearchKeyword>(offset, limit);
+
+        return paginator.response(searchLogs, total);
     }
 
     async createSearchKeyword(createSearchKeywordDto: CreateSearchKeywordDto) {

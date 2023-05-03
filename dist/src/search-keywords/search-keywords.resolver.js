@@ -14,15 +14,24 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SearchKeywordsResolver = void 0;
 const graphql_1 = require("@nestjs/graphql");
+const common_1 = require("@nestjs/common");
 const search_keywords_entity_1 = require("./search-keywords.entity");
 const search_keywords_service_1 = require("./search-keywords.service");
 const search_keywords_args_1 = require("./dto/search-keywords.args");
+const search_keywords_response_1 = require("./dto/search-keywords.response");
+const auth_guard_1 = require("../users/auth/auth.guard");
+const auth_decorator_1 = require("../users/auth/auth.decorator");
+const user_entity_1 = require("../users/user.entity");
+const search_logs_args_1 = require("./dto/search-logs.args");
 let SearchKeywordsResolver = class SearchKeywordsResolver {
     constructor(searchKeywordsService) {
         this.searchKeywordsService = searchKeywordsService;
     }
     searchKeywords(searchKeywordsArgs) {
         return this.searchKeywordsService.searchKeywords(searchKeywordsArgs);
+    }
+    searchLogs(me, searchLogsArgs) {
+        return this.searchKeywordsService.searchLogs(searchLogsArgs, me.id);
     }
 };
 __decorate([
@@ -32,6 +41,15 @@ __decorate([
     __metadata("design:paramtypes", [search_keywords_args_1.SearchKeywordsArgs]),
     __metadata("design:returntype", void 0)
 ], SearchKeywordsResolver.prototype, "searchKeywords", null);
+__decorate([
+    (0, graphql_1.Query)((returns) => search_keywords_response_1.OffsetPaginatedSearchKeyword),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    __param(0, (0, auth_decorator_1.AuthUser)()),
+    __param(1, (0, graphql_1.Args)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [user_entity_1.User, search_logs_args_1.SearchLogsArgs]),
+    __metadata("design:returntype", void 0)
+], SearchKeywordsResolver.prototype, "searchLogs", null);
 SearchKeywordsResolver = __decorate([
     (0, graphql_1.Resolver)((of) => search_keywords_entity_1.SearchKeyword),
     __metadata("design:paramtypes", [search_keywords_service_1.SearchKeywordsService])
