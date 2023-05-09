@@ -46,6 +46,7 @@ let SearchKeywordsService = class SearchKeywordsService {
             .orderBy('searchKeywords.createdAt', 'DESC')
             .limit(limit)
             .offset(offset)
+            .groupBy('searchKeywords.keyword')
             .getManyAndCount();
         const paginator = new offset_paginator_1.OffsetPaginator(offset, limit);
         return paginator.response(searchLogs, total);
