@@ -51,6 +51,11 @@ let SearchKeywordsService = class SearchKeywordsService {
         const paginator = new offset_paginator_1.OffsetPaginator(offset, limit);
         return paginator.response(searchLogs, total);
     }
+    findById(id) {
+        return this.searchKeywordsRepository.findOne({
+            where: { id },
+        });
+    }
     async createSearchKeyword(createSearchKeywordDto) {
         const { keyword, ip, userId } = createSearchKeywordDto;
         const searchKeyword = new search_keywords_entity_1.SearchKeyword();
@@ -59,6 +64,9 @@ let SearchKeywordsService = class SearchKeywordsService {
         searchKeyword.userId = userId;
         await this.searchKeywordsRepository.save(searchKeyword);
         return searchKeyword;
+    }
+    delete(searchKeyword) {
+        return this.searchKeywordsRepository.softRemove(searchKeyword);
     }
 };
 SearchKeywordsService = __decorate([

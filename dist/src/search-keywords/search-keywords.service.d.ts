@@ -8,5 +8,7 @@ export declare class SearchKeywordsService {
     constructor(searchKeywordsRepository: Repository<SearchKeyword>);
     searchKeywords(searchKeywordsArgs: SearchKeywordsArgs): Promise<SearchKeyword[]>;
     searchLogs(searchLogsArgs: SearchLogsArgs, authId: string): Promise<import("../common/paging/offset/offset.interface").IOffsetPaginatedType<SearchKeyword>>;
+    findById(id: string): Promise<SearchKeyword>;
     createSearchKeyword(createSearchKeywordDto: CreateSearchKeywordDto): Promise<SearchKeyword>;
+    delete(searchKeyword: SearchKeyword): Promise<SearchKeyword>;
 }

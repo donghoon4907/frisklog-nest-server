@@ -51,6 +51,12 @@ export class SearchKeywordsService {
         return paginator.response(searchLogs, total);
     }
 
+    findById(id: string) {
+        return this.searchKeywordsRepository.findOne({
+            where: { id },
+        });
+    }
+
     async createSearchKeyword(createSearchKeywordDto: CreateSearchKeywordDto) {
         const { keyword, ip, userId } = createSearchKeywordDto;
 
@@ -65,5 +71,9 @@ export class SearchKeywordsService {
         await this.searchKeywordsRepository.save(searchKeyword);
 
         return searchKeyword;
+    }
+
+    delete(searchKeyword: SearchKeyword) {
+        return this.searchKeywordsRepository.softRemove(searchKeyword);
     }
 }

@@ -375,6 +375,7 @@ type Mutation {
   unlike(id: String!): Boolean!
   readNotifications(input: ReadNotificationsDto!): [Notification!]!
   deleteNotifications(input: DeleteNotificationsDto!): [Notification!]!
+  deleteSearchKeyword(id: String!): SearchKeyword!
   addComment(input: CreateCommentDto!): Comment!
   updateComment(input: UpdateCommentDto!): Comment!
   deleteComment(id: String!): Comment!

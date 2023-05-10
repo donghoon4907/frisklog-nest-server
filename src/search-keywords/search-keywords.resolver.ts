@@ -1,5 +1,5 @@
-import { Args, Query, Resolver } from '@nestjs/graphql';
-import { UseGuards } from '@nestjs/common';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { ForbiddenException, UseGuards } from '@nestjs/common';
 
 import { SearchKeyword } from './search-keywords.entity';
 import { SearchKeywordsService } from './search-keywords.service';
@@ -25,5 +25,17 @@ export class SearchKeywordsResolver {
     @UseGuards(AuthGuard)
     searchLogs(@AuthUser() me: User, @Args() searchLogsArgs: SearchLogsArgs) {
         return this.searchKeywordsService.searchLogs(searchLogsArgs, me.id);
+    }
+
+    @Mutation((returns) => SearchKeyword)
+    @UseGuards(AuthGuard)
+    async deleteSearchKeyword(@Args('id') id: string) {
+        const searchkeyword = await this.searchKeywordsService.findById(id);
+
+        if (searchkeyword === null) {
+            throw new ForbiddenException('존재하지 않는 검색어입니다.');
+        }
+
+        return this.searchKeywordsService.delete(searchkeyword);
     }
 }

@@ -33,6 +33,13 @@ let SearchKeywordsResolver = class SearchKeywordsResolver {
     searchLogs(me, searchLogsArgs) {
         return this.searchKeywordsService.searchLogs(searchLogsArgs, me.id);
     }
+    async deleteSearchKeyword(id) {
+        const searchkeyword = await this.searchKeywordsService.findById(id);
+        if (searchkeyword === null) {
+            throw new common_1.ForbiddenException('존재하지 않는 검색어입니다.');
+        }
+        return this.searchKeywordsService.delete(searchkeyword);
+    }
 };
 __decorate([
     (0, graphql_1.Query)((returns) => [search_keywords_entity_1.SearchKeyword]),
@@ -50,6 +57,14 @@ __decorate([
     __metadata("design:paramtypes", [user_entity_1.User, search_logs_args_1.SearchLogsArgs]),
     __metadata("design:returntype", void 0)
 ], SearchKeywordsResolver.prototype, "searchLogs", null);
+__decorate([
+    (0, graphql_1.Mutation)((returns) => search_keywords_entity_1.SearchKeyword),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    __param(0, (0, graphql_1.Args)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], SearchKeywordsResolver.prototype, "deleteSearchKeyword", null);
 SearchKeywordsResolver = __decorate([
     (0, graphql_1.Resolver)((of) => search_keywords_entity_1.SearchKeyword),
     __metadata("design:paramtypes", [search_keywords_service_1.SearchKeywordsService])

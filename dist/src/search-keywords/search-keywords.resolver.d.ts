@@ -8,4 +8,5 @@ export declare class SearchKeywordsResolver {
     constructor(searchKeywordsService: SearchKeywordsService);
     searchKeywords(searchKeywordsArgs: SearchKeywordsArgs): Promise<SearchKeyword[]>;
     searchLogs(me: User, searchLogsArgs: SearchLogsArgs): Promise<import("../common/paging/offset/offset.interface").IOffsetPaginatedType<SearchKeyword>>;
+    deleteSearchKeyword(id: string): Promise<SearchKeyword>;
 }
