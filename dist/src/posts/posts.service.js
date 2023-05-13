@@ -40,11 +40,6 @@ let PostsService = class PostsService {
             .limit(limit)
             .offset(offset);
         if (searchKeyword) {
-            await this.searchKeywordsService.createSearchKeyword({
-                keyword: searchKeyword,
-                userId: me ? me.id : null,
-                ip,
-            });
             qb.andWhere('post.content like :searchKeyword', {
                 searchKeyword: `%${searchKeyword}%`,
             });
@@ -56,6 +51,17 @@ let PostsService = class PostsService {
             qb.andWhere('user.id = :userId', { userId });
         }
         const [posts, total] = await qb.getManyAndCount();
+        if (searchKeyword) {
+            await this.searchKeywordsService.createSearchKeyword({
+                keyword: searchKeyword,
+                userId: me ? me.id : null,
+                ip,
+            });
+            for (let i = 0; i < posts.length; i++) {
+                const regex = new RegExp(searchKeyword, 'g');
+                posts[i].content = posts[i].content.replace(regex, `<span class='highlight'>${searchKeyword}</span>`);
+            }
+        }
         const paginator = new offset_paginator_1.OffsetPaginator(offset, limit);
         return paginator.response(posts, total);
     }

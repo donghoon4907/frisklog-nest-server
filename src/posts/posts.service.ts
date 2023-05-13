@@ -49,13 +49,6 @@ export class PostsService {
             .offset(offset);
 
         if (searchKeyword) {
-            // 검색 로그 생성
-            await this.searchKeywordsService.createSearchKeyword({
-                keyword: searchKeyword,
-                userId: me ? me.id : null,
-                ip,
-            });
-
             qb.andWhere('post.content like :searchKeyword', {
                 searchKeyword: `%${searchKeyword}%`,
             });
@@ -70,6 +63,24 @@ export class PostsService {
         }
 
         const [posts, total] = await qb.getManyAndCount();
+
+        if (searchKeyword) {
+            // 검색 로그 생성
+            await this.searchKeywordsService.createSearchKeyword({
+                keyword: searchKeyword,
+                userId: me ? me.id : null,
+                ip,
+            });
+            // 검색어 하이라이팅
+            for (let i = 0; i < posts.length; i++) {
+                const regex = new RegExp(searchKeyword, 'g');
+
+                posts[i].content = posts[i].content.replace(
+                    regex,
+                    `<span class='highlight'>${searchKeyword}</span>`,
+                );
+            }
+        }
 
         const paginator = new OffsetPaginator<Post>(offset, limit);
 
