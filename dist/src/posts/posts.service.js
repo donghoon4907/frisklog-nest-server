@@ -58,8 +58,12 @@ let PostsService = class PostsService {
                 ip,
             });
             for (let i = 0; i < posts.length; i++) {
-                const regex = new RegExp(searchKeyword, 'g');
-                posts[i].content = posts[i].content.replace(regex, `<span class='highlight'>${searchKeyword}</span>`);
+                const regex = new RegExp(searchKeyword, 'gi');
+                const matchedKeyword = new Set(posts[i].content.match(regex));
+                for (let keyword of matchedKeyword) {
+                    const regex2 = new RegExp(keyword, 'g');
+                    posts[i].content = posts[i].content.replace(regex2, `<span class='highlight'>${keyword}</span>`);
+                }
             }
         }
         const paginator = new offset_paginator_1.OffsetPaginator(offset, limit);
