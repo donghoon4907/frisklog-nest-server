@@ -72,21 +72,21 @@ export class PostsService {
                 ip,
             });
             // 검색어 하이라이팅 작업 시작
-            for (let i = 0; i < posts.length; i++) {
-                // 대소문자를 구별하지 않음
-                const regex = new RegExp(searchKeyword, 'gi');
-                // 중복되지 않는 하이라이팅 작업 대상 목록
-                const matchedKeyword = new Set(posts[i].content.match(regex));
+            // for (let i = 0; i < posts.length; i++) {
+            //     // 대소문자를 구별하지 않음
+            //     const regex = new RegExp(searchKeyword, 'gi');
+            //     // 중복되지 않는 하이라이팅 작업 대상 목록
+            //     const matchedKeyword = new Set(posts[i].content.match(regex));
 
-                for (let keyword of matchedKeyword) {
-                    const regex2 = new RegExp(keyword, 'g');
-                    // 하이라이팅 대상 키워드를 모두 찾아 적용
-                    posts[i].content = posts[i].content.replace(
-                        regex2,
-                        `<span class='highlight'>${keyword}</span>`,
-                    );
-                }
-            }
+            //     for (let keyword of matchedKeyword) {
+            //         const regex2 = new RegExp(keyword, 'g');
+            //         // 하이라이팅 대상 키워드를 모두 찾아 적용
+            //         posts[i].content = posts[i].content.replace(
+            //             regex2,
+            //             `<span class='highlight'>${keyword}</span>`,
+            //         );
+            //     }
+            // }
         }
 
         const paginator = new OffsetPaginator<Post>(offset, limit);
