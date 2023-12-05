@@ -201,7 +201,7 @@ let UsersResolver = class UsersResolver {
                     avatar: picture,
                     email,
                 };
-                user = await this.usersService.createUser(params, 3);
+                user = await this.usersService.createUser(params, 4);
             }
             return this.usersService.verify(true, user);
         }

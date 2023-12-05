@@ -43,3 +43,6 @@ lerna-debug.log*
 
 # upload local files
 public/upload/*
+
+# build
+/dist
